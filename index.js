@@ -1844,6 +1844,10 @@ const configPage = `
                 <input type="checkbox" name="enabledNotifiers" value="email" class="form-checkbox h-4 w-4 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500">
                 <span class="ml-2 text-sm text-gray-700">邮件通知</span>
               </label>
+              <label class="inline-flex items-center">
+                <input type="checkbox" name="enabledNotifiers" value="discord" class="form-checkbox h-4 w-4 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500">
+                <span class="ml-2 text-sm text-gray-700">Discord Bot 私信</span>
+              </label>
             </div>
             <div class="mt-2 flex flex-wrap gap-4">
               <a href="https://www.notifyx.cn/" target="_blank" class="text-indigo-600 hover:text-indigo-800 text-sm">
@@ -1994,6 +1998,27 @@ const configPage = `
               </button>
             </div>
           </div>
+
+          <div id="discordConfig" class="config-section">
+            <h4 class="text-md font-medium text-gray-900 mb-3">Discord Bot 私信配置</h4>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                <div>
+                <label for="discordBotToken" class="block text-sm font-medium text-gray-700">Bot Token</label>
+                <input type="password" id="discordBotToken" placeholder="从Discord开发者门户获取" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+                <p class="mt-1 text-sm text-gray-500">机器人的Token，请保密。</p>
+                </div>
+                <div>
+                <label for="discordUserId" class="block text-sm font-medium text-gray-700">你的用户ID</label>
+                <input type="text" id="discordUserId" placeholder="开启开发者模式后复制" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+                <p class="mt-1 text-sm text-gray-500">接收私信的Discord用户ID。</p>
+                </div>
+            </div>
+            <div class="flex justify-end">
+                <button type="button" id="testDiscordBtn" class="btn-secondary text-white px-4 py-2 rounded-md text-sm font-medium">
+                <i class="fas fa-paper-plane mr-2"></i>测试 Discord 私信
+                </button>
+            </div>
+            </div>
         </div>
 
         <div class="flex justify-end">
@@ -2050,6 +2075,8 @@ const configPage = `
         document.getElementById('emailFrom').value = config.EMAIL_FROM || '';
         document.getElementById('emailFromName').value = config.EMAIL_FROM_NAME || '订阅提醒系统';
         document.getElementById('emailTo').value = config.EMAIL_TO || '';
+        document.getElementById('discordBotToken').value = config.DISCORD_BOT_TOKEN || '';
+        document.getElementById('discordUserId').value = config.DISCORD_USER_ID || '';
 
         // 加载农历显示设置
         document.getElementById('showLunarGlobal').checked = config.SHOW_LUNAR === true;
@@ -2073,9 +2100,10 @@ const configPage = `
       const webhookConfig = document.getElementById('webhookConfig');
       const wechatbotConfig = document.getElementById('wechatbotConfig');
       const emailConfig = document.getElementById('emailConfig');
+      const discordConfig = document.getElementById('discordConfig');
 
       // 重置所有配置区域
-      [telegramConfig, notifyxConfig, webhookConfig, wechatbotConfig, emailConfig].forEach(config => {
+      [telegramConfig, notifyxConfig, webhookConfig, wechatbotConfig, emailConfig, discordConfig].forEach(config => {
         config.classList.remove('active', 'inactive');
         config.classList.add('inactive');
       });
@@ -2097,6 +2125,9 @@ const configPage = `
         } else if (type === 'email') {
           emailConfig.classList.remove('inactive');
           emailConfig.classList.add('active');
+        } else if (type === 'discord') { 
+          discordConfig.classList.remove('inactive');
+          discordConfig.classList.add('active');
         }
       });
     }
@@ -2138,7 +2169,9 @@ const configPage = `
         EMAIL_FROM: document.getElementById('emailFrom').value.trim(),
         EMAIL_FROM_NAME: document.getElementById('emailFromName').value.trim(),
         EMAIL_TO: document.getElementById('emailTo').value.trim(),
-        ENABLED_NOTIFIERS: enabledNotifiers
+        ENABLED_NOTIFIERS: enabledNotifiers,
+        DISCORD_BOT_TOKEN: document.getElementById('discordBotToken').value.trim(),
+        DISCORD_USER_ID: document.getElementById('discordUserId').value.trim()
       };
 
       const passwordField = document.getElementById('adminPassword');
@@ -2179,13 +2212,15 @@ const configPage = `
       const buttonId = type === 'telegram' ? 'testTelegramBtn' :
                       type === 'notifyx' ? 'testNotifyXBtn' :
                       type === 'wechatbot' ? 'testWechatBotBtn' :
-                      type === 'email' ? 'testEmailBtn' : 'testWebhookBtn';
+                      type === 'email' ? 'testEmailBtn' : 
+                      type === 'discord' ? 'testDiscordBtn' : 'testWebhookBtn';
       const button = document.getElementById(buttonId);
       const originalContent = button.innerHTML;
       const serviceName = type === 'telegram' ? 'Telegram' :
                           type === 'notifyx' ? 'NotifyX' :
                           type === 'wechatbot' ? '企业微信机器人' :
-                          type === 'email' ? '邮件通知' : '企业微信应用通知';
+                          type === 'email' ? '邮件通知' : 
+                          type === 'discord' ? 'Discord 私信' : '企业微信应用通知';
 
       button.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>测试中...';
       button.disabled = true;
@@ -2246,7 +2281,16 @@ const configPage = `
           button.disabled = false;
           return;
         }
-      }
+      } else if (type === 'discord') { // [DISCORD BOT] 新增
+        config.DISCORD_BOT_TOKEN = document.getElementById('discordBotToken').value.trim();
+        config.DISCORD_USER_ID = document.getElementById('discordUserId').value.trim();
+        if (!config.DISCORD_BOT_TOKEN || !config.DISCORD_USER_ID) {
+            showToast('请先填写 Discord Bot Token 和你的用户ID', 'warning');
+            button.innerHTML = originalContent;
+            button.disabled = false;
+            return;
+        }
+     }
 
       try {
         const response = await fetch('/api/test-notification', {
@@ -2289,6 +2333,10 @@ const configPage = `
 
     document.getElementById('testEmailBtn').addEventListener('click', () => {
       testNotification('email');
+    });
+
+    document.getElementById('testDiscordBtn').addEventListener('click', () => {
+        testNotification('discord');
     });
 
     window.addEventListener('load', loadConfig);
@@ -2425,7 +2473,9 @@ const api = {
             EMAIL_FROM: newConfig.EMAIL_FROM || '',
             EMAIL_FROM_NAME: newConfig.EMAIL_FROM_NAME || '',
             EMAIL_TO: newConfig.EMAIL_TO || '',
-            ENABLED_NOTIFIERS: newConfig.ENABLED_NOTIFIERS || ['notifyx']
+            ENABLED_NOTIFIERS: newConfig.ENABLED_NOTIFIERS || ['notifyx'],
+            DISCORD_BOT_TOKEN: newConfig.DISCORD_BOT_TOKEN || '',
+            DISCORD_USER_ID: newConfig.DISCORD_USER_ID || ''
           };
 
           if (newConfig.ADMIN_PASSWORD) {
@@ -2524,6 +2574,12 @@ const api = {
 
           success = await sendEmailNotification(title, content, testConfig);
           message = success ? '邮件通知发送成功' : '邮件通知发送失败，请检查配置';
+        }
+        else if (body.type === 'discord') {
+            const testConfig = { ...config, DISCORD_BOT_TOKEN: body.DISCORD_BOT_TOKEN, DISCORD_USER_ID: body.DISCORD_USER_ID };
+            const content = '这是一条测试通知，用于验证 Discord Bot 私信功能是否正常工作。\n\n发送时间: ' + formatBeijingTime();
+            success = await sendDiscordNotification('Discord 私信测试通知', content, testConfig);
+            message = success ? 'Discord 私信发送成功' : 'Discord 私信发送失败，请检查配置和服务器设置';
         }
 
         return new Response(
@@ -2728,7 +2784,9 @@ async function getConfig(env) {
       EMAIL_FROM: config.EMAIL_FROM || '',
       EMAIL_FROM_NAME: config.EMAIL_FROM_NAME || '',
       EMAIL_TO: config.EMAIL_TO || '',
-      ENABLED_NOTIFIERS: config.ENABLED_NOTIFIERS || ['notifyx']
+      ENABLED_NOTIFIERS: config.ENABLED_NOTIFIERS || ['notifyx'],
+      DISCORD_BOT_TOKEN: config.DISCORD_BOT_TOKEN || '',
+      DISCORD_USER_ID: config.DISCORD_USER_ID || ''
     };
 
     console.log('[配置] 最终配置用户名:', finalConfig.ADMIN_USERNAME);
@@ -2757,7 +2815,9 @@ async function getConfig(env) {
       EMAIL_FROM: '',
       EMAIL_FROM_NAME: '',
       EMAIL_TO: '',
-      ENABLED_NOTIFIERS: ['notifyx']
+      ENABLED_NOTIFIERS: ['notifyx'],
+      DISCORD_BOT_TOKEN: '',
+      DISCORD_USER_ID: ''
     };
   }
 }
@@ -3225,6 +3285,10 @@ async function sendNotificationToAllChannels(title, commonContent, config, logPr
         const success = await sendEmailNotification(title, emailContent, config);
         console.log(`${logPrefix} 发送邮件通知 ${success ? '成功' : '失败'}`);
     }
+    if (config.ENABLED_NOTIFIERS.includes('discord')) {
+        const success = await sendDiscordNotification(title, commonContent, config);
+        console.log(`${logPrefix} 发送Discord私信通知 ${success ? '成功' : '失败'}`);
+    }
 }
 
 async function sendTelegramNotification(message, config) {
@@ -3364,6 +3428,76 @@ async function sendEmailNotification(title, content, config) {
     }
   } catch (error) {
     console.error('[邮件通知] 发送邮件失败:', error);
+    return false;
+  }
+}
+
+// [DISCORD BOT] 新增此函数
+async function sendDiscordNotification(title, content, config) {
+  try {
+    if (!config.DISCORD_BOT_TOKEN || !config.DISCORD_USER_ID) {
+      console.error('[Discord Bot] 通知未配置，缺少 Bot Token 或 User ID');
+      return false;
+    }
+
+    console.log('[Discord Bot] 准备向用户 ' + config.DISCORD_USER_ID + ' 发送DM');
+
+    const apiBase = 'https://discord.com/api/v10';
+    const botToken = config.DISCORD_BOT_TOKEN;
+    const userId = config.DISCORD_USER_ID;
+
+    // 步骤 1: 创建或获取与用户的DM频道
+    const dmChannelResponse = await fetch(`${apiBase}/users/@me/channels`, {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bot ${botToken}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        recipient_id: userId,
+      }),
+    });
+
+    if (!dmChannelResponse.ok) {
+      console.error(`[Discord Bot] 创建DM频道失败，状态码: ${dmChannelResponse.status}`, await dmChannelResponse.text());
+      return false;
+    }
+
+    const dmChannel = await dmChannelResponse.json();
+    const channelId = dmChannel.id;
+
+    // 步骤 2: 在获取到的DM频道中发送消息
+    const description = content.replace(/(\*\*|`|#+\s)/g, '');
+    const payload = {
+      embeds: [{
+        title: `🔔 ${title}`,
+        description: description,
+        color: 5814783, // Discord 官方蓝色
+        timestamp: new Date().toISOString(),
+        footer: {
+          text: '订阅管理系统'
+        }
+      }]
+    };
+
+    const messageResponse = await fetch(`${apiBase}/channels/${channelId}/messages`, {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bot ${botToken}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(payload),
+    });
+
+    if (messageResponse.ok) {
+      console.log('[Discord Bot] DM通知发送成功');
+      return true;
+    } else {
+      console.error(`[Discord Bot] 发送DM失败，状态码: ${messageResponse.status}`, await messageResponse.text());
+      return false;
+    }
+  } catch (error) {
+    console.error('[Discord Bot] 发送DM通知时发生异常:', error);
     return false;
   }
 }
