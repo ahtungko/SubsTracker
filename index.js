@@ -1,17 +1,17 @@
 // 订阅续期通知网站 - 基于CloudFlare Workers (完全优化版)
 
 // 时区工具函数
-function formatBeijingTime(date = new Date(), format = 'full') {
+function formatKualaLumpurTime(date = new Date(), format = 'full') {
   if (format === 'date') {
     return date.toLocaleDateString('zh-CN', {
-      timeZone: 'Asia/Shanghai',
+      timeZone: 'Asia/Kuala_Lumpur',
       year: 'numeric',
       month: '2-digit',
       day: '2-digit'
     });
   } else if (format === 'datetime') {
     return date.toLocaleString('zh-CN', {
-      timeZone: 'Asia/Shanghai',
+      timeZone: 'Asia/Kuala_Lumpur',
       year: 'numeric',
       month: '2-digit',
       day: '2-digit',
@@ -22,7 +22,7 @@ function formatBeijingTime(date = new Date(), format = 'full') {
   } else {
     // full format
     return date.toLocaleString('zh-CN', {
-      timeZone: 'Asia/Shanghai'
+      timeZone: 'Asia/Kuala_Lumpur'
     });
   }
 }
@@ -777,17 +777,17 @@ const adminPage = `
 
   <script>
     // 时区工具函数 - 前端版本
-    function formatBeijingTime(date = new Date(), format = 'full') {
+    function formatKualaLumpurTime(date = new Date(), format = 'full') {
       if (format === 'date') {
         return date.toLocaleDateString('zh-CN', {
-          timeZone: 'Asia/Shanghai',
+          timeZone: 'Asia/Kuala_Lumpur',
           year: 'numeric',
           month: '2-digit',
           day: '2-digit'
         });
       } else if (format === 'datetime') {
         return date.toLocaleString('zh-CN', {
-          timeZone: 'Asia/Shanghai',
+          timeZone: 'Asia/Kuala_Lumpur',
           year: 'numeric',
           month: '2-digit',
           day: '2-digit',
@@ -798,7 +798,7 @@ const adminPage = `
       } else {
         // full format
         return date.toLocaleString('zh-CN', {
-          timeZone: 'Asia/Shanghai'
+          timeZone: 'Asia/Kuala_Lumpur'
         });
       }
     }
@@ -1249,11 +1249,11 @@ function addLunarPeriod(lunar, periodValue, periodUnit) {
 		  const periodHtml = periodText ? createHoverText('周期: ' + periodText, 20, 'text-xs text-gray-500 mt-1') : '';
 
           // 到期时间相关信息
-          const expiryDateText = formatBeijingTime(new Date(subscription.expiryDate), 'date');
+          const expiryDateText = formatKualaLumpurTime(new Date(subscription.expiryDate), 'date');
           const lunarHtml = lunarExpiryText ? createHoverText('农历: ' + lunarExpiryText, 25, 'text-xs text-blue-600 mt-1') : '';
           const daysLeftText = daysDiff < 0 ? '已过期' + Math.abs(daysDiff) + '天' : '还剩' + daysDiff + '天';
           const startDateText = subscription.startDate ?
-            '开始: ' + formatBeijingTime(new Date(subscription.startDate), 'date') + (startLunarText ? ' (' + startLunarText + ')' : '') : '';
+            '开始: ' + formatKualaLumpurTime(new Date(subscription.startDate), 'date') + (startLunarText ? ' (' + startLunarText + ')' : '') : '';
           const startDateHtml = startDateText ? createHoverText(startDateText, 30, 'text-xs text-gray-500 mt-1') : '';
 
 		  //新增修改，修改日历类型
@@ -2517,7 +2517,7 @@ const api = {
             TG_CHAT_ID: body.TG_CHAT_ID
           };
 
-          const content = '*测试通知*\n\n这是一条测试通知，用于验证Telegram通知功能是否正常工作。\n\n发送时间: ' + formatBeijingTime();
+          const content = '*测试通知*\n\n这是一条测试通知，用于验证Telegram通知功能是否正常工作。\n\n发送时间: ' + formatKualaLumpurTime();
           success = await sendTelegramNotification(content, testConfig);
           message = success ? 'Telegram通知发送成功' : 'Telegram通知发送失败，请检查配置';
         } else if (body.type === 'notifyx') {
@@ -2527,7 +2527,7 @@ const api = {
           };
 
           const title = '测试通知';
-          const content = '## 这是一条测试通知\n\n用于验证NotifyX通知功能是否正常工作。\n\n发送时间: ' + formatBeijingTime();
+          const content = '## 这是一条测试通知\n\n用于验证NotifyX通知功能是否正常工作。\n\n发送时间: ' + formatKualaLumpurTime();
           const description = '测试NotifyX通知功能';
 
           success = await sendNotifyXNotification(title, content, description, testConfig);
@@ -2542,7 +2542,7 @@ const api = {
           };
 
           const title = '测试通知';
-          const content = '这是一条测试通知，用于验证企业微信应用通知功能是否正常工作。\n\n发送时间: ' + formatBeijingTime();
+          const content = '这是一条测试通知，用于验证企业微信应用通知功能是否正常工作。\n\n发送时间: ' + formatKualaLumpurTime();
 
           success = await sendWebhookNotification(title, content, testConfig);
           message = success ? '企业微信应用通知发送成功' : '企业微信应用通知发送失败，请检查配置';
@@ -2556,7 +2556,7 @@ const api = {
           };
 
           const title = '测试通知';
-          const content = '这是一条测试通知，用于验证企业微信机器人功能是否正常工作。\n\n发送时间: ' + formatBeijingTime();
+          const content = '这是一条测试通知，用于验证企业微信机器人功能是否正常工作。\n\n发送时间: ' + formatKualaLumpurTime();
 
           success = await sendWechatBotNotification(title, content, testConfig);
           message = success ? '企业微信机器人通知发送成功' : '企业微信机器人通知发送失败，请检查配置';
@@ -2570,14 +2570,14 @@ const api = {
           };
 
           const title = '测试通知';
-          const content = '这是一条测试通知，用于验证邮件通知功能是否正常工作。\n\n发送时间: ' + formatBeijingTime();
+          const content = '这是一条测试通知，用于验证邮件通知功能是否正常工作。\n\n发送时间: ' + formatKualaLumpurTime();
 
           success = await sendEmailNotification(title, content, testConfig);
           message = success ? '邮件通知发送成功' : '邮件通知发送失败，请检查配置';
         }
         else if (body.type === 'discord') {
             const testConfig = { ...config, DISCORD_BOT_TOKEN: body.DISCORD_BOT_TOKEN, DISCORD_USER_ID: body.DISCORD_USER_ID };
-            const content = '这是一条测试通知，用于验证 Discord Bot 私信功能是否正常工作。\n\n发送时间: ' + formatBeijingTime();
+            const content = '这是一条测试通知，用于验证 Discord Bot 私信功能是否正常工作。\n\n发送时间: ' + formatKualaLumpurTime();
             success = await sendDiscordNotification('Discord 私信测试通知', content, testConfig);
             message = success ? 'Discord 私信发送成功' : 'Discord 私信发送失败，请检查配置和服务器设置';
         }
@@ -3088,7 +3088,7 @@ async function testSingleSubscriptionNotification(id, env) {
       lunarExpiryText = lunarExpiry ? ` (农历: ${lunarExpiry.fullStr})` : '';
     }
 
-    const commonContent = `**订阅详情**:\n- **类型**: ${subscription.customType || '其他'}\n- **到期日**: ${formatBeijingTime(new Date(subscription.expiryDate), 'date')}${lunarExpiryText}\n- **备注**: ${subscription.notes || '无'}`;
+    const commonContent = `**订阅详情**:\n- **类型**: ${subscription.customType || '其他'}\n- **到期日**: ${formatKualaLumpurTime(new Date(subscription.expiryDate), 'date')}${lunarExpiryText}\n- **备注**: ${subscription.notes || '无'}`;
 
     // 使用多渠道发送
     await sendNotificationToAllChannels(title, commonContent, config, '[手动测试]');
@@ -3110,7 +3110,7 @@ async function sendWebhookNotification(title, content, config) {
 
     console.log('[企业微信应用通知] 开始发送通知到: ' + config.WEBHOOK_URL);
 
-    const timestamp = formatBeijingTime(new Date(), 'datetime');
+    const timestamp = formatKualaLumpurTime(new Date(), 'datetime');
     let requestBody;
     let headers = { 'Content-Type': 'application/json' };
 
@@ -3391,7 +3391,7 @@ async function sendEmailNotification(title, content, config) {
             <p>此邮件由订阅管理系统自动发送，请及时处理相关订阅事务。</p>
         </div>
         <div class="footer">
-            <p>订阅管理系统 | 发送时间: ${formatBeijingTime()}</p>
+            <p>订阅管理系统 | 发送时间: ${formatKualaLumpurTime()}</p>
         </div>
     </div>
 </body>
@@ -3515,7 +3515,7 @@ async function checkExpiringSubscriptions(env) {
   try {
     const now = new Date();
     const beijingTime = new Date(now.getTime() + 8 * 60 * 60 * 1000);
-    console.log('[定时任务] 开始检查即将到期的订阅 UTC: ' + now.toISOString() + ', 北京时间: ' + beijingTime.toLocaleString('zh-CN', {timeZone: 'Asia/Shanghai'}));
+    console.log('[定时任务] 开始检查即将到期的订阅 UTC: ' + now.toISOString() + ', 北京时间: ' + beijingTime.toLocaleString('zh-CN', {timeZone: 'Asia/Kuala_Lumpur'}));
 
     const subscriptions = await getAllSubscriptions(env);
     console.log('[定时任务] 共找到 ' + subscriptions.length + ' 个订阅');
@@ -3806,7 +3806,7 @@ export default {
   async scheduled(event, env, ctx) {
     const now = new Date();
     const beijingTime = new Date(now.getTime() + 8 * 60 * 60 * 1000);
-    console.log('[Workers] 定时任务触发 UTC:', now.toISOString(), '北京时间:', beijingTime.toLocaleString('zh-CN', {timeZone: 'Asia/Shanghai'}));
+    console.log('[Workers] 定时任务触发 UTC:', now.toISOString(), '北京时间:', beijingTime.toLocaleString('zh-CN', {timeZone: 'Asia/Kuala_Lumpur'}));
     await checkExpiringSubscriptions(env);
   }
 };
