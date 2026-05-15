@@ -229,28 +229,6 @@
       try {
         const localTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone || 'UTC';
 
-        function formatTimezoneDisplay(tz) {
-          try {
-            const now = new Date();
-            const dtf = new Intl.DateTimeFormat('en-US', {
-              timeZone: tz,
-              hour12: false,
-              year: 'numeric', month: '2-digit', day: '2-digit',
-              hour: '2-digit', minute: '2-digit', second: '2-digit'
-            });
-            const parts = dtf.formatToParts(now);
-            const get = type => Number(parts.find(x => x.type === type).value);
-            const target = Date.UTC(get('year'), get('month') - 1, get('day'), get('hour'), get('minute'), get('second'));
-            const utc = now.getTime();
-            const offset = Math.round((target - utc) / (1000 * 60 * 60));
-            const offsetStr = offset >= 0 ? '+' + offset : offset;
-            return `${tz} (UTC${offsetStr})`;
-          } catch (error) {
-            console.error('格式化时区显示失败:', error);
-            return tz;
-          }
-        }
-
         function update() {
           const now = new Date();
           const timeStr = now.toLocaleString('zh-CN', {
@@ -258,7 +236,7 @@
             year: 'numeric', month: '2-digit', day: '2-digit',
             hour: '2-digit', minute: '2-digit', second: '2-digit'
           });
-          const tzStr = formatTimezoneDisplay(localTimezone);
+          const tzStr = window.AppLocale.formatTimezoneDisplay(localTimezone);
           const el = document.getElementById('systemTimeDisplay');
           if (el) {
             el.textContent = `${timeStr}  ${tzStr}`;
