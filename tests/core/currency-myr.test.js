@@ -8,7 +8,9 @@ import {
   normalizeCurrencyCode,
   buildRateMapFromWiseResponses,
   convertToMYR,
-  getDynamicRates
+  getDynamicRates,
+  getExpenseByType,
+  getExpenseByCategory
 } from '../../src/core/currency.js';
 
 test('currency engine defaults and normalization now use MYR', () => {
@@ -63,4 +65,23 @@ test('getDynamicRates falls back to MYR-based rates when Wise token is missing',
   assert.equal(rates.MYR, 1);
   assert.equal(rates.CNY, FALLBACK_RATES.CNY);
   assert.equal(rates.USD, FALLBACK_RATES.USD);
+});
+
+test('expense aggregations use 未分类 instead of mojibake placeholders', () => {
+  const currentYear = new Date().getUTCFullYear();
+  const subscriptions = [{
+    customType: '',
+    category: '',
+    currency: 'MYR',
+    paymentHistory: [
+      { amount: 12, date: `${currentYear}-05-10T00:00:00.000Z` }
+    ]
+  }];
+  const rates = { ...FALLBACK_RATES };
+
+  const byType = getExpenseByType(subscriptions, 'UTC', rates);
+  const byCategory = getExpenseByCategory(subscriptions, 'UTC', rates);
+
+  assert.equal(byType[0].type, '未分类');
+  assert.equal(byCategory[0].category, '未分类');
 });

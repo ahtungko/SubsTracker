@@ -234,7 +234,7 @@ function getExpenseByType(subscriptions, timezone, rates) {
       const paymentDate = new Date(payment.date);
       const paymentParts = getTimezoneDateParts(paymentDate, timezone);
       if (paymentParts.year === currentYear) {
-        const type = sub.customType || '???';
+        const type = sub.customType || '未分类';
         const amountMYR = convertToMYR(payment.amount, sub.currency, rates);
         typeMap[type] = (typeMap[type] || 0) + amountMYR;
         total += amountMYR;
@@ -265,11 +265,11 @@ function getExpenseByCategory(subscriptions, timezone, rates) {
       const paymentDate = new Date(payment.date);
       const paymentParts = getTimezoneDateParts(paymentDate, timezone);
       if (paymentParts.year === currentYear) {
-        const categories = sub.category ? sub.category.split(CATEGORY_SEPARATOR_REGEX).filter(c => c.trim()) : ['???'];
+        const categories = sub.category ? sub.category.split(CATEGORY_SEPARATOR_REGEX).filter(c => c.trim()) : ['未分类'];
         const amountMYR = convertToMYR(payment.amount, sub.currency, rates);
 
         categories.forEach(category => {
-          const cat = category.trim() || '???';
+          const cat = category.trim() || '未分类';
           categoryMap[cat] = (categoryMap[cat] || 0) + amountMYR / categories.length;
         });
         total += amountMYR;
