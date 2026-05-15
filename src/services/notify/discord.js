@@ -1,3 +1,21 @@
+const DISCORD_EMBED_TITLE_MAX_LENGTH = 256;
+const DISCORD_EMBED_DESCRIPTION_MAX_LENGTH = 4096;
+const TRUNCATION_MARKER = '…';
+
+function clampDiscordEmbedText(value, maxLength) {
+  const text = String(value || '');
+
+  if (text.length <= maxLength) {
+    return text;
+  }
+
+  if (maxLength <= TRUNCATION_MARKER.length) {
+    return TRUNCATION_MARKER.slice(0, maxLength);
+  }
+
+  return `${text.slice(0, maxLength - TRUNCATION_MARKER.length)}${TRUNCATION_MARKER}`;
+}
+
 async function sendDiscordNotification(title, content, config) {
   try {
     const botToken = (config.DISCORD_BOT_TOKEN || '').trim();
@@ -34,7 +52,11 @@ async function sendDiscordNotification(title, content, config) {
       return false;
     }
 
-    const description = String(content || '').replace(/(\*\*|`|#+\s)/g, '');
+    const embedTitle = clampDiscordEmbedText(`\u{1F514} ${String(title || '')}`, DISCORD_EMBED_TITLE_MAX_LENGTH);
+    const description = clampDiscordEmbedText(
+      String(content || '').replace(/(\*\*|`|#+\s)/g, ''),
+      DISCORD_EMBED_DESCRIPTION_MAX_LENGTH
+    );
 
     const messageResponse = await fetch(`${apiBase}/channels/${dmChannel.id}/messages`, {
       method: 'POST',
@@ -45,7 +67,7 @@ async function sendDiscordNotification(title, content, config) {
       body: JSON.stringify({
         embeds: [
           {
-            title: `\u{1F514} ${title}`,
+            title: embedTitle,
             description,
             color: 5814783,
             timestamp: new Date().toISOString(),

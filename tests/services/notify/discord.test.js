@@ -105,3 +105,63 @@ test('dispatcher counts Discord failure when DM channel creation does not return
   assert.equal(calls.length, 1);
   assert.equal(calls[0].url, 'https://discord.com/api/v10/users/@me/channels');
 });
+
+test('dispatcher clamps oversized Discord embed title and description before sending', async (t) => {
+  const calls = [];
+  const originalFetch = global.fetch;
+  const longTitle = 'T'.repeat(400);
+  const longContent = 'D'.repeat(5000);
+
+  global.fetch = async (url, init) => {
+    calls.push({
+      url,
+      method: init?.method ?? 'GET',
+      body: init?.body ?? ''
+    });
+
+    if (url === 'https://discord.com/api/v10/users/@me/channels') {
+      return {
+        ok: true,
+        json: async () => ({ id: 'dm-channel-id' }),
+        text: async () => ''
+      };
+    }
+
+    if (url === 'https://discord.com/api/v10/channels/dm-channel-id/messages') {
+      return {
+        ok: true,
+        json: async () => ({ id: 'message-id' }),
+        text: async () => ''
+      };
+    }
+
+    throw new Error(`Unexpected fetch URL: ${url}`);
+  };
+
+  t.after(() => {
+    global.fetch = originalFetch;
+  });
+
+  const result = await sendNotificationToAllChannels(
+    longTitle,
+    longContent,
+    {
+      ENABLED_NOTIFIERS: ['discord'],
+      DISCORD_BOT_TOKEN: 'bot-token',
+      DISCORD_USER_ID: 'user-1'
+    },
+    '[test]'
+  );
+
+  assert.equal(result.attempted, 1);
+  assert.equal(result.successCount, 1);
+  assert.equal(result.failedCount, 0);
+  assert.equal(result.channelResults.discord, true);
+  assert.equal(calls.length, 2);
+
+  const payload = JSON.parse(calls[1].body);
+  assert.ok(payload.embeds[0].title.length <= 256);
+  assert.ok(payload.embeds[0].description.length <= 4096);
+  assert.match(payload.embeds[0].title, /…$/);
+  assert.match(payload.embeds[0].description, /…$/);
+});
