@@ -28,6 +28,12 @@ async function sendDiscordNotification(title, content, config) {
     }
 
     const dmChannel = await dmChannelResponse.json();
+
+    if (!dmChannel?.id) {
+      console.error('[Discord Bot] \u521b\u5efa DM \u9891\u9053\u5931\u8d25: \u672a\u8fd4\u56de\u9891\u9053 ID');
+      return false;
+    }
+
     const description = String(content || '').replace(/(\*\*|`|#+\s)/g, '');
 
     const messageResponse = await fetch(`${apiBase}/channels/${dmChannel.id}/messages`, {

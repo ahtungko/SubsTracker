@@ -100,3 +100,70 @@ test('Discord test notifications are supported and format timestamps with config
   assert.match(payload.embeds[0].description, /2026\/05\/14/);
   assert.match(payload.embeds[0].description, /20:30:45/);
 });
+
+test('Discord test notifications honor trimmed request-body overrides for token and user id', async (t) => {
+  const env = createEnv({
+    JWT_SECRET: 'jwt-secret',
+    TIMEZONE: 'America/New_York',
+    DISCORD_BOT_TOKEN: 'saved-token',
+    DISCORD_USER_ID: 'saved-user'
+  });
+
+  const calls = [];
+  const originalFetch = global.fetch;
+  const originalDate = global.Date;
+
+  global.Date = FixedDate;
+  global.fetch = async (url, init) => {
+    calls.push({
+      url,
+      method: init?.method ?? 'GET',
+      headers: init?.headers ?? {},
+      body: init?.body ?? ''
+    });
+
+    if (url === 'https://discord.com/api/v10/users/@me/channels') {
+      return {
+        ok: true,
+        json: async () => ({ id: 'dm-channel-id' }),
+        text: async () => ''
+      };
+    }
+
+    if (url === 'https://discord.com/api/v10/channels/dm-channel-id/messages') {
+      return {
+        ok: true,
+        json: async () => ({ id: 'message-id' }),
+        text: async () => ''
+      };
+    }
+
+    throw new Error(`Unexpected fetch URL: ${url}`);
+  };
+
+  t.after(() => {
+    global.fetch = originalFetch;
+    global.Date = originalDate;
+  });
+
+  const request = new Request('https://example.test/api/test-notification', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      type: 'discord',
+      DISCORD_BOT_TOKEN: '  override-token  ',
+      DISCORD_USER_ID: '  override-user  '
+    })
+  });
+
+  const response = await handleTestNotification(request, env);
+  const json = await response.json();
+
+  assert.equal(response.status, 200);
+  assert.equal(json.success, true);
+  assert.equal(calls.length, 2);
+  assert.equal(calls[0].headers.Authorization, 'Bot override-token');
+  assert.deepEqual(JSON.parse(calls[0].body), {
+    recipient_id: 'override-user'
+  });
+});

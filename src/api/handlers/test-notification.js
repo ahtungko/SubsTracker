@@ -178,7 +178,6 @@ async function handleTestNotification(request, env) {
           : config.DISCORD_USER_ID
       };
 
-      const title = '测试通知';
       const content = '这是一条测试通知，用于验证 Discord Bot 私信功能是否正常工作。\n\n发送时间: ' + sentAt;
 
       success = await sendDiscordNotification('Discord 私信测试通知', content, testConfig);
