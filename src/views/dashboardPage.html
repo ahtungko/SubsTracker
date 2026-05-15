@@ -125,7 +125,7 @@
   <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
     <div class="mb-6">
       <h2 class="text-2xl font-bold text-gray-800">📊 仪表板</h2>
-      <p class="text-sm text-gray-500 mt-1">订阅费用和活动概览（统计金额已折合为 CNY）</p>
+      <p class="text-sm text-gray-500 mt-1">订阅费用和活动概览（统计金额已折合为 MYR）</p>
     </div>
 
     <div class="bg-white rounded-lg shadow-md overflow-hidden mb-6">
@@ -192,7 +192,7 @@
             <i class="fas fa-chart-bar text-purple-500"></i>
             <h3 class="text-lg font-medium text-gray-900">按类型支出排行</h3>
           </div>
-          <span class="px-3 py-1 bg-indigo-100 text-indigo-800 text-xs font-medium rounded-full">年度统计 (折合CNY)</span>
+          <span class="px-3 py-1 bg-indigo-100 text-indigo-800 text-xs font-medium rounded-full">年度统计 (折合MYR)</span>
         </div>
         <div class="p-6" id="expenseByType">
           <div class="loading-skeleton"></div>
@@ -205,7 +205,7 @@
             <i class="fas fa-folder text-green-500"></i>
             <h3 class="text-lg font-medium text-gray-900">按分类支出统计</h3>
           </div>
-          <span class="px-3 py-1 bg-indigo-100 text-indigo-800 text-xs font-medium rounded-full">年度统计 (折合CNY)</span>
+          <span class="px-3 py-1 bg-indigo-100 text-indigo-800 text-xs font-medium rounded-full">年度统计 (折合MYR)</span>
         </div>
         <div class="p-6" id="expenseByCategory">
           <div class="loading-skeleton"></div>
@@ -217,11 +217,11 @@
   <script>
     // 定义货币符号映射
     const currencySymbols = {
-      'CNY': '¥', 'USD': '$', 'HKD': 'HK$', 'TWD': 'NT$', 
+      'MYR': 'RM', 'CNY': '¥', 'USD': '$', 'HKD': 'HK$', 'TWD': 'NT$', 
       'JPY': '¥', 'EUR': '€', 'GBP': '£', 'KRW': '₩', 'TRY': '₺'
     };
     function getSymbol(currency) {
-      return currencySymbols[currency] || '¥';
+      return currencySymbols[currency] || 'RM';
     }
 
     // 前端统一本地时区显示
@@ -344,8 +344,8 @@
 
         document.getElementById('statsGrid').innerHTML=`
           <div class="stat-card">
-            <div class="stat-card-header">月度支出 (CNY)</div>
-            <div class="stat-card-value">¥${data.monthlyExpense.amount.toFixed(2)}</div>
+            <div class="stat-card-header">月度支出 (MYR)</div>
+            <div class="stat-card-value">RM${data.monthlyExpense.amount.toFixed(2)}</div>
             <div class="stat-card-subtitle">本月折合支出</div>
             <div class="stat-card-trend ${data.monthlyExpense.trendDirection}">
               <i class="fas fa-arrow-${data.monthlyExpense.trendDirection==='up'?'up':data.monthlyExpense.trendDirection==='down'?'down':'right'}"></i>
@@ -353,9 +353,9 @@
             </div>
           </div>
           <div class="stat-card">
-            <div class="stat-card-header">年度支出 (CNY)</div>
-            <div class="stat-card-value">¥${data.yearlyExpense.amount.toFixed(2)}</div>
-            <div class="stat-card-subtitle">月均支出: ¥${data.yearlyExpense.monthlyAverage.toFixed(2)}</div>
+            <div class="stat-card-header">年度支出 (MYR)</div>
+            <div class="stat-card-value">RM${data.yearlyExpense.amount.toFixed(2)}</div>
+            <div class="stat-card-subtitle">月均支出: RM${data.yearlyExpense.monthlyAverage.toFixed(2)}</div>
           </div>
           <div class="stat-card">
             <div class="stat-card-header">活跃订阅</div>
@@ -403,7 +403,7 @@
             <div class="ranking-item-header">
               <div class="ranking-item-name">${item.type}</div>
               <div class="ranking-item-value">
-                <span class="ranking-item-amount">¥${item.amount.toFixed(2)}</span>
+                <span class="ranking-item-amount">RM${item.amount.toFixed(2)}</span>
                 <span class="ranking-item-percentage">${item.percentage}%</span>
               </div>
             </div>
@@ -420,7 +420,7 @@
             <div class="ranking-item-header">
               <div class="ranking-item-name">${item.category}</div>
               <div class="ranking-item-value">
-                <span class="ranking-item-amount">¥${item.amount.toFixed(2)}</span>
+                <span class="ranking-item-amount">RM${item.amount.toFixed(2)}</span>
                 <span class="ranking-item-percentage">${item.percentage}%</span>
               </div>
             </div>

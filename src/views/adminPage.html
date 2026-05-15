@@ -521,15 +521,16 @@
             <div class="flex space-x-2">
               <div class="w-24 shrink-0"> 
                 <select id="currency" class="h-10 w-full px-2 border border-gray-300 rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 bg-white text-sm">
-                  <option value="CNY" selected>CNY (¥)</option>
-                  <option value="USD">USD ($)</option>   // 美元
-                  <option value="HKD">HKD (HK$)</option> // 港币
-                  <option value="TWD">TWD (NT$)</option> // 新台币
-                  <option value="JPY">JPY (¥)</option>   // 日元
-                  <option value="EUR">EUR (€)</option>   // 欧元
-                  <option value="GBP">GBP (£)</option>   // 英镑
-                  <option value="KRW">KRW (₩)</option>   // 韩元
-                  <option value="TRY">TRY (₺)</option>   // 土耳其里拉
+                  <option value="MYR" selected>MYR (RM)</option>
+                  <option value="CNY">CNY (¥)</option>
+                  <option value="USD">USD ($)</option>   // ??
+                  <option value="HKD">HKD (HK$)</option> // ??
+                  <option value="TWD">TWD (NT$)</option> // ???
+                  <option value="JPY">JPY (¥)</option>   // ??
+                  <option value="EUR">EUR (€)</option>   // ??
+                  <option value="GBP">GBP (£)</option>   // ??
+                  <option value="KRW">KRW (₩)</option>   // ??
+                  <option value="TRY">TRY (₺)</option>   // ?????
                 </select>
               </div>
               <div class="relative flex-1">
@@ -1275,12 +1276,12 @@ const lunarBiz = {
         }
       });
     }
-
     function getCurrencySymbol(currency) {
       const currencySymbols = {
-        'CNY': '¥', 'USD': '$', 'HKD': 'HK$', 'TWD': 'NT$',
+        'MYR': 'RM', 'CNY': '¥', 'USD': '$', 'HKD': 'HK$', 'TWD': 'NT$',
         'JPY': '¥', 'EUR': '€', 'GBP': '£', 'KRW': '₩', 'TRY': '₺'
       };
+      return currencySymbols[currency] || 'RM';
       return currencySymbols[currency] || '¥';
     }
 
@@ -1494,12 +1495,12 @@ const lunarBiz = {
         const reminderExtra = reminder.value === 0
           ? '<div class="text-xs text-gray-500 mt-1">仅到期时提醒</div>'
           : (reminder.unit === 'hour' ? '<div class="text-xs text-gray-500 mt-1">小时级提醒</div>' : '');
-        const reminderHtml = '<div><i class="fas fa-bell mr-1"></i>' + reminder.displayText + '</div>' + reminderExtra;
-
         const currencySymbols = {
-          'CNY': '¥', 'USD': '$', 'HKD': 'HK$', 'TWD': 'NT$', 
+          'MYR': 'RM', 'CNY': '¥', 'USD': '$', 'HKD': 'HK$', 'TWD': 'NT$', 
           'JPY': '¥', 'EUR': '€', 'GBP': '£', 'KRW': '₩', 'TRY': '₺'
         };
+        const currencySymbol = currencySymbols[subscription.currency] || 'RM';
+
         const currencySymbol = currencySymbols[subscription.currency] || '¥';
 
         const hasAmount = subscription.amount !== null && subscription.amount !== undefined && !Number.isNaN(Number(subscription.amount));
@@ -1716,14 +1717,14 @@ const lunarBiz = {
         }
 
         const defaultAmount = subscription.amount !== null && subscription.amount !== undefined ? subscription.amount : 0;
-        
-        // 获取动态货币符号
         const currencySymbols = {
-          'CNY': '¥', 'USD': '$', 'HKD': 'HK$', 'TWD': 'NT$', 
+          'MYR': 'RM', 'CNY': '¥', 'USD': '$', 'HKD': 'HK$', 'TWD': 'NT$', 
           'JPY': '¥', 'EUR': '€', 'GBP': '£', 'KRW': '₩', 'TRY': '₺'
         };
-        const currency = subscription.currency || 'CNY';
-        const symbol = currencySymbols[currency] || '¥';
+        const currency = subscription.currency || 'MYR';
+        const symbol = currencySymbols[currency] || 'RM';
+        const currencyLabel = "(" + currency + " " + symbol + ")";
+        const currencyLabel = "(" + currency + " " + symbol + ")";
         const currencyLabel = "(" + currency + " " + symbol + ")";
         
         const lunarBadge = subscription.useLunar ? 
@@ -2287,9 +2288,8 @@ const lunarBiz = {
       document.getElementById('modalTitle').textContent = '添加新订阅';
       document.getElementById('subscriptionModal').classList.remove('hidden');
       document.body.classList.add('overflow-hidden'); // 禁止背景滚动
-
-      document.getElementById('subscriptionForm').reset();
-      document.getElementById('currency').value = 'CNY'; // 默认设置为CNY
+      document.getElementById('currency').value = 'MYR'; // é»è®¤è®¾ç½®ä¸ºMYR
+      document.getElementById('currency').value = 'MYR'; // ?????MYR
       document.getElementById('subscriptionId').value = '';
       clearFieldErrors();
 
@@ -3079,9 +3079,9 @@ const lunarBiz = {
           document.getElementById('subscriptionMode').value = subscription.subscriptionMode || 'cycle'; // 默认为 cycle
           document.getElementById('customType').value = subscription.customType || '';
           document.getElementById('category').value = subscription.category || '';
-          document.getElementById('notes').value = subscription.notes || '';
-          document.getElementById('amount').value = subscription.amount !== null && subscription.amount !== undefined ? subscription.amount : '';
-          document.getElementById('currency').value = subscription.currency || 'CNY'; // 默认设置为 CNY
+          document.getElementById('currency').value = subscription.currency || 'MYR'; // é»è®¤è®¾ç½®ä¸º MYR
+          document.getElementById('currency').value = subscription.currency || 'MYR'; // ????? MYR
+          document.getElementById('currency').value = subscription.currency || 'MYR'; // 默认设置为 CNY
           document.getElementById('isActive').checked = subscription.isActive !== false;
           document.getElementById('autoRenew').checked = subscription.autoRenew !== false;
           document.getElementById('startDate').value = subscription.startDate ? subscription.startDate.split('T')[0] : '';

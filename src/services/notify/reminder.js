@@ -90,11 +90,11 @@ function formatNotificationContent(subscriptions, config) {
     const calendarType = sub.useLunar ? '农历' : '公历';
     const autoRenewText = sub.autoRenew ? '是' : '否';
     const currencySymbols = {
-      CNY: '¥', USD: '$', HKD: 'HK$', TWD: 'NT$',
+      MYR: 'RM', CNY: '¥', USD: '$', HKD: 'HK$', TWD: 'NT$',
       JPY: '¥', EUR: '€', GBP: '£', KRW: '₩', TRY: '₺'
     };
     const amountConfigured = sub.amount !== null && sub.amount !== undefined && !Number.isNaN(Number(sub.amount));
-    const amountCurrency = currencySymbols[sub.currency || 'CNY'] || '¥';
+    const amountCurrency = currencySymbols[sub.currency || 'MYR'] || 'RM';
     const amountText = amountConfigured ? `\n金额: ${amountCurrency}${Number(sub.amount).toFixed(2)}/周期` : '';
 
     const subscriptionContent = `${statusEmoji} **${sub.name}**
