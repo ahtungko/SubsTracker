@@ -1284,7 +1284,6 @@ const lunarBiz = {
       };
       return currencySymbols[currency] || 'RM';
     }
-    }
 
     function renderSubscriptionTable() {
       const tbody = document.getElementById('subscriptionsBody');
@@ -1728,7 +1727,6 @@ const lunarBiz = {
         const symbol = currencySymbols[currency] || 'RM';
         const currencyLabel = "(" + currency + " " + symbol + ")";
         
-        const lunarBadge = subscription.useLunar ? 
         const lunarBadge = subscription.useLunar ? 
             '<span class="text-sm bg-purple-100 text-purple-800 px-2 py-0.5 rounded-full border border-purple-200 shrink-0">农历周期</span>' : '';
 

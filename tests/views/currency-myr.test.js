@@ -15,6 +15,12 @@ function countMatches(text, pattern) {
   return (text.match(pattern) || []).length;
 }
 
+function getFirstInlineScript(html) {
+  const match = html.match(/<script[^>]*>([\s\S]*?)<\/script>/i);
+  assert.ok(match, 'expected page HTML to contain an inline script');
+  return match[1];
+}
+
 test('admin page exposes MYR as the default currency option', () => {
   assert.match(adminPageHtml, /<option value="MYR" selected>MYR \(RM\)<\/option>/);
   assert.match(adminPageHtml, /document\.getElementById\('currency'\)\.value = 'MYR'/);
@@ -58,4 +64,9 @@ test('admin page MYR cleanup removes mojibake placeholders and uses MYR fallback
   assert.equal(adminPageHtml.includes("'KRW': '?'"), false);
   assert.equal(adminPageHtml.includes("'TRY': '?'"), false);
   assert.equal(adminPageHtml.includes('????'), false);
+});
+
+test('admin page inline script compiles without syntax errors', () => {
+  const inlineScript = getFirstInlineScript(adminPageHtml);
+  assert.doesNotThrow(() => new Function(inlineScript));
 });
