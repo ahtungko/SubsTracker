@@ -20,6 +20,7 @@ test('config page treats the Discord bot token as a masked secret field', () => 
   assert.match(html, /id="clearDiscordBotToken"/);
   assert.match(html, /id="DISCORD_BOT_TOKENStatus"/);
   assert.match(html, /DISCORD_BOT_TOKEN: config\.DISCORD_BOT_TOKEN_CONFIGURED === true/);
+  assert.match(html, /setSecretStatus\('DISCORD_BOT_TOKEN', cfg\.DISCORD_BOT_TOKEN \? '已配置（已隐藏）' : '未配置'\)/);
   assert.match(html, /wireSecretInput\('discordBotToken', 'DISCORD_BOT_TOKEN'\)/);
   assert.match(html, /wireClearSecretButton\('clearDiscordBotToken', 'discordBotToken', 'DISCORD_BOT_TOKEN'\)/);
 });
