@@ -2,6 +2,7 @@ import { getConfig } from './config.js';
 import { getCurrentTimeInTimezone, getTimezoneMidnightTimestamp } from '../core/time.js';
 import { lunarCalendar, lunarBiz } from '../core/lunar.js';
 import { resolveReminderSetting } from '../services/notify/reminder.js';
+import { DEFAULT_CURRENCY, normalizeCurrencyCode } from '../core/currency.js';
 
 function trimPaymentHistory(records = [], limit = 100) {
   const safeLimit = Math.min(1000, Math.max(10, Number(limit) || 100));
@@ -18,10 +19,33 @@ function trimPaymentHistory(records = [], limit = 100) {
 async function getAllSubscriptions(env) {
   try {
     const data = await env.SUBSCRIPTIONS_KV.get('subscriptions');
-    return data ? JSON.parse(data) : [];
+    const subscriptions = data ? JSON.parse(data) : [];
+    const normalized = subscriptions.map(normalizeSubscriptionCurrencyFields);
+    const changed = JSON.stringify(normalized) !== JSON.stringify(subscriptions);
+
+    if (changed) {
+      await env.SUBSCRIPTIONS_KV.put('subscriptions', JSON.stringify(normalized));
+    }
+
+    return normalized;
   } catch (error) {
     return [];
   }
+}
+
+function normalizeSubscriptionCurrencyFields(subscription) {
+  const normalizedCurrency = normalizeCurrencyCode(subscription?.currency);
+  const originalHistory = Array.isArray(subscription?.paymentHistory) ? subscription.paymentHistory : [];
+  const normalizedHistory = originalHistory.map(payment => ({
+    ...payment,
+    currency: normalizeCurrencyCode(payment?.currency ?? normalizedCurrency)
+  }));
+
+  return {
+    ...subscription,
+    currency: normalizedCurrency,
+    paymentHistory: normalizedHistory
+  };
 }
 
 async function getSubscription(id, env) {
@@ -90,13 +114,13 @@ async function createSubscription(subscription, env) {
       reminderHours: reminderSetting.unit === 'hour' ? reminderSetting.value : undefined,
       notes: subscription.notes || '',
       amount: subscription.amount !== undefined && subscription.amount !== null ? subscription.amount : null,
-      currency: subscription.currency || 'CNY',
+      currency: normalizeCurrencyCode(subscription.currency),
       lastPaymentDate: initialPaymentDate,
       paymentHistory: subscription.amount !== undefined && subscription.amount !== null ? [{
         id: Date.now().toString(),
         date: initialPaymentDate,
         amount: subscription.amount,
-        currency: subscription.currency || 'CNY',
+        currency: normalizeCurrencyCode(subscription.currency),
         type: 'initial',
         note: '初始订阅',
         periodStart: subscription.startDate || initialPaymentDate,
@@ -187,7 +211,7 @@ async function updateSubscription(id, subscription, env) {
         paymentHistory[initialPaymentIndex] = {
           ...paymentHistory[initialPaymentIndex],
           amount: newAmount,
-          currency: subscription.currency || oldSubscription.currency || 'CNY'
+          currency: normalizeCurrencyCode(subscription.currency ?? oldSubscription.currency)
         };
       }
     }
@@ -208,7 +232,7 @@ async function updateSubscription(id, subscription, env) {
       reminderHours: reminderSetting.unit === 'hour' ? reminderSetting.value : undefined,
       notes: subscription.notes || '',
       amount: newAmount,
-      currency: subscription.currency || subscriptions[index].currency || 'CNY',
+      currency: normalizeCurrencyCode(subscription.currency ?? subscriptions[index].currency),
       lastPaymentDate: subscriptions[index].lastPaymentDate || subscriptions[index].startDate || subscriptions[index].createdAt || currentTime.toISOString(),
       paymentHistory: paymentHistory,
       isActive: subscription.isActive !== undefined ? subscription.isActive : subscriptions[index].isActive,
@@ -313,7 +337,7 @@ async function manualRenewSubscription(id, env, options = {}) {
       id: Date.now().toString(),
       date: paymentDate.toISOString(),
       amount: amount,
-      currency: subscription.currency || 'CNY',
+      currency: normalizeCurrencyCode(subscription.currency),
       type: 'manual',
       note: note,
       periodStart: newStartDate.toISOString(),
@@ -422,7 +446,7 @@ async function updatePaymentRecord(subscriptionId, paymentId, paymentData, env) 
       ...paymentHistory[paymentIndex],
       date: paymentData.date || paymentHistory[paymentIndex].date,
       amount: paymentData.amount !== undefined ? paymentData.amount : paymentHistory[paymentIndex].amount,
-      currency: paymentData.currency || paymentHistory[paymentIndex].currency || subscription.currency || 'CNY',
+      currency: normalizeCurrencyCode(paymentData.currency ?? paymentHistory[paymentIndex].currency ?? subscription.currency ?? DEFAULT_CURRENCY),
       note: paymentData.note !== undefined ? paymentData.note : paymentHistory[paymentIndex].note
     };
 
