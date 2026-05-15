@@ -1,60 +1,107 @@
 import { MS_PER_DAY, getCurrentTimeInTimezone, getTimezoneDateParts } from './time.js';
 
-const CATEGORY_SEPARATOR_REGEX = /[\/，,\s]+/;
+const CATEGORY_SEPARATOR_REGEX = /[\/\uFF0C,\s]+/;
+const DEFAULT_CURRENCY = 'MYR';
+const SUPPORTED_CURRENCIES = ['MYR', 'CNY', 'USD', 'HKD', 'TWD', 'JPY', 'EUR', 'GBP', 'KRW', 'TRY'];
 
-// 汇率配置 (以 CNY 为基准，当 API 不可用或缺少特定币种如 TWD 时使用)
+// MYR-based fallback rates used when the Wise API is unavailable
 const FALLBACK_RATES = {
-  'CNY': 1,
-  'USD': 6.98,
-  'HKD': 0.90,
-  'TWD': 0.22,
-  'JPY': 0.044,
-  'EUR': 8.16,
-  'GBP': 9.40,
-  'KRW': 0.0048,
-  'TRY': 0.16
+  MYR: 1,
+  CNY: 0.58,
+  USD: 3.93,
+  HKD: 0.54,
+  TWD: 0.125,
+  JPY: 0.0249,
+  EUR: 4.59,
+  GBP: 5.30,
+  KRW: 0.0030,
+  TRY: 0.10
 };
+
+function normalizeCurrencyCode(currency, defaultCode = DEFAULT_CURRENCY) {
+  if (typeof currency !== 'string') return defaultCode;
+  const code = currency.trim().toUpperCase();
+  return code || defaultCode;
+}
+
+function buildRateMapFromWiseResponses(baseCurrency, responses = []) {
+  const rates = { ...FALLBACK_RATES, [baseCurrency]: 1 };
+
+  responses.forEach((items) => {
+    const list = Array.isArray(items)
+      ? items
+      : (items && typeof items === 'object' ? [items] : []);
+    list.forEach((item) => {
+      if (!item || item.target !== baseCurrency || !item.source || !Number.isFinite(Number(item.rate))) return;
+      rates[item.source] = Number(item.rate);
+    });
+  });
+
+  return rates;
+}
+
+async function fetchWiseRouteRate(source, target, token) {
+  const response = await fetch(`https://api.wise-sandbox.com/v1/rates?source=${encodeURIComponent(source)}&target=${encodeURIComponent(target)}`, {
+    headers: {
+      Authorization: `Bearer ${token}`
+    }
+  });
+
+  if (!response.ok) {
+    throw new Error(`Wise route ${source}->${target} failed: ${response.status}`);
+  }
+
+  return response.json();
+}
 
 async function getDynamicRates(env) {
   const CACHE_KEY = 'SYSTEM_EXCHANGE_RATES';
-  const CACHE_TTL = 86400000; // 24小时
+  const CACHE_TTL = 86400000; // 24 hours
+  const token = env.WISE_SANDBOX_TOKEN;
 
   try {
     const cached = await env.SUBSCRIPTIONS_KV.get(CACHE_KEY, { type: 'json' });
     if (cached && cached.ts && (Date.now() - cached.ts < CACHE_TTL)) {
       return cached.rates;
     }
-    const response = await fetch('https://api.frankfurter.dev/v1/latest?base=CNY');
-    if (response.ok) {
-      const data = await response.json();
-      const newRates = {
-        ...FALLBACK_RATES,
-        ...data.rates,
-        'CNY': 1
-      };
 
-      await env.SUBSCRIPTIONS_KV.put(CACHE_KEY, JSON.stringify({
-        ts: Date.now(),
-        rates: newRates
-      }));
-
-      return newRates;
-    } else {
-      console.warn('[汇率] API 请求失败，使用兜底汇率');
+    if (!token) {
+      console.warn('[rates] missing WISE_SANDBOX_TOKEN, using MYR fallback rates');
+      return FALLBACK_RATES;
     }
+
+    const routes = await Promise.allSettled(
+      SUPPORTED_CURRENCIES
+        .filter(code => code !== DEFAULT_CURRENCY)
+        .map(code => fetchWiseRouteRate(code, DEFAULT_CURRENCY, token))
+    );
+
+    const fulfilled = routes
+      .filter(item => item.status === 'fulfilled')
+      .map(item => item.value);
+
+    const newRates = buildRateMapFromWiseResponses(DEFAULT_CURRENCY, fulfilled);
+
+    await env.SUBSCRIPTIONS_KV.put(CACHE_KEY, JSON.stringify({
+      ts: Date.now(),
+      rates: newRates
+    }));
+
+    return newRates;
   } catch (error) {
-    console.error('[汇率] 获取过程出错:', error);
+    console.error('[rates] failed to fetch Wise rates:', error);
   }
+
   return FALLBACK_RATES;
 }
 
-function convertToCNY(amount, currency, rates) {
+function convertToMYR(amount, currency, rates) {
   if (!amount || amount <= 0) return 0;
-  const code = currency || 'CNY';
-  if (code === 'CNY') return amount;
+  const code = normalizeCurrencyCode(currency);
+  if (code === DEFAULT_CURRENCY) return amount;
   const rate = rates[code];
   if (!rate) return amount;
-  return amount / rate;
+  return amount * rate;
 }
 
 function calculateMonthlyExpense(subscriptions, timezone, rates) {
@@ -71,7 +118,7 @@ function calculateMonthlyExpense(subscriptions, timezone, rates) {
       const paymentDate = new Date(payment.date);
       const paymentParts = getTimezoneDateParts(paymentDate, timezone);
       if (paymentParts.year === currentYear && paymentParts.month === currentMonth) {
-        amount += convertToCNY(payment.amount, sub.currency, rates);
+        amount += convertToMYR(payment.amount, sub.currency, rates);
       }
     });
   });
@@ -86,7 +133,7 @@ function calculateMonthlyExpense(subscriptions, timezone, rates) {
       const paymentDate = new Date(payment.date);
       const paymentParts = getTimezoneDateParts(paymentDate, timezone);
       if (paymentParts.year === lastMonthYear && paymentParts.month === lastMonth) {
-        lastMonthAmount += convertToCNY(payment.amount, sub.currency, rates);
+        lastMonthAmount += convertToMYR(payment.amount, sub.currency, rates);
       }
     });
   });
@@ -117,7 +164,7 @@ function calculateYearlyExpense(subscriptions, timezone, rates) {
       const paymentDate = new Date(payment.date);
       const paymentParts = getTimezoneDateParts(paymentDate, timezone);
       if (paymentParts.year === currentYear) {
-        amount += convertToCNY(payment.amount, sub.currency, rates);
+        amount += convertToMYR(payment.amount, sub.currency, rates);
       }
     });
   });
@@ -139,7 +186,7 @@ function getRecentPayments(subscriptions, timezone) {
         recentPayments.push({
           name: sub.name,
           amount: payment.amount,
-          currency: sub.currency || 'CNY',
+          currency: normalizeCurrencyCode(sub.currency),
           customType: sub.customType,
           paymentDate: payment.date,
           note: payment.note
@@ -165,7 +212,7 @@ function getUpcomingRenewals(subscriptions, timezone) {
       return {
         name: sub.name,
         amount: sub.amount || 0,
-        currency: sub.currency || 'CNY',
+        currency: normalizeCurrencyCode(sub.currency),
         customType: sub.customType,
         renewalDate: sub.expiryDate,
         daysUntilRenewal
@@ -187,10 +234,10 @@ function getExpenseByType(subscriptions, timezone, rates) {
       const paymentDate = new Date(payment.date);
       const paymentParts = getTimezoneDateParts(paymentDate, timezone);
       if (paymentParts.year === currentYear) {
-        const type = sub.customType || '未分类';
-        const amountCNY = convertToCNY(payment.amount, sub.currency, rates);
-        typeMap[type] = (typeMap[type] || 0) + amountCNY;
-        total += amountCNY;
+        const type = sub.customType || '???';
+        const amountMYR = convertToMYR(payment.amount, sub.currency, rates);
+        typeMap[type] = (typeMap[type] || 0) + amountMYR;
+        total += amountMYR;
       }
     });
   });
@@ -218,14 +265,14 @@ function getExpenseByCategory(subscriptions, timezone, rates) {
       const paymentDate = new Date(payment.date);
       const paymentParts = getTimezoneDateParts(paymentDate, timezone);
       if (paymentParts.year === currentYear) {
-        const categories = sub.category ? sub.category.split(CATEGORY_SEPARATOR_REGEX).filter(c => c.trim()) : ['未分类'];
-        const amountCNY = convertToCNY(payment.amount, sub.currency, rates);
+        const categories = sub.category ? sub.category.split(CATEGORY_SEPARATOR_REGEX).filter(c => c.trim()) : ['???'];
+        const amountMYR = convertToMYR(payment.amount, sub.currency, rates);
 
         categories.forEach(category => {
-          const cat = category.trim() || '未分类';
-          categoryMap[cat] = (categoryMap[cat] || 0) + amountCNY / categories.length;
+          const cat = category.trim() || '???';
+          categoryMap[cat] = (categoryMap[cat] || 0) + amountMYR / categories.length;
         });
-        total += amountCNY;
+        total += amountMYR;
       }
     });
   });
@@ -240,9 +287,13 @@ function getExpenseByCategory(subscriptions, timezone, rates) {
 }
 
 export {
+  DEFAULT_CURRENCY,
+  SUPPORTED_CURRENCIES,
   FALLBACK_RATES,
+  normalizeCurrencyCode,
+  buildRateMapFromWiseResponses,
   getDynamicRates,
-  convertToCNY,
+  convertToMYR,
   calculateMonthlyExpense,
   calculateYearlyExpense,
   getRecentPayments,
