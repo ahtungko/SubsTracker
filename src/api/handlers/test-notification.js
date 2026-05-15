@@ -1,5 +1,5 @@
 import { getConfig } from '../../data/config.js';
-import { formatBeijingTime } from '../../core/time.js';
+import { formatTimeInTimezone } from '../../core/time.js';
 import { sendTelegramNotification } from '../../services/notify/telegram.js';
 import { sendNotifyXNotification } from '../../services/notify/notifyx.js';
 import { sendWebhookNotification } from '../../services/notify/webhook.js';
@@ -9,6 +9,7 @@ import { sendBarkNotification } from '../../services/notify/bark.js';
 import { sendGotifyNotification } from '../../services/notify/gotify.js';
 import { sendServerChanNotification } from '../../services/notify/serverchan.js';
 import { sendPushPlusNotification } from '../../services/notify/pushplus.js';
+import { sendDiscordNotification } from '../../services/notify/discord.js';
 
 async function handleTestNotification(request, env) {
   try {
@@ -18,7 +19,8 @@ async function handleTestNotification(request, env) {
     let message = '';
 
     const type = typeof body.type === 'string' ? body.type.trim() : '';
-    const supportedTypes = ['telegram', 'notifyx', 'webhook', 'wechatbot', 'email', 'bark', 'gotify', 'serverchan', 'pushplus'];
+    const sentAt = formatTimeInTimezone(new Date(), config?.TIMEZONE || 'UTC', 'datetime');
+    const supportedTypes = ['telegram', 'notifyx', 'webhook', 'wechatbot', 'email', 'bark', 'gotify', 'serverchan', 'pushplus', 'discord'];
 
     if (!type) {
       return new Response(
@@ -41,7 +43,7 @@ async function handleTestNotification(request, env) {
         TG_CHAT_ID: typeof body.TG_CHAT_ID === 'string' && body.TG_CHAT_ID.trim().length > 0 ? body.TG_CHAT_ID.trim() : config.TG_CHAT_ID
       };
 
-      const content = '*测试通知*\n\n这是一条测试通知，用于验证Telegram通知功能是否正常工作。\n\n发送时间: ' + formatBeijingTime();
+      const content = '*测试通知*\n\n这是一条测试通知，用于验证Telegram通知功能是否正常工作。\n\n发送时间: ' + sentAt;
       success = await sendTelegramNotification(content, testConfig);
       message = success ? 'Telegram通知发送成功' : 'Telegram通知发送失败，请检查配置';
     } else if (type === 'notifyx') {
@@ -53,7 +55,7 @@ async function handleTestNotification(request, env) {
       };
 
       const title = '测试通知';
-      const content = '## 这是一条测试通知\n\n用于验证NotifyX通知功能是否正常工作。\n\n发送时间: ' + formatBeijingTime();
+      const content = '## 这是一条测试通知\n\n用于验证NotifyX通知功能是否正常工作。\n\n发送时间: ' + sentAt;
       const description = '测试NotifyX通知功能';
 
       success = await sendNotifyXNotification(title, content, description, testConfig);
@@ -72,7 +74,7 @@ async function handleTestNotification(request, env) {
       };
 
       const title = '测试通知';
-      const content = '这是一条测试通知，用于验证Webhook 通知功能是否正常工作。\n\n发送时间: ' + formatBeijingTime();
+      const content = '这是一条测试通知，用于验证Webhook 通知功能是否正常工作。\n\n发送时间: ' + sentAt;
 
       success = await sendWebhookNotification(title, content, testConfig);
       message = success ? 'Webhook 通知发送成功' : 'Webhook 通知发送失败，请检查配置';
@@ -88,7 +90,7 @@ async function handleTestNotification(request, env) {
       };
 
       const title = '测试通知';
-      const content = '这是一条测试通知，用于验证企业微信机器人功能是否正常工作。\n\n发送时间: ' + formatBeijingTime();
+      const content = '这是一条测试通知，用于验证企业微信机器人功能是否正常工作。\n\n发送时间: ' + sentAt;
 
       success = await sendWechatBotNotification(title, content, testConfig);
       message = success ? '企业微信机器人通知发送成功' : '企业微信机器人通知发送失败，请检查配置';
@@ -104,7 +106,7 @@ async function handleTestNotification(request, env) {
       };
 
       const title = '测试通知';
-      const content = '这是一条测试通知，用于验证邮件通知功能是否正常工作。\n\n发送时间: ' + formatBeijingTime();
+      const content = '这是一条测试通知，用于验证邮件通知功能是否正常工作。\n\n发送时间: ' + sentAt;
 
       success = await sendEmailNotification(title, content, testConfig);
       message = success ? '邮件通知发送成功' : '邮件通知发送失败，请检查配置';
@@ -119,7 +121,7 @@ async function handleTestNotification(request, env) {
       };
 
       const title = '测试通知';
-      const content = '这是一条测试通知，用于验证Bark通知功能是否正常工作。\n\n发送时间: ' + formatBeijingTime();
+      const content = '这是一条测试通知，用于验证Bark通知功能是否正常工作。\n\n发送时间: ' + sentAt;
 
       success = await sendBarkNotification(title, content, testConfig);
       message = success ? 'Bark通知发送成功' : 'Bark通知发送失败，请检查配置';
@@ -133,7 +135,7 @@ async function handleTestNotification(request, env) {
       };
 
       const title = '测试通知';
-      const content = '这是一条测试通知，用于验证Gotify通知功能是否正常工作。\n\n发送时间: ' + formatBeijingTime();
+      const content = '这是一条测试通知，用于验证Gotify通知功能是否正常工作。\n\n发送时间: ' + sentAt;
 
       success = await sendGotifyNotification(title, content, testConfig);
       message = success ? 'Gotify通知发送成功' : 'Gotify通知发送失败，请检查配置';
@@ -146,7 +148,7 @@ async function handleTestNotification(request, env) {
       };
 
       const title = '测试通知';
-      const content = '这是一条测试通知，用于验证Server酱通知功能是否正常工作。\n\n发送时间: ' + formatBeijingTime();
+      const content = '这是一条测试通知，用于验证Server酱通知功能是否正常工作。\n\n发送时间: ' + sentAt;
 
       success = await sendServerChanNotification(title, content, testConfig);
       message = success ? 'Server酱通知发送成功' : 'Server酱通知发送失败，请检查配置';
@@ -161,10 +163,26 @@ async function handleTestNotification(request, env) {
       };
 
       const title = '测试通知';
-      const content = '这是一条测试通知，用于验证PushPlus通知功能是否正常工作。\n\n发送时间: ' + formatBeijingTime();
+      const content = '这是一条测试通知，用于验证PushPlus通知功能是否正常工作。\n\n发送时间: ' + sentAt;
 
       success = await sendPushPlusNotification(title, content, testConfig);
       message = success ? 'PushPlus通知发送成功' : 'PushPlus通知发送失败，请检查配置';
+    } else if (type === 'discord') {
+      const testConfig = {
+        ...config,
+        DISCORD_BOT_TOKEN: (typeof body.DISCORD_BOT_TOKEN === 'string' && body.DISCORD_BOT_TOKEN.trim().length > 0)
+          ? body.DISCORD_BOT_TOKEN.trim()
+          : config.DISCORD_BOT_TOKEN,
+        DISCORD_USER_ID: (typeof body.DISCORD_USER_ID === 'string' && body.DISCORD_USER_ID.trim().length > 0)
+          ? body.DISCORD_USER_ID.trim()
+          : config.DISCORD_USER_ID
+      };
+
+      const title = '测试通知';
+      const content = '这是一条测试通知，用于验证 Discord Bot 私信功能是否正常工作。\n\n发送时间: ' + sentAt;
+
+      success = await sendDiscordNotification('Discord 私信测试通知', content, testConfig);
+      message = success ? 'Discord 私信发送成功' : 'Discord 私信发送失败，请检查配置和服务器设置';
     }
 
     return new Response(
