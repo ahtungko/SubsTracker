@@ -1277,12 +1277,13 @@ const lunarBiz = {
       });
     }
     function getCurrencySymbol(currency) {
+    function getCurrencySymbol(currency) {
       const currencySymbols = {
-        'MYR': 'RM', 'CNY': '¥', 'USD': '$', 'HKD': 'HK$', 'TWD': 'NT$',
-        'JPY': '¥', 'EUR': '€', 'GBP': '£', 'KRW': '₩', 'TRY': '₺'
+        'MYR': 'RM', 'CNY': '?', 'USD': '$', 'HKD': 'HK$', 'TWD': 'NT$',
+        'JPY': '?', 'EUR': '?', 'GBP': '?', 'KRW': '?', 'TRY': '?'
       };
       return currencySymbols[currency] || 'RM';
-      return currencySymbols[currency] || '¥';
+    }
     }
 
     function renderSubscriptionTable() {
@@ -1496,12 +1497,10 @@ const lunarBiz = {
           ? '<div class="text-xs text-gray-500 mt-1">仅到期时提醒</div>'
           : (reminder.unit === 'hour' ? '<div class="text-xs text-gray-500 mt-1">小时级提醒</div>' : '');
         const currencySymbols = {
-          'MYR': 'RM', 'CNY': '¥', 'USD': '$', 'HKD': 'HK$', 'TWD': 'NT$', 
-          'JPY': '¥', 'EUR': '€', 'GBP': '£', 'KRW': '₩', 'TRY': '₺'
+          'MYR': 'RM', 'CNY': '?', 'USD': '$', 'HKD': 'HK$', 'TWD': 'NT$', 
+          'JPY': '?', 'EUR': '?', 'GBP': '?', 'KRW': '?', 'TRY': '?'
         };
         const currencySymbol = currencySymbols[subscription.currency] || 'RM';
-
-        const currencySymbol = currencySymbols[subscription.currency] || '¥';
 
         const hasAmount = subscription.amount !== null && subscription.amount !== undefined && !Number.isNaN(Number(subscription.amount));
         const amountHtml = hasAmount
@@ -1718,13 +1717,11 @@ const lunarBiz = {
 
         const defaultAmount = subscription.amount !== null && subscription.amount !== undefined ? subscription.amount : 0;
         const currencySymbols = {
-          'MYR': 'RM', 'CNY': '¥', 'USD': '$', 'HKD': 'HK$', 'TWD': 'NT$', 
-          'JPY': '¥', 'EUR': '€', 'GBP': '£', 'KRW': '₩', 'TRY': '₺'
+          'MYR': 'RM', 'CNY': '?', 'USD': '$', 'HKD': 'HK$', 'TWD': 'NT$', 
+          'JPY': '?', 'EUR': '?', 'GBP': '?', 'KRW': '?', 'TRY': '?'
         };
         const currency = subscription.currency || 'MYR';
         const symbol = currencySymbols[currency] || 'RM';
-        const currencyLabel = "(" + currency + " " + symbol + ")";
-        const currencyLabel = "(" + currency + " " + symbol + ")";
         const currencyLabel = "(" + currency + " " + symbol + ")";
         
         const lunarBadge = subscription.useLunar ? 
@@ -2288,7 +2285,6 @@ const lunarBiz = {
       document.getElementById('modalTitle').textContent = '添加新订阅';
       document.getElementById('subscriptionModal').classList.remove('hidden');
       document.body.classList.add('overflow-hidden'); // 禁止背景滚动
-      document.getElementById('currency').value = 'MYR'; // é»è®¤è®¾ç½®ä¸ºMYR
       document.getElementById('currency').value = 'MYR'; // ?????MYR
       document.getElementById('subscriptionId').value = '';
       clearFieldErrors();
@@ -3081,7 +3077,7 @@ const lunarBiz = {
           document.getElementById('category').value = subscription.category || '';
           document.getElementById('currency').value = subscription.currency || 'MYR'; // é»è®¤è®¾ç½®ä¸º MYR
           document.getElementById('currency').value = subscription.currency || 'MYR'; // ????? MYR
-          document.getElementById('currency').value = subscription.currency || 'MYR'; // 默认设置为 CNY
+          document.getElementById('isActive').checked = subscription.isActive !== false;
           document.getElementById('isActive').checked = subscription.isActive !== false;
           document.getElementById('autoRenew').checked = subscription.autoRenew !== false;
           document.getElementById('startDate').value = subscription.startDate ? subscription.startDate.split('T')[0] : '';
