@@ -118,6 +118,7 @@ function formatTimezoneDisplay(timezone = 'UTC') {
       'Asia/Hong_Kong': '香港时间',
       'Asia/Taipei': '台北时间',
       'Asia/Singapore': '新加坡时间',
+      'Asia/Kuala_Lumpur': '吉隆坡时间',
       'Asia/Tokyo': '日本时间',
       'Asia/Seoul': '韩国时间',
       'America/New_York': '美国东部时间',
