@@ -22,6 +22,8 @@ const DEFAULT_CONFIG = {
   BARK_DEVICE_KEY: '',
   BARK_SERVER: 'https://api.day.app',
   BARK_IS_ARCHIVE: 'false',
+  DISCORD_BOT_TOKEN: '',
+  DISCORD_USER_ID: '',
   ENABLED_NOTIFIERS: ['notifyx'],
   THEME_MODE: 'system',
   TIMEZONE: 'UTC',

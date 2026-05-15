@@ -13,7 +13,8 @@ const SECRET_FIELDS = [
   'THIRD_PARTY_API_TOKEN',
   'GOTIFY_APP_TOKEN',
   'SERVERCHAN_SENDKEY',
-  'PUSHPLUS_TOKEN'
+  'PUSHPLUS_TOKEN',
+  'DISCORD_BOT_TOKEN'
 ];
 
 function isConfiguredSecret(value) {
@@ -115,6 +116,9 @@ async function handleUpdateConfig(request, env) {
       PUSHPLUS_TOKEN: mergeSecretField(config, newConfig, 'PUSHPLUS_TOKEN', clearSecretFields),
       PUSHPLUS_TOPIC: (newConfig.PUSHPLUS_TOPIC || '').trim(),
       PUSHPLUS_CHANNEL: (newConfig.PUSHPLUS_CHANNEL || '').trim(),
+
+      DISCORD_BOT_TOKEN: mergeSecretField(config, newConfig, 'DISCORD_BOT_TOKEN', clearSecretFields),
+      DISCORD_USER_ID: (newConfig.DISCORD_USER_ID || '').trim(),
 
       ENABLED_NOTIFIERS: newConfig.ENABLED_NOTIFIERS || ['notifyx'],
       TIMEZONE: newConfig.TIMEZONE || config.TIMEZONE || 'UTC',
