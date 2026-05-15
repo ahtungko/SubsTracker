@@ -32,10 +32,11 @@ test('dashboard copy and totals now reference MYR instead of CNY', () => {
   assert.match(dashboardPageHtml, /MYR/);
   assert.match(dashboardPageHtml, /RM\$\{data\.monthlyExpense\.amount\.toFixed\(2\)\}/);
   assert.match(dashboardPageHtml, /RM\$\{data\.yearlyExpense\.amount\.toFixed\(2\)\}/);
-  assert.equal(dashboardPageHtml.includes('月度支出 (CNY)'), false);
+  assert.equal(dashboardPageHtml.includes('???? (CNY)'), false);
 });
 
 test('admin page currency helpers are not duplicated after MYR edit', () => {
+  assert.equal(countMatches(adminPageHtml, /function getCurrencySymbol\(currency\)/g), 1);
   assert.equal(countMatches(adminPageHtml, /const currencySymbol =/g), 1);
   assert.equal(countMatches(adminPageHtml, /const currencyLabel =/g), 1);
   assert.equal(countMatches(adminPageHtml, /return currencySymbols\[currency\]/g), 1);
@@ -45,4 +46,16 @@ test('admin page currency helpers are not duplicated after MYR edit', () => {
 test('admin subscription table defines reminderHtml before using it', () => {
   assert.equal(countMatches(adminPageHtml, /const reminderHtml =/g), 1);
   assert.equal(countMatches(adminPageHtml, /reminderHtml \+/g), 1);
+});
+
+test('admin page MYR cleanup removes mojibake placeholders and uses MYR fallback in payment editor', () => {
+  assert.equal(adminPageHtml.includes("subscription.currency || 'CNY'"), false);
+  assert.equal(adminPageHtml.includes("currentSubscription?.currency || 'CNY'"), false);
+  assert.equal(adminPageHtml.includes("'CNY': '?'"), false);
+  assert.equal(adminPageHtml.includes("'JPY': '?'"), false);
+  assert.equal(adminPageHtml.includes("'EUR': '?'"), false);
+  assert.equal(adminPageHtml.includes("'GBP': '?'"), false);
+  assert.equal(adminPageHtml.includes("'KRW': '?'"), false);
+  assert.equal(adminPageHtml.includes("'TRY': '?'"), false);
+  assert.equal(adminPageHtml.includes('????'), false);
 });

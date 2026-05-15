@@ -522,15 +522,15 @@
               <div class="w-24 shrink-0"> 
                 <select id="currency" class="h-10 w-full px-2 border border-gray-300 rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 bg-white text-sm">
                   <option value="MYR" selected>MYR (RM)</option>
-                  <option value="CNY">CNY (¥)</option>
-                  <option value="USD">USD ($)</option>   // ??
-                  <option value="HKD">HKD (HK$)</option> // ??
-                  <option value="TWD">TWD (NT$)</option> // ???
-                  <option value="JPY">JPY (¥)</option>   // ??
-                  <option value="EUR">EUR (€)</option>   // ??
-                  <option value="GBP">GBP (£)</option>   // ??
-                  <option value="KRW">KRW (₩)</option>   // ??
-                  <option value="TRY">TRY (₺)</option>   // ?????
+                  <option value="CNY">CNY (&yen;)</option>
+                  <option value="USD">USD ($)</option>   // USD
+                  <option value="HKD">HKD (HK$)</option> // HKD
+                  <option value="TWD">TWD (NT$)</option> // TWD
+                  <option value="JPY">JPY (&yen;)</option>   // JPY
+                  <option value="EUR">EUR (&euro;)</option>   // EUR
+                  <option value="GBP">GBP (&pound;)</option>   // GBP
+                  <option value="KRW">KRW (&#8361;)</option>   // KRW
+                  <option value="TRY">TRY (&#8378;)</option>   // TRY
                 </select>
               </div>
               <div class="relative flex-1">
@@ -1276,11 +1276,11 @@ const lunarBiz = {
         }
       });
     }
-    function getCurrencySymbol(currency) {
+
     function getCurrencySymbol(currency) {
       const currencySymbols = {
-        'MYR': 'RM', 'CNY': '?', 'USD': '$', 'HKD': 'HK$', 'TWD': 'NT$',
-        'JPY': '?', 'EUR': '?', 'GBP': '?', 'KRW': '?', 'TRY': '?'
+        'MYR': 'RM', 'CNY': '\u00A5', 'USD': '$', 'HKD': 'HK$', 'TWD': 'NT$',
+        'JPY': '\u00A5', 'EUR': '\u20AC', 'GBP': '\u00A3', 'KRW': '\u20A9', 'TRY': '\u20BA'
       };
       return currencySymbols[currency] || 'RM';
     }
@@ -1494,15 +1494,13 @@ const lunarBiz = {
         const startDateHtml = startDateText ? createHoverText(startDateText, 30, 'text-xs text-gray-500 mt-1') : '';
 
         const reminderExtra = reminder.value === 0
-          ? '<div class="text-xs text-gray-500 mt-1">仅到期时提醒</div>'
-          : (reminder.unit === 'hour' ? '<div class="text-xs text-gray-500 mt-1">小时级提醒</div>' : '');
-        const reminderLabel = reminder.value === 0
-          ? '????'
-          : (reminder.unit === 'hour' ? '?? ' + reminder.value + ' ??' : '?? ' + reminder.value + ' ?');
-        const reminderHtml = '<div class="text-sm text-gray-900">' + reminderLabel + '</div>' + reminderExtra;
+          ? '<div class="text-xs text-gray-500 mt-1">\u4ec5\u5230\u671f\u65f6\u63d0\u9192</div>'
+          : (reminder.unit === 'hour' ? '<div class="text-xs text-gray-500 mt-1">\u5c0f\u65f6\u7ea7\u63d0\u9192</div>' : '');
+        const reminderHtml = '<div><i class="fas fa-bell mr-1"></i>' + reminder.displayText + '</div>' + reminderExtra;
+
         const currencySymbols = {
-          'MYR': 'RM', 'CNY': '?', 'USD': '$', 'HKD': 'HK$', 'TWD': 'NT$', 
-          'JPY': '?', 'EUR': '?', 'GBP': '?', 'KRW': '?', 'TRY': '?'
+          'MYR': 'RM', 'CNY': '\u00A5', 'USD': '$', 'HKD': 'HK$', 'TWD': 'NT$', 
+          'JPY': '\u00A5', 'EUR': '\u20AC', 'GBP': '\u00A3', 'KRW': '\u20A9', 'TRY': '\u20BA'
         };
         const currencySymbol = currencySymbols[subscription.currency] || 'RM';
 
@@ -1720,14 +1718,17 @@ const lunarBiz = {
         }
 
         const defaultAmount = subscription.amount !== null && subscription.amount !== undefined ? subscription.amount : 0;
+        
+        // currency symbol map
         const currencySymbols = {
-          'MYR': 'RM', 'CNY': '?', 'USD': '$', 'HKD': 'HK$', 'TWD': 'NT$', 
-          'JPY': '?', 'EUR': '?', 'GBP': '?', 'KRW': '?', 'TRY': '?'
+          'MYR': 'RM', 'CNY': '\u00A5', 'USD': '$', 'HKD': 'HK$', 'TWD': 'NT$', 
+          'JPY': '\u00A5', 'EUR': '\u20AC', 'GBP': '\u00A3', 'KRW': '\u20A9', 'TRY': '\u20BA'
         };
         const currency = subscription.currency || 'MYR';
         const symbol = currencySymbols[currency] || 'RM';
         const currencyLabel = "(" + currency + " " + symbol + ")";
         
+        const lunarBadge = subscription.useLunar ? 
         const lunarBadge = subscription.useLunar ? 
             '<span class="text-sm bg-purple-100 text-purple-800 px-2 py-0.5 rounded-full border border-purple-200 shrink-0">农历周期</span>' : '';
 
@@ -2159,7 +2160,7 @@ const lunarBiz = {
                         </div>
 
                         <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-1">支付金额 (${subscription.currency || 'CNY'} ${getCurrencySymbol(payment.currency || subscription.currency)})</label>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">\u652f\u4ed8\u91d1\u989d (${subscription.currency || 'MYR'} ${getCurrencySymbol(payment.currency || subscription.currency)})</label>
                             <input type="number" id="editPaymentAmount" value="${payment.amount}" step="0.01" min="0"
                                    class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500">
                         </div>
@@ -2207,7 +2208,7 @@ const lunarBiz = {
         const paymentData = {
             date: document.getElementById('editPaymentDate').value,
             amount: parseFloat(document.getElementById('editPaymentAmount').value) || 0,
-            currency: currentSubscription?.currency || 'CNY',
+            currency: currentSubscription?.currency || 'MYR',
             note: document.getElementById('editPaymentNote').value
         };
 
@@ -2289,7 +2290,9 @@ const lunarBiz = {
       document.getElementById('modalTitle').textContent = '添加新订阅';
       document.getElementById('subscriptionModal').classList.remove('hidden');
       document.body.classList.add('overflow-hidden'); // 禁止背景滚动
-      document.getElementById('currency').value = 'MYR'; // ?????MYR
+
+      document.getElementById('subscriptionForm').reset();
+      document.getElementById('currency').value = 'MYR'; // default MYR
       document.getElementById('subscriptionId').value = '';
       clearFieldErrors();
 
@@ -3079,9 +3082,9 @@ const lunarBiz = {
           document.getElementById('subscriptionMode').value = subscription.subscriptionMode || 'cycle'; // 默认为 cycle
           document.getElementById('customType').value = subscription.customType || '';
           document.getElementById('category').value = subscription.category || '';
-          document.getElementById('currency').value = subscription.currency || 'MYR'; // é»è®¤è®¾ç½®ä¸º MYR
-          document.getElementById('currency').value = subscription.currency || 'MYR'; // ????? MYR
-          document.getElementById('isActive').checked = subscription.isActive !== false;
+          document.getElementById('notes').value = subscription.notes || '';
+          document.getElementById('amount').value = subscription.amount !== null && subscription.amount !== undefined ? subscription.amount : '';
+          document.getElementById('currency').value = subscription.currency || 'MYR'; // default MYR
           document.getElementById('isActive').checked = subscription.isActive !== false;
           document.getElementById('autoRenew').checked = subscription.autoRenew !== false;
           document.getElementById('startDate').value = subscription.startDate ? subscription.startDate.split('T')[0] : '';
