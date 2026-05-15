@@ -41,3 +41,8 @@ test('admin page currency helpers are not duplicated after MYR edit', () => {
   assert.equal(countMatches(adminPageHtml, /return currencySymbols\[currency\]/g), 1);
   assert.equal(countMatches(adminPageHtml, /document\.getElementById\('currency'\)\.value = 'MYR'/g), 1);
 });
+
+test('admin subscription table defines reminderHtml before using it', () => {
+  assert.equal(countMatches(adminPageHtml, /const reminderHtml =/g), 1);
+  assert.equal(countMatches(adminPageHtml, /reminderHtml \+/g), 1);
+});

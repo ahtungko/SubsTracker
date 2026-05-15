@@ -1496,6 +1496,10 @@ const lunarBiz = {
         const reminderExtra = reminder.value === 0
           ? '<div class="text-xs text-gray-500 mt-1">仅到期时提醒</div>'
           : (reminder.unit === 'hour' ? '<div class="text-xs text-gray-500 mt-1">小时级提醒</div>' : '');
+        const reminderLabel = reminder.value === 0
+          ? '????'
+          : (reminder.unit === 'hour' ? '?? ' + reminder.value + ' ??' : '?? ' + reminder.value + ' ?');
+        const reminderHtml = '<div class="text-sm text-gray-900">' + reminderLabel + '</div>' + reminderExtra;
         const currencySymbols = {
           'MYR': 'RM', 'CNY': '?', 'USD': '$', 'HKD': 'HK$', 'TWD': 'NT$', 
           'JPY': '?', 'EUR': '?', 'GBP': '?', 'KRW': '?', 'TRY': '?'
