@@ -217,6 +217,9 @@
   <script>
     window.AppLocale.applyDocumentMetadata({ titleKey: 'page_title_dashboard' });
     window.AppLocale.applyTranslations();
+    const getPreferredLocale = () => window.AppLocale.getPreferredLocale();
+    const getLocaleTag = () => window.AppLocale.getUiLocaleTag(getPreferredLocale());
+    const t = (key, params = {}) => window.AppLocale.getMessage(key, getPreferredLocale(), params);
 
     // 定义货币符号映射
     const currencySymbols = {
@@ -234,7 +237,7 @@
 
         function update() {
           const now = new Date();
-          const timeStr = now.toLocaleString('zh-CN', {
+          const timeStr = now.toLocaleString(getLocaleTag(), {
             timeZone: localTimezone,
             year: 'numeric', month: '2-digit', day: '2-digit',
             hour: '2-digit', minute: '2-digit', second: '2-digit'
@@ -269,7 +272,7 @@
         if (schedulerStatusEl) {
           const status = data.schedulerStatus;
           if (!status) {
-            schedulerStatusEl.innerHTML = '<div class="empty-state"><div class="empty-state-icon">🕐</div><div class="empty-state-text">暂无定时任务执行记录（等待下一次 Cron）</div></div>';
+            schedulerStatusEl.innerHTML = '<div class="empty-state"><div class="empty-state-icon">🕐</div><div class="empty-state-text">' + window.AppLocale.getMessage('dashboard_scheduler_empty', window.AppLocale.getPreferredLocale()) + '</div></div>';
           } else {
             const sendResult = status.sendResult || {};
             const runAt = status.lastRunAt ? new Date(status.lastRunAt).toLocaleString('zh-CN') : '未知';
@@ -325,35 +328,35 @@
 
         document.getElementById('statsGrid').innerHTML=`
           <div class="stat-card">
-            <div class="stat-card-header">月度支出 (MYR)</div>
+            <div class="stat-card-header">${window.AppLocale.getMessage('dashboard_stats_monthly_spend', window.AppLocale.getPreferredLocale())}</div>
             <div class="stat-card-value">RM${data.monthlyExpense.amount.toFixed(2)}</div>
-            <div class="stat-card-subtitle">本月折合支出</div>
+            <div class="stat-card-subtitle">${window.AppLocale.getMessage('dashboard_stats_monthly_subtitle', window.AppLocale.getPreferredLocale())}</div>
             <div class="stat-card-trend ${data.monthlyExpense.trendDirection}">
               <i class="fas fa-arrow-${data.monthlyExpense.trendDirection==='up'?'up':data.monthlyExpense.trendDirection==='down'?'down':'right'}"></i>
               ${data.monthlyExpense.trend}%
             </div>
           </div>
           <div class="stat-card">
-            <div class="stat-card-header">年度支出 (MYR)</div>
+            <div class="stat-card-header">${window.AppLocale.getMessage('dashboard_stats_yearly_spend', window.AppLocale.getPreferredLocale())}</div>
             <div class="stat-card-value">RM${data.yearlyExpense.amount.toFixed(2)}</div>
-            <div class="stat-card-subtitle">月均支出: RM${data.yearlyExpense.monthlyAverage.toFixed(2)}</div>
+            <div class="stat-card-subtitle">${window.AppLocale.getMessage('dashboard_stats_monthly_average', window.AppLocale.getPreferredLocale(), { amount: data.yearlyExpense.monthlyAverage.toFixed(2) })}</div>
           </div>
           <div class="stat-card">
-            <div class="stat-card-header">活跃订阅</div>
+            <div class="stat-card-header">${window.AppLocale.getMessage('dashboard_stats_active_subscriptions', window.AppLocale.getPreferredLocale())}</div>
             <div class="stat-card-value">${data.activeSubscriptions.active}</div>
-            <div class="stat-card-subtitle">总订阅数: ${data.activeSubscriptions.total}</div>
-            ${data.activeSubscriptions.expiringSoon>0?`<div class="stat-card-trend down"><i class="fas fa-exclamation-circle"></i>${data.activeSubscriptions.expiringSoon} 即将到期</div>`:''}
+            <div class="stat-card-subtitle">${window.AppLocale.getMessage('dashboard_stats_total_subscriptions', window.AppLocale.getPreferredLocale(), { count: data.activeSubscriptions.total })}</div>
+            ${data.activeSubscriptions.expiringSoon>0?`<div class="stat-card-trend down"><i class="fas fa-exclamation-circle"></i>${window.AppLocale.getMessage('dashboard_stats_expiring_soon', window.AppLocale.getPreferredLocale(), { count: data.activeSubscriptions.expiringSoon })}</div>`:''}
           </div>
         `;
         
         const rp=document.getElementById('recentPayments');
-        rp.innerHTML=data.recentPayments.length===0?'<div class="empty-state"><div class="empty-state-icon">📭</div><div class="empty-state-text">过去7天内没有支付记录</div></div>':
+        rp.innerHTML=data.recentPayments.length===0?'<div class="empty-state"><div class="empty-state-icon">📭</div><div class="empty-state-text">' + window.AppLocale.getMessage('dashboard_recent_payments_empty', window.AppLocale.getPreferredLocale()) + '</div></div>':
         data.recentPayments.map(s=>`
           <div class="list-item">
             <div class="list-item-content">
               <div class="list-item-name">${s.name}</div>
               <div class="list-item-meta">
-                <span><i class="fas fa-calendar"></i> ${new Date(s.paymentDate).toLocaleDateString('zh-CN')}</span>
+                <span><i class="fas fa-calendar"></i> ${new Date(s.paymentDate).toLocaleDateString(getLocaleTag())}</span>
                 ${s.customType?`<span class="list-item-badge">${s.customType}</span>`:''}
               </div>
             </div>
@@ -362,14 +365,14 @@
         `).join('');
         
         const ur=document.getElementById('upcomingRenewals');
-        ur.innerHTML=data.upcomingRenewals.length===0?'<div class="empty-state"><div class="empty-state-icon">✅</div><div class="empty-state-text">未来7天内没有即将续费的订阅</div></div>':
+        ur.innerHTML=data.upcomingRenewals.length===0?'<div class="empty-state"><div class="empty-state-icon">?</div><div class="empty-state-text">' + t('dashboard_upcoming_empty') + '</div></div>':
         data.upcomingRenewals.map(s=>`
           <div class="list-item">
             <div class="list-item-content">
               <div class="list-item-name">${s.name}</div>
               <div class="list-item-meta">
-                <span><i class="fas fa-clock"></i> ${new Date(s.renewalDate).toLocaleDateString('zh-CN')}</span>
-                <span style="color:#f59e0b;font-weight:600">${s.daysUntilRenewal} 天后</span>
+                <span><i class="fas fa-clock"></i> ${new Date(s.renewalDate).toLocaleDateString(getLocaleTag())}</span>
+                <span style="color:#f59e0b;font-weight:600">${window.AppLocale.getMessage('dashboard_upcoming_days_left', window.AppLocale.getPreferredLocale(), { count: s.daysUntilRenewal })}</span>
                 ${s.customType?`<span class="list-item-badge">${s.customType}</span>`:''}
               </div>
             </div>
@@ -378,7 +381,7 @@
         `).join('');
         
         const et=document.getElementById('expenseByType');
-        et.innerHTML=data.expenseByType.length===0?'<div class="empty-state"><div class="empty-state-icon">📊</div><div class="empty-state-text">暂无支出数据</div></div>':
+        et.innerHTML=data.expenseByType.length===0?'<div class="empty-state"><div class="empty-state-icon">📊</div><div class="empty-state-text">' + window.AppLocale.getMessage('dashboard_spending_empty', window.AppLocale.getPreferredLocale()) + '</div></div>':
         data.expenseByType.map((item,i)=>`
           <div class="ranking-item">
             <div class="ranking-item-header">
@@ -395,7 +398,7 @@
         `).join('');
         
         const ec=document.getElementById('expenseByCategory');
-        ec.innerHTML=data.expenseByCategory.length===0?'<div class="empty-state"><div class="empty-state-icon">📂</div><div class="empty-state-text">暂无支出数据</div></div>':
+        ec.innerHTML=data.expenseByCategory.length===0?'<div class="empty-state"><div class="empty-state-icon">📂</div><div class="empty-state-text">' + window.AppLocale.getMessage('dashboard_spending_empty', window.AppLocale.getPreferredLocale()) + '</div></div>':
         data.expenseByCategory.map((item,i)=>`
           <div class="ranking-item">
             <div class="ranking-item-header">

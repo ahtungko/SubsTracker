@@ -133,7 +133,7 @@
             </div>
             <div>
               <label for="adminPassword" class="block text-sm font-medium text-gray-700" data-i18n="config_label_admin_password">密码</label>
-              <input type="password" id="adminPassword" placeholder="如不修改密码，请留空" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+              <input type="password" id="adminPassword" placeholder="Leave blank to keep the current password" data-i18n-placeholder="config_admin_password_placeholder" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
               <p class="mt-1 text-sm text-gray-500">留空表示不修改当前密码</p>
             </div>
           </div>
@@ -196,7 +196,7 @@
             <p class="mt-1 text-sm text-gray-500" data-i18n="config_notification_locale_help">This setting controls the language used in reminder emails, Discord DMs, and other outbound notifications.</p>
           </div>
           <div class="mb-6">
-            <label class="block text-sm font-medium text-gray-700 mb-3">通知方式（可多选）</label>
+            <label class="block text-sm font-medium text-gray-700 mb-3" data-i18n="config_notifiers_heading">Notification Channels (multi-select)</label>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
               <label class="inline-flex items-center">
                 <input type="checkbox" name="enabledNotifiers" value="telegram" class="form-checkbox h-4 w-4 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500">
@@ -236,7 +236,7 @@
               </label>
               <label class="inline-flex items-center">
                 <input type="checkbox" name="enabledNotifiers" value="discord" class="form-checkbox h-4 w-4 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500">
-                <span class="ml-2 text-sm text-gray-700">Discord Bot 私信</span>
+                <span class="ml-2 text-sm text-gray-700" data-i18n="config_notifier_discord">Discord Bot DM</span>
               </label>
             </div>
             <div class="mt-2 flex flex-wrap gap-4">
@@ -270,7 +270,7 @@
               <input type="text" id="thirdPartyToken" placeholder="留空表示不修改；输入新值将更新"
                 class="flex-1 border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
               <button type="button" id="generateThirdPartyToken" class="btn-info text-white px-4 py-2 rounded-md text-sm font-medium whitespace-nowrap">
-                <i class="fas fa-magic mr-2"></i>生成令牌
+                <i class="fas fa-magic mr-2"></i>Generate Token
               </button>
               <button type="button" id="clearThirdPartyToken" class="btn-warning text-white px-4 py-2 rounded-md text-sm font-medium whitespace-nowrap">
                 <i class="fas fa-eraser mr-2"></i>清空
@@ -655,18 +655,18 @@
 
     function updateAllSecretStatus() {
       const cfg = window.SECRET_CONFIGURED || {};
-      setSecretStatus('TG_BOT_TOKEN', cfg.TG_BOT_TOKEN ? '已配置（已隐藏）' : '未配置');
-      setSecretStatus('NOTIFYX_API_KEY', cfg.NOTIFYX_API_KEY ? '已配置（已隐藏）' : '未配置');
-      setSecretStatus('WEBHOOK_URL', cfg.WEBHOOK_URL ? '已配置（已隐藏）' : '未配置');
-      setSecretStatus('WEBHOOK_HEADERS', cfg.WEBHOOK_HEADERS ? '已配置（已隐藏）' : '未配置');
-      setSecretStatus('WECHATBOT_WEBHOOK', cfg.WECHATBOT_WEBHOOK ? '已配置（已隐藏）' : '未配置');
-      setSecretStatus('RESEND_API_KEY', cfg.RESEND_API_KEY ? '已配置（已隐藏）' : '未配置');
-      setSecretStatus('BARK_DEVICE_KEY', cfg.BARK_DEVICE_KEY ? '已配置（已隐藏）' : '未配置');
-      setSecretStatus('THIRD_PARTY_API_TOKEN', cfg.THIRD_PARTY_API_TOKEN ? '已配置（已隐藏）' : '未配置');
-      setSecretStatus('GOTIFY_APP_TOKEN', cfg.GOTIFY_APP_TOKEN ? '已配置（已隐藏）' : '未配置');
-      setSecretStatus('SERVERCHAN_SENDKEY', cfg.SERVERCHAN_SENDKEY ? '已配置（已隐藏）' : '未配置');
-      setSecretStatus('PUSHPLUS_TOKEN', cfg.PUSHPLUS_TOKEN ? '已配置（已隐藏）' : '未配置');
-      setSecretStatus('DISCORD_BOT_TOKEN', cfg.DISCORD_BOT_TOKEN ? '已配置（已隐藏）' : '未配置');
+      setSecretStatus('TG_BOT_TOKEN', cfg.TG_BOT_TOKEN ? window.AppLocale.getMessage('config_secret_configured', window.AppLocale.getPreferredLocale()) : window.AppLocale.getMessage('config_secret_not_configured', window.AppLocale.getPreferredLocale()));
+      setSecretStatus('NOTIFYX_API_KEY', cfg.NOTIFYX_API_KEY ? window.AppLocale.getMessage('config_secret_configured', window.AppLocale.getPreferredLocale()) : window.AppLocale.getMessage('config_secret_not_configured', window.AppLocale.getPreferredLocale()));
+      setSecretStatus('WEBHOOK_URL', cfg.WEBHOOK_URL ? window.AppLocale.getMessage('config_secret_configured', window.AppLocale.getPreferredLocale()) : window.AppLocale.getMessage('config_secret_not_configured', window.AppLocale.getPreferredLocale()));
+      setSecretStatus('WEBHOOK_HEADERS', cfg.WEBHOOK_HEADERS ? window.AppLocale.getMessage('config_secret_configured', window.AppLocale.getPreferredLocale()) : window.AppLocale.getMessage('config_secret_not_configured', window.AppLocale.getPreferredLocale()));
+      setSecretStatus('WECHATBOT_WEBHOOK', cfg.WECHATBOT_WEBHOOK ? window.AppLocale.getMessage('config_secret_configured', window.AppLocale.getPreferredLocale()) : window.AppLocale.getMessage('config_secret_not_configured', window.AppLocale.getPreferredLocale()));
+      setSecretStatus('RESEND_API_KEY', cfg.RESEND_API_KEY ? window.AppLocale.getMessage('config_secret_configured', window.AppLocale.getPreferredLocale()) : window.AppLocale.getMessage('config_secret_not_configured', window.AppLocale.getPreferredLocale()));
+      setSecretStatus('BARK_DEVICE_KEY', cfg.BARK_DEVICE_KEY ? window.AppLocale.getMessage('config_secret_configured', window.AppLocale.getPreferredLocale()) : window.AppLocale.getMessage('config_secret_not_configured', window.AppLocale.getPreferredLocale()));
+      setSecretStatus('THIRD_PARTY_API_TOKEN', cfg.THIRD_PARTY_API_TOKEN ? window.AppLocale.getMessage('config_secret_configured', window.AppLocale.getPreferredLocale()) : window.AppLocale.getMessage('config_secret_not_configured', window.AppLocale.getPreferredLocale()));
+      setSecretStatus('GOTIFY_APP_TOKEN', cfg.GOTIFY_APP_TOKEN ? window.AppLocale.getMessage('config_secret_configured', window.AppLocale.getPreferredLocale()) : window.AppLocale.getMessage('config_secret_not_configured', window.AppLocale.getPreferredLocale()));
+      setSecretStatus('SERVERCHAN_SENDKEY', cfg.SERVERCHAN_SENDKEY ? window.AppLocale.getMessage('config_secret_configured', window.AppLocale.getPreferredLocale()) : window.AppLocale.getMessage('config_secret_not_configured', window.AppLocale.getPreferredLocale()));
+      setSecretStatus('PUSHPLUS_TOKEN', cfg.PUSHPLUS_TOKEN ? window.AppLocale.getMessage('config_secret_configured', window.AppLocale.getPreferredLocale()) : window.AppLocale.getMessage('config_secret_not_configured', window.AppLocale.getPreferredLocale()));
+      setSecretStatus('DISCORD_BOT_TOKEN', cfg.DISCORD_BOT_TOKEN ? window.AppLocale.getMessage('config_secret_configured', window.AppLocale.getPreferredLocale()) : window.AppLocale.getMessage('config_secret_not_configured', window.AppLocale.getPreferredLocale()));
     }
 
     function wireSecretInput(inputId, key) {
@@ -677,11 +677,11 @@
         if (value.length > 0) {
           // 用户输入了新值，视为将被更新
           CLEAR_SECRET_FIELDS.delete(key);
-          setSecretStatus(key, '将更新（保存后生效）');
+      setSecretStatus(key, window.AppLocale.getMessage('config_secret_pending_update', window.AppLocale.getPreferredLocale()));
         } else {
           // 空表示“不修改”（默认）
           const cfg = window.SECRET_CONFIGURED || {};
-          setSecretStatus(key, cfg[key] ? '已配置（已隐藏）' : '未配置');
+          setSecretStatus(key, cfg[key] ? window.AppLocale.getMessage('config_secret_configured', window.AppLocale.getPreferredLocale()) : window.AppLocale.getMessage('config_secret_not_configured', window.AppLocale.getPreferredLocale()));
         }
       });
     }
@@ -693,8 +693,8 @@
       btn.addEventListener('click', () => {
         input.value = '';
         CLEAR_SECRET_FIELDS.add(key);
-        setSecretStatus(key, '将清空（保存后生效）');
-        showToast('已标记清空：' + key + '（点击“保存配置”后生效）', 'warning', 4500);
+        setSecretStatus(key, window.AppLocale.getMessage('config_secret_pending_reset', window.AppLocale.getPreferredLocale()));
+        showToast(window.AppLocale.getMessage('config_clear_secret_marked', window.AppLocale.getPreferredLocale(), { key }), 'warning', 4500);
       });
     }
 
@@ -810,7 +810,7 @@
       timezoneSelect.value = timezoneExists ? selectedTimezone : fallbackTimezone;
 
       if (!timezoneExists) {
-        showToast('检测到未知时区配置，已回退为 UTC，请重新确认后保存', 'warning', 4500);
+        showToast(window.AppLocale.getMessage('config_timezone_unknown_warning', window.AppLocale.getPreferredLocale()), 'warning', 4500);
       }
     }
     
@@ -1017,7 +1017,7 @@
       }
       const originalContent = button.innerHTML;
 
-      button.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>测试中...';
+      button.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>' + window.AppLocale.getMessage('config_test_in_progress', window.AppLocale.getPreferredLocale());
       button.disabled = true;
 
       const config = {};
@@ -1173,10 +1173,10 @@
         const input = document.getElementById('thirdPartyToken');
         input.value = token;
         input.dispatchEvent(new Event('input'));
-        showToast('已生成新的第三方 API 令牌，请保存配置后生效', 'info');
+        showToast(window.AppLocale.getMessage('config_generate_token_success', window.AppLocale.getPreferredLocale()), 'info');
       } catch (error) {
-        console.error('生成令牌失败:', error);
-        showToast('生成令牌失败，请手动输入', 'error');
+        console.error('Token generation failed:', error);
+        showToast(window.AppLocale.getMessage('config_generate_token_failed', window.AppLocale.getPreferredLocale()), 'error');
       }
     });
 

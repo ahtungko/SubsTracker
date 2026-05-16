@@ -138,7 +138,63 @@ const UI_MESSAGES = {
     config_test_discord_user_id_required: '请先填写 Discord 用户 ID',
     admin_fetch_subscription_failed: '获取订阅信息失败',
     dashboard_load_failed: '加载失败',
-    dashboard_load_failed_prefix: '加载失败:'
+    dashboard_load_failed_prefix: '加载失败:',
+    admin_search_placeholder: '搜索名称、类型或备注...',
+    admin_validation_name_required: '请输入订阅名称',
+    admin_validation_period_value_positive: '周期数值必须大于 0',
+    admin_validation_start_date_format: '开始日期格式需为 YYYY-MM-DD',
+    admin_validation_expiry_date_format: '到期日期格式需为 YYYY-MM-DD',
+    admin_validation_reminder_non_negative: '提醒值不能为负数',
+    admin_no_matching_subscriptions: '没有符合条件的订阅',
+    admin_status_expiring_soon: '即将到期',
+    admin_action_edit: '编辑',
+    admin_delete_confirm: '确定要删除这个订阅吗？此操作不可恢复。',
+    admin_payment_history_title: '支付历史 - {name}',
+    admin_renew_modal_title: '手动续订 - {name}',
+    admin_filter_all_modes: '全部模式',
+    admin_filter_cycle: '循环订阅',
+    admin_filter_reset: '到期重置',
+    admin_filter_all_categories: '全部分类',
+    admin_table_col_name: '名称',
+    admin_table_col_type: '类型',
+    admin_table_col_expiry: '到期',
+    admin_table_col_amount: '金额',
+    admin_table_col_reminder: '提醒',
+    admin_table_col_status: '状态',
+    admin_table_col_actions: '操作',
+    admin_calendar_today: '回到今天',
+    admin_loading: '加载中...',
+    admin_action_history: '历史',
+    admin_action_test: '测试',
+    admin_action_renew: '续订',
+    admin_action_delete: '删除',
+    admin_action_renew_title: '立即续订一个周期',
+    admin_action_history_title: '查看支付历史',
+    admin_delete_success: '已删除：{name}',
+    config_admin_password_placeholder: '如不修改密码，请留空',
+    config_notifiers_heading: '通知方式（可多选）',
+    config_notifier_discord: 'Discord Bot 私信',
+    config_secret_configured: '已配置（已隐藏）',
+    config_secret_not_configured: '未配置',
+    config_secret_pending_update: '将更新（保存后生效）',
+    config_secret_pending_reset: '将清空（保存后生效）',
+    config_clear_secret_marked: '已标记清空：{key}（保存后生效）',
+    config_test_in_progress: '测试中...',
+    config_generate_token_success: '已生成新的第三方 API 令牌，请保存配置后生效',
+    config_generate_token_failed: '生成令牌失败，请手动输入',
+    config_timezone_unknown_warning: '检测到未知时区配置，已回退为 UTC，请重新确认后保存',
+    dashboard_scheduler_empty: '暂无定时任务执行记录（等待下一次 Cron）',
+    dashboard_stats_monthly_spend: '月度支出 (MYR)',
+    dashboard_stats_monthly_subtitle: '本月折合支出',
+    dashboard_stats_yearly_spend: '年度支出 (MYR)',
+    dashboard_stats_monthly_average: '月均支出: RM{amount}',
+    dashboard_stats_active_subscriptions: '活跃订阅',
+    dashboard_stats_total_subscriptions: '总订阅数: {count}',
+    dashboard_stats_expiring_soon: '{count} 即将到期',
+    dashboard_recent_payments_empty: '过去 7 天内没有支付记录',
+    dashboard_upcoming_empty: '未来 7 天内没有即将续费的订阅',
+    dashboard_upcoming_days_left: '{count} 天后',
+    dashboard_spending_empty: '暂无支出数据'
   },
   en: {
     app_name: 'Subscription Manager',
@@ -210,7 +266,63 @@ const UI_MESSAGES = {
     config_test_discord_user_id_required: 'Please enter the Discord user ID first.',
     admin_fetch_subscription_failed: 'Failed to fetch subscription information',
     dashboard_load_failed: 'Failed to load',
-    dashboard_load_failed_prefix: 'Failed to load:'
+    dashboard_load_failed_prefix: 'Failed to load:',
+    admin_search_placeholder: 'Search name, type, or notes...',
+    admin_validation_name_required: 'Please enter a subscription name',
+    admin_validation_period_value_positive: 'Period value must be greater than 0',
+    admin_validation_start_date_format: 'Start date must use YYYY-MM-DD',
+    admin_validation_expiry_date_format: 'Expiry date must use YYYY-MM-DD',
+    admin_validation_reminder_non_negative: 'Reminder value cannot be negative',
+    admin_no_matching_subscriptions: 'No subscriptions match the current filters',
+    admin_status_expiring_soon: 'Expiring Soon',
+    admin_action_edit: 'Edit',
+    admin_delete_confirm: 'Are you sure you want to delete this subscription? This action cannot be undone.',
+    admin_payment_history_title: 'Payment History - {name}',
+    admin_renew_modal_title: 'Manual Renewal - {name}',
+    admin_filter_all_modes: 'All Modes',
+    admin_filter_cycle: 'Recurring',
+    admin_filter_reset: 'Reset on Expiry',
+    admin_filter_all_categories: 'All Categories',
+    admin_table_col_name: 'Name',
+    admin_table_col_type: 'Type',
+    admin_table_col_expiry: 'Expiry',
+    admin_table_col_amount: 'Amount',
+    admin_table_col_reminder: 'Reminder',
+    admin_table_col_status: 'Status',
+    admin_table_col_actions: 'Actions',
+    admin_calendar_today: 'Back to Today',
+    admin_loading: 'Loading...',
+    admin_action_history: 'History',
+    admin_action_test: 'Test',
+    admin_action_renew: 'Renew',
+    admin_action_delete: 'Delete',
+    admin_action_renew_title: 'Renew one period now',
+    admin_action_history_title: 'View payment history',
+    admin_delete_success: 'Deleted: {name}',
+    config_admin_password_placeholder: 'Leave blank to keep the current password',
+    config_notifiers_heading: 'Notification Channels (multi-select)',
+    config_notifier_discord: 'Discord Bot DM',
+    config_secret_configured: 'Configured (hidden)',
+    config_secret_not_configured: 'Not configured',
+    config_secret_pending_update: 'Will update (applies after saving)',
+    config_secret_pending_reset: 'Will clear (applies after saving)',
+    config_clear_secret_marked: 'Marked for clearing: {key} (applies after saving)',
+    config_test_in_progress: 'Testing...',
+    config_generate_token_success: 'Generated a new third-party API token. Save settings to apply it.',
+    config_generate_token_failed: 'Failed to generate a token. Please enter one manually.',
+    config_timezone_unknown_warning: 'An unknown timezone setting was detected and reset to UTC. Please review it and save again.',
+    dashboard_scheduler_empty: 'No scheduled job runs yet (waiting for the next Cron run)',
+    dashboard_stats_monthly_spend: 'Monthly Spend (MYR)',
+    dashboard_stats_monthly_subtitle: 'Converted spend for this month',
+    dashboard_stats_yearly_spend: 'Yearly Spend (MYR)',
+    dashboard_stats_monthly_average: 'Monthly average: RM{amount}',
+    dashboard_stats_active_subscriptions: 'Active Subscriptions',
+    dashboard_stats_total_subscriptions: 'Total subscriptions: {count}',
+    dashboard_stats_expiring_soon: '{count} expiring soon',
+    dashboard_recent_payments_empty: 'No payment records in the last 7 days',
+    dashboard_upcoming_empty: 'No subscriptions renewing in the next 7 days',
+    dashboard_upcoming_days_left: 'In {count} days',
+    dashboard_spending_empty: 'No spending data yet'
   }
 };
 
@@ -243,12 +355,26 @@ function getTimezoneDisplayName(timezone, locale = DEFAULT_UI_LOCALE) {
   return localizedLabels[timezone] || fallbackLabels[timezone] || timezone;
 }
 
-function getMessage(key, locale = DEFAULT_UI_LOCALE) {
+function formatMessage(template, params = {}) {
+  return String(template).replace(/\{(\w+)\}/g, (_, token) => {
+    if (Object.prototype.hasOwnProperty.call(params, token)) {
+      return String(params[token]);
+    }
+    return '{' + token + '}';
+  });
+}
+
+function getUiLocaleTag(locale = DEFAULT_UI_LOCALE) {
+  return normalizeUiLocale(locale) === 'zh' ? 'zh-CN' : 'en-US';
+}
+
+function getMessage(key, locale = DEFAULT_UI_LOCALE, params = {}) {
   const resolvedLocale = normalizeUiLocale(locale);
   const localizedMessages = UI_MESSAGES[resolvedLocale] || UI_MESSAGES[DEFAULT_UI_LOCALE] || {};
   const fallbackMessages = UI_MESSAGES[DEFAULT_UI_LOCALE] || {};
+  const message = localizedMessages[key] || fallbackMessages[key] || key;
 
-  return localizedMessages[key] || fallbackMessages[key] || key;
+  return typeof message === 'string' ? formatMessage(message, params) : message;
 }
 
 export {
@@ -258,5 +384,7 @@ export {
   UI_MESSAGES,
   normalizeUiLocale,
   getTimezoneDisplayName,
+  getUiLocaleTag,
+  formatMessage,
   getMessage
 };

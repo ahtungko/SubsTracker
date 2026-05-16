@@ -62,6 +62,17 @@ test('browser locale runtime exposes getMessage and applyTranslations', async ()
       setAttribute(name, value) {
         this.attributes[name] = value;
       }
+    },
+    {
+      dataset: { i18nPlaceholder: 'admin_search_placeholder' },
+      attributes: { placeholder: '\u641c\u7d22\u540d\u79f0\u3001\u7c7b\u578b\u6216\u5907\u6ce8...' },
+      getAttribute(name) {
+        if (name === 'data-i18n-placeholder') return this.dataset.i18nPlaceholder;
+        return this.attributes[name] || null;
+      },
+      setAttribute(name, value) {
+        this.attributes[name] = value;
+      }
     }
   ];
 
@@ -77,6 +88,9 @@ test('browser locale runtime exposes getMessage and applyTranslations', async ()
       }
       if (selector === '[data-i18n-title]') {
         return translatedNodes.filter(node => node.dataset?.i18nTitle);
+      }
+      if (selector === '[data-i18n-placeholder]') {
+        return translatedNodes.filter(node => node.dataset?.i18nPlaceholder);
       }
       throw new Error('Unexpected selector: ' + selector);
     }
@@ -104,6 +118,7 @@ test('browser locale runtime exposes getMessage and applyTranslations', async ()
   assert.deepEqual(AppLocale.getRequestHeaders('ja-JP'), { 'X-Locale': 'en' });
   assert.equal(AppLocale.getMessage('nav_dashboard', 'zh-CN'), '\u4eea\u8868\u76d8');
   assert.equal(AppLocale.getMessage('nav_dashboard', 'en-US'), 'Dashboard');
+  assert.equal(AppLocale.getMessage('dashboard_upcoming_days_left', 'en-US', { count: 5 }), 'In 5 days');
   assert.equal(AppLocale.getMessage('missing_key', 'zh-CN'), 'missing_key');
 
   assert.doesNotThrow(() => AppLocale.applyDocumentMetadata());
@@ -117,6 +132,7 @@ test('browser locale runtime exposes getMessage and applyTranslations', async ()
   assert.equal(translatedNodes[1].textContent, 'Save Settings');
   assert.equal(translatedNodes[2].attributes['aria-label'], 'Toggle navigation menu');
   assert.equal(translatedNodes[3].attributes.title, 'Dashboard - SubsTracker');
+  assert.equal(translatedNodes[4].attributes.placeholder, 'Search name, type, or notes...');
   assert.equal(documentStub.title, 'Dashboard - SubsTracker');
   assert.equal(documentStub.documentElement.lang, 'en');
 });
@@ -372,6 +388,60 @@ test('admin page sends locale headers for remaining subscription and config fetc
 test('dashboard page localises browser-only load fallbacks via AppLocale messages', () => {
   assert.equal(dashboardPageHtml.includes("window.AppLocale.getMessage('dashboard_load_failed'"), true);
   assert.equal(dashboardPageHtml.includes("window.AppLocale.getMessage('dashboard_load_failed_prefix'"), true);
+});
+
+test('dashboard page localises second-wave scheduler and stats copy', () => {
+  assert.equal(dashboardPageHtml.includes("window.AppLocale.getMessage('dashboard_scheduler_empty'"), true);
+  assert.equal(dashboardPageHtml.includes("window.AppLocale.getMessage('dashboard_stats_monthly_spend'"), true);
+  assert.equal(dashboardPageHtml.includes("window.AppLocale.getMessage('dashboard_stats_monthly_subtitle'"), true);
+  assert.equal(dashboardPageHtml.includes("window.AppLocale.getMessage('dashboard_stats_yearly_spend'"), true);
+  assert.equal(dashboardPageHtml.includes("window.AppLocale.getMessage('dashboard_stats_active_subscriptions'"), true);
+  assert.equal(dashboardPageHtml.includes("window.AppLocale.getMessage('dashboard_stats_expiring_soon'"), true);
+  assert.equal(dashboardPageHtml.includes("window.AppLocale.getMessage('dashboard_recent_payments_empty'"), true);
+  assert.equal(dashboardPageHtml.includes("window.AppLocale.getMessage('dashboard_upcoming_days_left'"), true);
+  assert.equal(dashboardPageHtml.includes("window.AppLocale.getMessage('dashboard_spending_empty'"), true);
+  assert.equal(dashboardPageHtml.includes('????????'), false);
+  assert.equal(dashboardPageHtml.includes('暂无定时任务执行记录'), false);
+  assert.equal(dashboardPageHtml.includes('月度支出 (MYR)'), false);
+  assert.equal(dashboardPageHtml.includes('过去7天内没有支付记录'), false);
+  assert.equal(dashboardPageHtml.includes('未来7天内没有即将续费的订阅'), false);
+  assert.equal(dashboardPageHtml.includes('暂无支出数据'), false);
+});
+
+test('admin page localises second-wave filters, table labels, and runtime actions', () => {
+  assert.equal(adminPageHtml.includes('data-i18n-placeholder="admin_search_placeholder"'), true);
+  assert.equal(adminPageHtml.includes('data-i18n="admin_filter_all_modes"'), true);
+  assert.equal(adminPageHtml.includes('data-i18n="admin_table_col_name"'), true);
+  assert.equal(adminPageHtml.includes("window.AppLocale.getMessage('admin_validation_name_required'"), true);
+  assert.equal(adminPageHtml.includes("window.AppLocale.getMessage('admin_no_matching_subscriptions'"), true);
+  assert.equal(adminPageHtml.includes("window.AppLocale.getMessage('admin_status_expiring_soon'"), true);
+  assert.equal(adminPageHtml.includes("window.AppLocale.getMessage('admin_action_edit'"), true);
+  assert.equal(adminPageHtml.includes("window.AppLocale.getMessage('admin_delete_confirm'"), true);
+  assert.equal(adminPageHtml.includes("window.AppLocale.getMessage('admin_payment_history_title'"), true);
+  assert.equal(adminPageHtml.includes("window.AppLocale.getMessage('admin_renew_modal_title'"), true);
+  assert.equal(adminPageHtml.includes('搜索名称、类型或备注...'), false);
+  assert.equal(adminPageHtml.includes('没有符合条件的订阅'), false);
+  assert.equal(adminPageHtml.includes('加载中...'), false);
+  assert.equal(adminPageHtml.includes('立即续订一个周期'), false);
+});
+
+test('admin page source keeps strings readable instead of unicode escape soup', () => {
+  assert.equal(/\\u[0-9a-fA-F]{4}/.test(adminPageHtml), false);
+});
+
+test('config page localises second-wave notifier and secret-management copy', () => {
+  assert.equal(configPageHtml.includes('data-i18n-placeholder="config_admin_password_placeholder"'), true);
+  assert.equal(configPageHtml.includes('data-i18n="config_notifiers_heading"'), true);
+  assert.equal(configPageHtml.includes('data-i18n="config_notifier_discord"'), true);
+  assert.equal(configPageHtml.includes("window.AppLocale.getMessage('config_secret_configured'"), true);
+  assert.equal(configPageHtml.includes("window.AppLocale.getMessage('config_secret_pending_update'"), true);
+  assert.equal(configPageHtml.includes("window.AppLocale.getMessage('config_test_in_progress'"), true);
+  assert.equal(configPageHtml.includes("window.AppLocale.getMessage('config_generate_token_success'"), true);
+  assert.equal(configPageHtml.includes("window.AppLocale.getMessage('config_timezone_unknown_warning'"), true);
+  assert.equal(configPageHtml.includes('已配置（已隐藏）'), false);
+  assert.equal(configPageHtml.includes('未配置'), false);
+  assert.equal(configPageHtml.includes('测试中...'), false);
+  assert.equal(configPageHtml.includes('生成令牌'), false);
 });
 
 

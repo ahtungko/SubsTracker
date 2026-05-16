@@ -5,6 +5,8 @@ import {
   UI_MESSAGES,
   normalizeUiLocale,
   getTimezoneDisplayName,
+  getUiLocaleTag,
+  formatMessage,
   getMessage
 } from '../core/locale.js';
 
@@ -17,6 +19,8 @@ function buildBrowserLocaleResources() {
     const UI_MESSAGES = ${JSON.stringify(UI_MESSAGES)};
     const normalizeUiLocale = ${normalizeUiLocale.toString()};
     const getTimezoneDisplayName = ${getTimezoneDisplayName.toString()};
+    const getUiLocaleTag = ${getUiLocaleTag.toString()};
+    const formatMessage = ${formatMessage.toString()};
     const getMessage = ${getMessage.toString()};
 
     function getPreferredLocale() {
@@ -102,6 +106,7 @@ function buildBrowserLocaleResources() {
 
       applyAttributeTranslations(root, '[data-i18n-aria-label]', 'aria-label', 'data-i18n-aria-label', resolvedLocale);
       applyAttributeTranslations(root, '[data-i18n-title]', 'title', 'data-i18n-title', resolvedLocale);
+      applyAttributeTranslations(root, '[data-i18n-placeholder]', 'placeholder', 'data-i18n-placeholder', resolvedLocale);
     }
 
     function applyDocumentMetadata({ titleKey } = {}, root = document, locale) {
@@ -118,6 +123,7 @@ function buildBrowserLocaleResources() {
       DEFAULT_UI_LOCALE,
       SUPPORTED_TIMEZONE_IDS,
       normalizeUiLocale,
+      getUiLocaleTag,
       getPreferredLocale,
       getTimezoneDisplayName,
       formatTimezoneDisplay,

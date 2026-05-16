@@ -1,5 +1,8 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
+import fs from 'node:fs';
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
 
 import {
   DEFAULT_UI_LOCALE,
@@ -10,6 +13,9 @@ import {
   getTimezoneDisplayName,
   getMessage
 } from '../../src/core/locale.js';
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+const localeSource = fs.readFileSync(path.join(__dirname, '..', '..', 'src', 'core', 'locale.js'), 'utf8');
 
 test('normalizeUiLocale maps Chinese browser locales to zh', () => {
   assert.equal(normalizeUiLocale('zh-CN'), 'zh');
@@ -149,4 +155,35 @@ test('getMessage returns localized config save runtime strings', () => {
   assert.equal(getMessage('config_save_failed_unknown', 'en-US'), 'Settings save failed: Unknown error');
   assert.equal(getMessage('config_save_failed_retry', 'zh-CN'), '\u4fdd\u5b58\u914d\u7f6e\u5931\u8d25\uff0c\u8bf7\u7a0d\u540e\u518d\u8bd5');
   assert.equal(getMessage('config_save_failed_retry', 'en-US'), 'Failed to save settings. Please try again later.');
+});
+
+test('getMessage returns localized second-wave admin, dashboard, and config strings', () => {
+  assert.equal(getMessage('admin_search_placeholder', 'zh-CN'), '\u641c\u7d22\u540d\u79f0\u3001\u7c7b\u578b\u6216\u5907\u6ce8...');
+  assert.equal(getMessage('admin_search_placeholder', 'en-US'), 'Search name, type, or notes...');
+  assert.equal(getMessage('config_secret_configured', 'zh-CN'), '\u5df2\u914d\u7f6e\uff08\u5df2\u9690\u85cf\uff09');
+  assert.equal(getMessage('config_secret_configured', 'en-US'), 'Configured (hidden)');
+  assert.equal(getMessage('dashboard_scheduler_empty', 'zh-CN'), '\u6682\u65e0\u5b9a\u65f6\u4efb\u52a1\u6267\u884c\u8bb0\u5f55\uff08\u7b49\u5f85\u4e0b\u4e00\u6b21 Cron\uff09');
+  assert.equal(getMessage('dashboard_scheduler_empty', 'en-US'), 'No scheduled job runs yet (waiting for the next Cron run)');
+});
+
+test('getMessage interpolates second-wave runtime strings', () => {
+  assert.equal(getMessage('dashboard_upcoming_days_left', 'zh-CN', { count: 3 }), '3 \u5929\u540e');
+  assert.equal(getMessage('dashboard_upcoming_days_left', 'en-US', { count: 3 }), 'In 3 days');
+  assert.equal(getMessage('admin_delete_success', 'zh-CN', { name: 'Netflix' }), '\u5df2\u5220\u9664\uff1aNetflix');
+  assert.equal(getMessage('admin_delete_success', 'en-US', { name: 'Netflix' }), 'Deleted: Netflix');
+  assert.equal(getMessage('config_clear_secret_marked', 'zh-CN', { key: 'TG_BOT_TOKEN' }), '\u5df2\u6807\u8bb0\u6e05\u7a7a\uff1aTG_BOT_TOKEN\uff08\u4fdd\u5b58\u540e\u751f\u6548\uff09');
+  assert.equal(getMessage('config_clear_secret_marked', 'en-US', { key: 'TG_BOT_TOKEN' }), 'Marked for clearing: TG_BOT_TOKEN (applies after saving)');
+});
+
+test('getMessage returns localized dashboard stats strings without mojibake placeholders', () => {
+  assert.equal(getMessage('dashboard_stats_monthly_subtitle', 'zh-CN'), '\u672c\u6708\u6298\u5408\u652f\u51fa');
+  assert.equal(getMessage('dashboard_stats_yearly_spend', 'en-US'), 'Yearly Spend (MYR)');
+  assert.equal(getMessage('dashboard_stats_active_subscriptions', 'en-US'), 'Active Subscriptions');
+  assert.equal(getMessage('dashboard_stats_expiring_soon', 'zh-CN', { count: 2 }), '2 \u5373\u5c06\u5230\u671f');
+});
+
+test('locale source keeps zh strings readable instead of unicode escape soup', () => {
+  assert.equal(localeSource.includes('\\u641c\\u7d22\\u540d\\u79f0\\u3001\\u7c7b\\u578b'), false);
+  assert.equal(localeSource.includes('\\u672c\\u6708\\u6298\\u5408\\u652f\\u51fa'), false);
+  assert.equal(localeSource.includes('\\u5df2\\u914d\\u7f6e\\uff08\\u5df2\\u9690\\u85cf\\uff09'), false);
 });
