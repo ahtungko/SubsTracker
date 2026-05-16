@@ -134,7 +134,7 @@
             <div>
               <label for="adminPassword" class="block text-sm font-medium text-gray-700" data-i18n="config_label_admin_password">密码</label>
               <input type="password" id="adminPassword" placeholder="Leave blank to keep the current password" data-i18n-placeholder="config_admin_password_placeholder" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
-              <p class="mt-1 text-sm text-gray-500">留空表示不修改当前密码</p>
+              <p class="mt-1 text-sm text-gray-500" data-i18n="config_admin_password_help">Leave blank to keep the current password</p>
             </div>
           </div>
         </div>
@@ -149,7 +149,7 @@
               <option value="dark" data-i18n="config_theme_dark">🌙 暗黑模式</option>
               <option value="system" data-i18n="config_theme_system">🖥️ 跟随系统</option>
             </select>
-            <p class="mt-1 text-sm text-gray-500">选择系统的外观风格</p>
+            <p class="mt-1 text-sm text-gray-500" data-i18n="config_theme_help">Choose the visual appearance used by the app</p>
           </div>
           
           <div class="mb-6">
@@ -208,15 +208,15 @@
               </label>
               <label class="inline-flex items-center">
                 <input type="checkbox" name="enabledNotifiers" value="webhook" class="form-checkbox h-4 w-4 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500">
-                <span class="ml-2 text-sm text-gray-700">Webhook 通知</span>
+                <span class="ml-2 text-sm text-gray-700" data-i18n="config_notifier_webhook">Webhook Notification</span>
               </label>
               <label class="inline-flex items-center">
                 <input type="checkbox" name="enabledNotifiers" value="wechatbot" class="form-checkbox h-4 w-4 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500">
-                <span class="ml-2 text-sm text-gray-700">企业微信机器人</span>
+                <span class="ml-2 text-sm text-gray-700" data-i18n="config_notifier_wechatbot">WeCom Bot</span>
               </label>
               <label class="inline-flex items-center">
                 <input type="checkbox" name="enabledNotifiers" value="email" class="form-checkbox h-4 w-4 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500">
-                <span class="ml-2 text-sm text-gray-700">邮件通知</span>
+                <span class="ml-2 text-sm text-gray-700" data-i18n="config_notifier_email">Email Notification</span>
               </label>
               <label class="inline-flex items-center">
                 <input type="checkbox" name="enabledNotifiers" value="bark" class="form-checkbox h-4 w-4 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500">
@@ -228,7 +228,7 @@
               </label>
               <label class="inline-flex items-center">
                 <input type="checkbox" name="enabledNotifiers" value="serverchan" class="form-checkbox h-4 w-4 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500">
-                <span class="ml-2 text-sm text-gray-700">Server酱</span>
+                <span class="ml-2 text-sm text-gray-700" data-i18n="config_notifier_serverchan">ServerChan</span>
               </label>
               <label class="inline-flex items-center">
                 <input type="checkbox" name="enabledNotifiers" value="pushplus" class="form-checkbox h-4 w-4 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500">
@@ -247,7 +247,7 @@
                 <i class="fas fa-external-link-alt ml-1"></i> Webhook 调试工具
               </a>
               <a href="https://developer.work.weixin.qq.com/document/path/91770" target="_blank" class="text-indigo-600 hover:text-indigo-800 text-sm">
-                <i class="fas fa-external-link-alt ml-1"></i> 企业微信机器人文档
+                <i class="fas fa-external-link-alt ml-1"></i> <span data-i18n="config_link_wechatbot_docs">WeCom Bot Docs</span>
               </a>
               <a href="https://developers.cloudflare.com/workers/tutorials/send-emails-with-resend/" target="_blank" class="text-indigo-600 hover:text-indigo-800 text-sm">
                 <i class="fas fa-external-link-alt ml-1"></i> 获取 Resend API Key
@@ -342,10 +342,10 @@
           </div>
 
           <div id="webhookConfig" class="config-section">
-            <h4 class="text-md font-medium text-gray-900 mb-3">Webhook 通知 配置</h4>
+            <h4 class="text-md font-medium text-gray-900 mb-3" data-i18n="config_section_webhook_title">Webhook Notification Settings</h4>
             <div class="grid grid-cols-1 gap-4 mb-4">
               <div>
-                <label for="webhookUrl" class="block text-sm font-medium text-gray-700">Webhook 通知 URL</label>
+                <label for="webhookUrl" class="block text-sm font-medium text-gray-700" data-i18n="config_label_webhook_url">Webhook Notification URL</label>
                 <div class="mt-1 flex flex-col sm:flex-row sm:items-center gap-3">
                   <input type="url" id="webhookUrl" placeholder="留空表示不修改；输入新值将更新" class="flex-1 border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
                   <button type="button" id="clearWebhookUrl" class="btn-warning text-white px-4 py-2 rounded-md text-sm font-medium whitespace-nowrap">
@@ -382,13 +382,13 @@
             </div>
             <div class="flex justify-end">
               <button type="button" id="testWebhookBtn" class="btn-secondary text-white px-4 py-2 rounded-md text-sm font-medium">
-                <i class="fas fa-paper-plane mr-2"></i>测试 Webhook 通知
+                <i class="fas fa-paper-plane mr-2"></i><span data-i18n="config_test_webhook">Test Webhook Notification</span>
               </button>
             </div>
           </div>
 
           <div id="wechatbotConfig" class="config-section">
-            <h4 class="text-md font-medium text-gray-900 mb-3">企业微信机器人 配置</h4>
+            <h4 class="text-md font-medium text-gray-900 mb-3" data-i18n="config_section_wechatbot_title">WeCom Bot Settings</h4>
             <div class="grid grid-cols-1 gap-4 mb-4">
               <div>
                 <label for="wechatbotWebhook" class="block text-sm font-medium text-gray-700">机器人 Webhook URL</label>
@@ -424,13 +424,13 @@
             </div>
             <div class="flex justify-end">
               <button type="button" id="testWechatBotBtn" class="btn-secondary text-white px-4 py-2 rounded-md text-sm font-medium">
-                <i class="fas fa-paper-plane mr-2"></i>测试 企业微信机器人
+                <i class="fas fa-paper-plane mr-2"></i><span data-i18n="config_test_wechatbot">Test WeCom Bot</span>
               </button>
             </div>
           </div>
 
           <div id="emailConfig" class="config-section">
-            <h4 class="text-md font-medium text-gray-900 mb-3">邮件通知 配置</h4>
+            <h4 class="text-md font-medium text-gray-900 mb-3" data-i18n="config_section_email_title">Email Notification Settings</h4>
             <div class="grid grid-cols-1 gap-4 mb-4">
               <div>
                 <label for="resendApiKey" class="block text-sm font-medium text-gray-700">Resend API Key</label>
@@ -461,7 +461,7 @@
             </div>
             <div class="flex justify-end">
               <button type="button" id="testEmailBtn" class="btn-secondary text-white px-4 py-2 rounded-md text-sm font-medium">
-                <i class="fas fa-paper-plane mr-2"></i>测试 邮件通知
+                <i class="fas fa-paper-plane mr-2"></i><span data-i18n="config_test_email">Test Email Notification</span>
               </button>
             </div>
           </div>

@@ -176,14 +176,62 @@ test('getMessage interpolates second-wave runtime strings', () => {
 });
 
 test('getMessage returns localized dashboard stats strings without mojibake placeholders', () => {
-  assert.equal(getMessage('dashboard_stats_monthly_subtitle', 'zh-CN'), '\u672c\u6708\u6298\u5408\u652f\u51fa');
+  assert.equal(getMessage('dashboard_stats_monthly_subtitle', 'zh-CN'), '本月折合支出');
   assert.equal(getMessage('dashboard_stats_yearly_spend', 'en-US'), 'Yearly Spend (MYR)');
   assert.equal(getMessage('dashboard_stats_active_subscriptions', 'en-US'), 'Active Subscriptions');
-  assert.equal(getMessage('dashboard_stats_expiring_soon', 'zh-CN', { count: 2 }), '2 \u5373\u5c06\u5230\u671f');
+  assert.equal(getMessage('dashboard_stats_expiring_soon', 'zh-CN', { count: 2 }), '2 即将到期');
+});
+
+test('locale catalog includes shared scheduler and admin keys for both locales', () => {
+  assert.equal(UI_MESSAGES.zh.dashboard_scheduler_last_run_label, '最近执行时间');
+  assert.equal(UI_MESSAGES.en.dashboard_scheduler_last_run_label, 'Last Run Time');
+  assert.equal(UI_MESSAGES.zh.dashboard_scheduler_status_label, '状态');
+  assert.equal(UI_MESSAGES.en.dashboard_scheduler_status_label, 'Status');
+  assert.equal(UI_MESSAGES.zh.config_admin_password_help, '留空表示不修改当前密码');
+  assert.equal(UI_MESSAGES.en.config_admin_password_help, 'Leave blank to keep the current password');
+  assert.equal(UI_MESSAGES.zh.config_notifier_webhook, 'Webhook 通知');
+  assert.equal(UI_MESSAGES.en.config_notifier_webhook, 'Webhook Notification');
+  assert.equal(UI_MESSAGES.zh.admin_status_expired, '已过期');
+  assert.equal(UI_MESSAGES.en.admin_status_expired, 'Expired');
+  assert.equal(UI_MESSAGES.zh.admin_edit_payment_title, '编辑支付记录');
+  assert.equal(UI_MESSAGES.en.admin_edit_payment_title, 'Edit Payment Record');
+});
+
+test('getMessage returns shared scheduler labels and interpolated strings', () => {
+  assert.equal(getMessage('dashboard_scheduler_last_run_label', 'zh-CN'), '最近执行时间');
+  assert.equal(getMessage('dashboard_scheduler_last_run_label', 'en-US'), 'Last Run Time');
+  assert.equal(getMessage('dashboard_scheduler_status_label', 'zh-CN'), '状态');
+  assert.equal(getMessage('dashboard_scheduler_status_label', 'en-US'), 'Status');
+  assert.equal(
+    getMessage('dashboard_scheduler_checked_matches', 'zh-CN', { checked: 8, matched: 3 }),
+    '检查 8 条，命中 3 条'
+  );
+  assert.equal(
+    getMessage('dashboard_scheduler_checked_matches', 'en-US', { checked: 8, matched: 3 }),
+    'Checked 8 subscriptions, matched 3'
+  );
+  assert.equal(getMessage('dashboard_stats_total_subscriptions', 'zh-CN', { count: 12 }), '总订阅数: 12');
+  assert.equal(getMessage('dashboard_stats_total_subscriptions', 'en-US', { count: 12 }), 'Total subscriptions: 12');
+});
+
+test('getMessage returns shared config and admin strings', () => {
+  assert.equal(getMessage('config_admin_password_help', 'zh-CN'), '留空表示不修改当前密码');
+  assert.equal(getMessage('config_admin_password_help', 'en-US'), 'Leave blank to keep the current password');
+  assert.equal(getMessage('config_notifier_webhook', 'zh-CN'), 'Webhook 通知');
+  assert.equal(getMessage('config_notifier_webhook', 'en-US'), 'Webhook Notification');
+  assert.equal(getMessage('config_notifier_serverchan', 'zh-CN'), 'Server酱');
+  assert.equal(getMessage('config_notifier_serverchan', 'en-US'), 'ServerChan');
+  assert.equal(getMessage('admin_status_expired', 'zh-CN'), '已过期');
+  assert.equal(getMessage('admin_status_expired', 'en-US'), 'Expired');
+  assert.equal(getMessage('admin_edit_payment_title', 'zh-CN'), '编辑支付记录');
+  assert.equal(getMessage('admin_edit_payment_title', 'en-US'), 'Edit Payment Record');
 });
 
 test('locale source keeps zh strings readable instead of unicode escape soup', () => {
   assert.equal(localeSource.includes('\\u641c\\u7d22\\u540d\\u79f0\\u3001\\u7c7b\\u578b'), false);
   assert.equal(localeSource.includes('\\u672c\\u6708\\u6298\\u5408\\u652f\\u51fa'), false);
   assert.equal(localeSource.includes('\\u5df2\\u914d\\u7f6e\\uff08\\u5df2\\u9690\\u85cf\\uff09'), false);
+  assert.equal(localeSource.includes('\\u6700\\u8fd1\\u6267\\u884c\\u65f6\\u95f4'), false);
+  assert.equal(localeSource.includes('\\u7559\\u7a7a\\u8868\\u793a\\u4e0d\\u4fee\\u6539\\u5f53\\u524d\\u5bc6\\u7801'), false);
+  assert.equal(localeSource.includes('\\u5df2\\u8fc7\\u671f'), false);
 });

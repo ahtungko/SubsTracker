@@ -34,6 +34,6 @@ test('config page wires Discord save, toggle, and test-notification flows', () =
   assert.match(html, /\[telegramConfig, notifyxConfig, webhookConfig, wechatbotConfig, emailConfig, barkConfig, gotifyConfig, serverchanConfig, pushplusConfig, discordConfig\]\.forEach/);
   assert.match(html, /} else if \(type === 'discord'\) {\s*discordConfig\.classList\.remove\('inactive'\);\s*discordConfig\.classList\.add\('active'\);/);
   assert.match(html, /testDiscordBtn/);
-  assert.match(html, /Discord 私信/);
+  assert.match(html, /data-i18n="config_notifier_discord"/);
   assert.match(html, /testNotification\('discord'\)/);
 });
