@@ -88,7 +88,10 @@
       try {
         const response = await fetch('/api/login', {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
+          headers: {
+            'Content-Type': 'application/json',
+            ...window.AppLocale.getRequestHeaders(preferredLocale)
+          },
           body: JSON.stringify({ username, password })
         });
         

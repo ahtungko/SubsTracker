@@ -83,7 +83,7 @@ test('browser locale runtime exposes getMessage and applyTranslations', async ()
   };
 
   const sandbox = {
-    window: {},
+    window: { Object },
     document: documentStub,
     navigator: { language: 'en-US', languages: ['en-US'] },
     Intl,
@@ -98,6 +98,10 @@ test('browser locale runtime exposes getMessage and applyTranslations', async ()
   assert.equal(typeof AppLocale.getMessage, 'function');
   assert.equal(typeof AppLocale.applyTranslations, 'function');
   assert.equal(typeof AppLocale.applyDocumentMetadata, 'function');
+  assert.equal(typeof AppLocale.getRequestHeaders, 'function');
+  assert.deepEqual(AppLocale.getRequestHeaders('zh-CN'), { 'X-Locale': 'zh' });
+  assert.deepEqual(AppLocale.getRequestHeaders('en-US'), { 'X-Locale': 'en' });
+  assert.deepEqual(AppLocale.getRequestHeaders('ja-JP'), { 'X-Locale': 'en' });
   assert.equal(AppLocale.getMessage('nav_dashboard', 'zh-CN'), '\u4eea\u8868\u76d8');
   assert.equal(AppLocale.getMessage('nav_dashboard', 'en-US'), 'Dashboard');
   assert.equal(AppLocale.getMessage('missing_key', 'zh-CN'), 'missing_key');
@@ -248,7 +252,7 @@ test('login page dynamic submit and error messages follow zh-CN locale', async (
     };
 
     const sandbox = {
-      window: { location: { href: '' } },
+      window: { Object, location: { href: '' } },
       document: documentStub,
       navigator: { language: 'zh-CN', languages: ['zh-CN'] },
       Intl,
@@ -308,3 +312,64 @@ test('login page dynamic submit and error messages follow zh-CN locale', async (
   );
 });
 
+
+
+test('browser runtime request headers are used in login/config fetch paths', () => {
+  assert.equal(loginPageHtml.includes('window.AppLocale.getRequestHeaders('), true);
+  assert.equal(configPageHtml.includes('window.AppLocale.getRequestHeaders('), true);
+});
+
+test('browser runtime request headers are used in admin/dashboard fetch paths', () => {
+  assert.equal(adminPageHtml.includes('window.AppLocale.getRequestHeaders('), true);
+  assert.equal(dashboardPageHtml.includes('window.AppLocale.getRequestHeaders('), true);
+});
+
+
+test('admin page localises remaining browser-only error toasts via AppLocale messages', () => {
+  assert.equal(adminPageHtml.includes("window.AppLocale.getMessage('admin_test_button_missing'"), true);
+  assert.equal(adminPageHtml.includes("window.AppLocale.getMessage('admin_test_missing_subscription_id'"), true);
+  assert.equal(adminPageHtml.includes("window.AppLocale.getMessage('admin_test_network_error'"), true);
+  assert.equal(adminPageHtml.includes("window.AppLocale.getMessage('test_notification_invalid_response'"), true);
+  assert.equal(adminPageHtml.includes("window.AppLocale.getMessage('test_notification_http_prefix'"), true);
+  assert.equal(adminPageHtml.includes("window.AppLocale.getMessage('admin_fetch_subscription_failed'"), true);
+  assert.equal(adminPageHtml.includes('????????: '), false);
+});
+
+
+test('config page preserves backend test-notification messages and localizes only local fallbacks', () => {
+  assert.equal(configPageHtml.includes("window.AppLocale.getMessage('admin_test_button_missing'"), true);
+  assert.equal(configPageHtml.includes("window.AppLocale.getMessage('admin_test_network_error'"), true);
+  assert.equal(configPageHtml.includes("window.AppLocale.getMessage('test_notification_invalid_response'"), true);
+  assert.equal(configPageHtml.includes("window.AppLocale.getMessage('test_notification_http_prefix'"), true);
+  assert.equal(configPageHtml.includes("window.AppLocale.getMessage('config_test_gotify_server_required'"), true);
+  assert.equal(configPageHtml.includes("window.AppLocale.getMessage('config_test_discord_user_id_required'"), true);
+  assert.equal(configPageHtml.includes(' ???????'), false);
+  assert.equal(configPageHtml.includes(' ??????: '), false);
+});
+
+test('config page localizes config-save button and toast states without Chinese wrappers', () => {
+  const normalizedConfigPageHtml = configPageHtml.replace(/\s+/g, ' ');
+  assert.equal(normalizedConfigPageHtml.includes("window.AppLocale.getMessage('config_save_in_progress'"), true);
+  assert.equal(normalizedConfigPageHtml.includes("window.AppLocale.getMessage('config_save_success'"), true);
+  assert.equal(normalizedConfigPageHtml.includes("window.AppLocale.getMessage('config_save_failed_unknown'"), true);
+  assert.equal(normalizedConfigPageHtml.includes("window.AppLocale.getMessage('config_save_failed_retry'"), true);
+  assert.equal(normalizedConfigPageHtml.includes('showToast(result.message || window.AppLocale.getMessage('), true);
+  assert.equal(normalizedConfigPageHtml.includes("showToast(result.message, 'error');"), false);
+  assert.equal(normalizedConfigPageHtml.includes('保存中...'), false);
+  assert.equal(normalizedConfigPageHtml.includes('配置保存成功'), false);
+  assert.equal(normalizedConfigPageHtml.includes('配置保存失败: '), false);
+  assert.equal(normalizedConfigPageHtml.includes('保存配置失败，请稍后再试'), false);
+});
+
+test('admin page sends locale headers for remaining subscription and config fetches', () => {
+  assert.equal(adminPageHtml.includes("fetch('/api/subscriptions', {"), true);
+  assert.equal(adminPageHtml.includes("fetch('/api/subscriptions/' + id, {"), true);
+  assert.equal(adminPageHtml.includes("fetch(`/api/subscriptions/${subscriptionId}`, {"), true);
+  assert.equal(adminPageHtml.includes("fetch(`/api/subscriptions/${subscriptionId}/payments`, {"), true);
+  assert.equal(adminPageHtml.includes("fetch('/api/config', {"), true);
+});
+
+test('dashboard page localises browser-only load fallbacks via AppLocale messages', () => {
+  assert.equal(dashboardPageHtml.includes("window.AppLocale.getMessage('dashboard_load_failed'"), true);
+  assert.equal(dashboardPageHtml.includes("window.AppLocale.getMessage('dashboard_load_failed_prefix'"), true);
+});

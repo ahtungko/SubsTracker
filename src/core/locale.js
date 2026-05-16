@@ -122,7 +122,21 @@ const UI_MESSAGES = {
     config_notification_hint_title: '提示',
     config_notification_hint_body_1: '后台统一按 UTC 判断通知时段。示例：北京时间 08:00 对应 UTC 00，请在此填 00。',
     config_notification_hint_body_2: '若 Cron 已设置为每小时执行，可用该字段限制实际发送提醒的小时段。',
-    config_save: '保存设置'
+    config_save: '保存设置',
+    config_save_in_progress: '保存中...',
+    config_save_success: '配置保存成功',
+    config_save_failed_unknown: '配置保存失败：未知错误',
+    config_save_failed_retry: '保存配置失败，请稍后再试',
+    admin_test_button_missing: '未找到测试按钮，请刷新页面后重试',
+    admin_test_missing_subscription_id: '订阅 ID 缺失，无法发送测试通知',
+    admin_test_network_error: '发送测试通知时发生网络错误，请稍后重试',
+    test_notification_invalid_response: '服务返回了无法解析的响应',
+    test_notification_http_prefix: 'HTTP ',
+    config_test_gotify_server_required: '请先填写 Gotify Server URL',
+    config_test_discord_user_id_required: '请先填写 Discord 用户 ID',
+    admin_fetch_subscription_failed: '获取订阅信息失败',
+    dashboard_load_failed: '加载失败',
+    dashboard_load_failed_prefix: '加载失败:'
   },
   en: {
     app_name: 'Subscription Manager',
@@ -178,7 +192,21 @@ const UI_MESSAGES = {
     config_notification_hint_title: 'Tip',
     config_notification_hint_body_1: 'The backend always evaluates notification windows in UTC. Example: 08:00 Beijing time corresponds to UTC 00, so enter 00 here.',
     config_notification_hint_body_2: 'If Cron runs hourly, you can use this field to limit which hours actually send reminders.',
-    config_save: 'Save Settings'
+    config_save: 'Save Settings',
+    config_save_in_progress: 'Saving...',
+    config_save_success: 'Settings saved',
+    config_save_failed_unknown: 'Settings save failed: Unknown error',
+    config_save_failed_retry: 'Failed to save settings. Please try again later.',
+    admin_test_button_missing: 'Test button not found. Please refresh and try again.',
+    admin_test_missing_subscription_id: 'Subscription ID is missing, so the test notification cannot be sent.',
+    admin_test_network_error: 'A network error occurred while sending the test notification. Please try again later.',
+    test_notification_invalid_response: 'The server returned a response that could not be parsed.',
+    test_notification_http_prefix: 'HTTP ',
+    config_test_gotify_server_required: 'Please enter the Gotify Server URL first.',
+    config_test_discord_user_id_required: 'Please enter the Discord user ID first.',
+    admin_fetch_subscription_failed: 'Failed to fetch subscription information',
+    dashboard_load_failed: 'Failed to load',
+    dashboard_load_failed_prefix: 'Failed to load:'
   }
 };
 

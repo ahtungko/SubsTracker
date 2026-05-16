@@ -1,5 +1,6 @@
 import { getConfig, setConfig } from '../../data/config.js';
 import { generateRandomSecret, sanitizeNotificationHours } from '../utils.js';
+import { extractRequestLocale, getServerMessage } from '../locale.js';
 
 // 这些字段可能包含 token/密钥，绝不下发到浏览器
 const SECRET_FIELDS = [
@@ -72,6 +73,8 @@ async function handleGetConfig(env) {
 }
 
 async function handleUpdateConfig(request, env) {
+  const locale = extractRequestLocale(request);
+
   try {
     const config = await getConfig(env);
     const newConfig = await request.json();
@@ -151,7 +154,7 @@ async function handleUpdateConfig(request, env) {
   } catch (error) {
     console.error('配置保存错误:', error);
     return new Response(
-      JSON.stringify({ success: false, message: '更新配置失败: ' + error.message }),
+      JSON.stringify({ success: false, message: getServerMessage('config_update_failed_prefix', locale) + error.message }),
       { status: 400, headers: { 'Content-Type': 'application/json' } }
     );
   }

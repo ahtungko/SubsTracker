@@ -692,7 +692,11 @@
 
     async function loadConfig() {
       try {
-        const response = await fetch('/api/config');
+        const response = await fetch('/api/config', {
+          headers: {
+            ...window.AppLocale.getRequestHeaders(window.AppLocale.getPreferredLocale())
+          }
+        });
         const config = await response.json();
 
         // === 安全策略 ===
@@ -941,20 +945,23 @@
 
       const submitButton = e.target.querySelector('button[type="submit"]');
       const originalContent = submitButton.innerHTML;
-      submitButton.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>保存中...';
+      submitButton.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>' + window.AppLocale.getMessage('config_save_in_progress', window.AppLocale.getPreferredLocale());
       submitButton.disabled = true;
 
       try {
         const response = await fetch('/api/config', {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
+          headers: {
+            'Content-Type': 'application/json',
+            ...window.AppLocale.getRequestHeaders(window.AppLocale.getPreferredLocale())
+          },
           body: JSON.stringify(config)
         });
 
         const result = await response.json();
 
         if (result.success) {
-          showToast('配置保存成功', 'success');
+          showToast(window.AppLocale.getMessage('config_save_success', window.AppLocale.getPreferredLocale()), 'success');
           if (window.updateAppTheme) {    // 保存成功后立即应用主题，无需刷新
             window.updateAppTheme(config.THEME_MODE);
           }
@@ -972,11 +979,11 @@
             window.location.reload();
           }
         } else {
-          showToast('配置保存失败: ' + (result.message || '未知错误'), 'error');
+          showToast(result.message || window.AppLocale.getMessage('config_save_failed_unknown', window.AppLocale.getPreferredLocale()), 'error');
         }
       } catch (error) {
         console.error('保存配置失败:', error);
-        showToast('保存配置失败，请稍后再试', 'error');
+        showToast(window.AppLocale.getMessage('config_save_failed_retry', window.AppLocale.getPreferredLocale()), 'error');
       } finally {
         submitButton.innerHTML = originalContent;
         submitButton.disabled = false;
@@ -995,19 +1002,10 @@
                       type === 'discord' ? 'testDiscordBtn' : 'testWebhookBtn';
       const button = document.getElementById(buttonId);
       if (!button) {
-        showToast('测试按钮不存在，请刷新页面后重试', 'error');
+        showToast(window.AppLocale.getMessage('admin_test_button_missing', window.AppLocale.getPreferredLocale()), 'error');
         return;
       }
       const originalContent = button.innerHTML;
-      const serviceName = type === 'telegram' ? 'Telegram' :
-                          type === 'notifyx' ? 'NotifyX' :
-                          type === 'wechatbot' ? '企业微信机器人' :
-                          type === 'email' ? '邮件通知' :
-                          type === 'bark' ? 'Bark' :
-                          type === 'gotify' ? 'Gotify' :
-                          type === 'serverchan' ? 'Server酱' :
-                          type === 'pushplus' ? 'PushPlus' :
-                          type === 'discord' ? 'Discord 私信' : 'Webhook 通知';
 
       button.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>测试中...';
       button.disabled = true;
@@ -1051,7 +1049,7 @@
         if (token) config.GOTIFY_APP_TOKEN = token;
 
         if (!config.GOTIFY_SERVER_URL) {
-          showToast('请先填写 Gotify Server URL', 'warning');
+          showToast(window.AppLocale.getMessage('config_test_gotify_server_required', window.AppLocale.getPreferredLocale()), 'warning');
           button.innerHTML = originalContent;
           button.disabled = false;
           return;
@@ -1071,7 +1069,7 @@
         config.DISCORD_USER_ID = userId;
 
         if (!config.DISCORD_USER_ID) {
-          showToast('请先填写 Discord 用户 ID', 'warning');
+          showToast(window.AppLocale.getMessage('config_test_discord_user_id_required', window.AppLocale.getPreferredLocale()), 'warning');
           button.innerHTML = originalContent;
           button.disabled = false;
           return;
@@ -1081,7 +1079,10 @@
       try {
         const response = await fetch('/api/test-notification', {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
+          headers: {
+            'Content-Type': 'application/json',
+            ...window.AppLocale.getRequestHeaders(window.AppLocale.getPreferredLocale())
+          },
           body: JSON.stringify({ type: type, ...config })
         });
 
@@ -1089,18 +1090,23 @@
         try {
           result = await response.json();
         } catch (_) {
-          result = { success: false, message: '服务返回了无法解析的响应' };
+          result = {
+            success: false,
+            message: window.AppLocale.getMessage('test_notification_invalid_response', window.AppLocale.getPreferredLocale())
+          };
         }
 
         if (response.ok && result.success) {
-          showToast(serviceName + ' 通知测试成功！', 'success');
+          showToast(result.message, 'success');
         } else {
-          const message = (result && result.message) ? result.message : ('HTTP ' + response.status);
-          showToast(serviceName + ' 通知测试失败: ' + message, 'error', 4500);
+          const message = (result && result.message)
+            ? result.message
+            : (window.AppLocale.getMessage('test_notification_http_prefix', window.AppLocale.getPreferredLocale()) + response.status);
+          showToast(message, 'error', 4500);
         }
       } catch (error) {
         console.error('测试通知失败:', error);
-        showToast(serviceName + ' 测试失败，请检查网络后重试', 'error');
+        showToast(window.AppLocale.getMessage('admin_test_network_error', window.AppLocale.getPreferredLocale()), 'error');
       } finally {
         button.innerHTML = originalContent;
         button.disabled = false;

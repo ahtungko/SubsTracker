@@ -1,10 +1,12 @@
 import { generateJWT, verifyJWT } from '../../core/auth.js';
 import { getConfig } from '../../data/config.js';
 import { getCookieValue } from '../utils.js';
+import { extractRequestLocale, getServerMessage } from '../locale.js';
 
 async function handleLogin(request, env) {
   const config = await getConfig(env);
   const body = await request.json();
+  const locale = extractRequestLocale(request);
 
   if (body.username === config.ADMIN_USERNAME && body.password === config.ADMIN_PASSWORD) {
     const token = await generateJWT(body.username, config.JWT_SECRET);
@@ -21,7 +23,7 @@ async function handleLogin(request, env) {
   }
 
   return new Response(
-    JSON.stringify({ success: false, message: '用户名或密码错误' }),
+    JSON.stringify({ success: false, message: getServerMessage('login_invalid_credentials', locale) }),
     { headers: { 'Content-Type': 'application/json' } }
   );
 }

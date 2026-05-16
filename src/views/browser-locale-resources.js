@@ -74,6 +74,13 @@ function buildBrowserLocaleResources() {
       }
     }
 
+    function getRequestHeaders(locale) {
+      const resolvedLocale = normalizeUiLocale(locale || getPreferredLocale());
+      const headers = new window.Object();
+      headers['X-Locale'] = resolvedLocale;
+      return headers;
+    }
+
     function applyAttributeTranslations(root, selector, attributeName, datasetKey, locale) {
       const nodes = root.querySelectorAll(selector);
       nodes.forEach((node) => {
@@ -115,6 +122,7 @@ function buildBrowserLocaleResources() {
       getTimezoneDisplayName,
       formatTimezoneDisplay,
       getMessage,
+      getRequestHeaders,
       applyTranslations,
       applyDocumentMetadata
     });

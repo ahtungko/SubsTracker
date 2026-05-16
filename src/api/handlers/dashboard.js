@@ -1,8 +1,13 @@
 import { getAllSubscriptions } from '../../data/subscriptions.js';
 import { getDynamicRates, calculateMonthlyExpense, calculateYearlyExpense, getRecentPayments, getUpcomingRenewals, getExpenseByType, getExpenseByCategory } from '../../core/currency.js';
 import { getCurrentTimeInTimezone, MS_PER_DAY } from '../../core/time.js';
+import { extractRequestLocale, getServerMessage } from '../locale.js';
 
-async function handleDashboardStats(env, config) {
+async function handleDashboardStats(requestOrEnv, envOrConfig, maybeConfig) {
+  const request = maybeConfig === undefined ? null : requestOrEnv;
+  const env = maybeConfig === undefined ? requestOrEnv : envOrConfig;
+  const config = maybeConfig === undefined ? envOrConfig : maybeConfig;
+  const locale = request ? extractRequestLocale(request) : 'en';
   try {
     const subscriptions = await getAllSubscriptions(env);
     const timezone = 'UTC';
@@ -58,7 +63,7 @@ async function handleDashboardStats(env, config) {
   } catch (error) {
     console.error('获取仪表盘统计失败:', error);
     return new Response(
-      JSON.stringify({ success: false, message: '获取统计数据失败: ' + error.message }),
+      JSON.stringify({ success: false, message: getServerMessage('dashboard_fetch_failed_prefix', locale) + error.message }),
       { status: 500, headers: { 'Content-Type': 'application/json' } }
     );
   }

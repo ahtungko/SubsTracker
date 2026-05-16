@@ -259,9 +259,9 @@
 
     async function loadDashboardData(){
       try {
-        const r=await fetch('/api/dashboard/stats');
+        const r=await fetch('/api/dashboard/stats',{headers:{...window.AppLocale.getRequestHeaders(window.AppLocale.getPreferredLocale())}});
         const d=await r.json();
-        if(!d.success) throw new Error(d.message||'加载失败');
+        if(!d.success) throw new Error(d.message||window.AppLocale.getMessage('dashboard_load_failed', window.AppLocale.getPreferredLocale()));
         
         const data=d.data;
 
@@ -412,7 +412,7 @@
         `).join('');
       } catch(e){
         console.error('加载仪表盘数据失败:',e);
-        document.getElementById('statsGrid').innerHTML='<div class="empty-state"><div class="empty-state-icon">❌</div><div class="empty-state-text">加载失败:'+e.message+'</div></div>';
+        document.getElementById('statsGrid').innerHTML='<div class="empty-state"><div class="empty-state-icon">?</div><div class="empty-state-text">'+window.AppLocale.getMessage('dashboard_load_failed_prefix', window.AppLocale.getPreferredLocale())+e.message+'</div></div>';
       }
     }
     

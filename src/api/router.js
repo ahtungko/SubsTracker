@@ -5,11 +5,13 @@ import { handleThirdPartyNotify } from './handlers/notify.js';
 import { handleSubscriptions } from './handlers/subscriptions.js';
 import { getConfig } from '../data/config.js';
 import { handleTestNotification } from './handlers/test-notification.js';
+import { extractRequestLocale, getServerMessage } from './locale.js';
 
 async function handleApiRequest(request, env) {
   const url = new URL(request.url);
   const path = url.pathname.slice(4);
   const method = request.method;
+  const locale = extractRequestLocale(request);
 
   const config = await getConfig(env);
 
@@ -24,7 +26,7 @@ async function handleApiRequest(request, env) {
   const { user } = await getUserFromRequest(request, env);
   if (!user && path !== '/login') {
     return new Response(
-      JSON.stringify({ success: false, message: '未授权访问' }),
+      JSON.stringify({ success: false, message: getServerMessage('api_unauthorized', locale) }),
       { status: 401, headers: { 'Content-Type': 'application/json' } }
     );
   }
@@ -35,7 +37,7 @@ async function handleApiRequest(request, env) {
   }
 
   if (path === '/dashboard/stats' && method === 'GET') {
-    return handleDashboardStats(env, config);
+    return handleDashboardStats(request, env, config);
   }
 
   if (path === '/test-notification' && method === 'POST') {
@@ -49,7 +51,7 @@ async function handleApiRequest(request, env) {
   if (thirdPartyResponse) return thirdPartyResponse;
 
   return new Response(
-    JSON.stringify({ success: false, message: '未找到请求的资源' }),
+    JSON.stringify({ success: false, message: getServerMessage('api_not_found', locale) }),
     { status: 404, headers: { 'Content-Type': 'application/json' } }
   );
 }

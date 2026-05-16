@@ -10,8 +10,20 @@ import { sendGotifyNotification } from '../../services/notify/gotify.js';
 import { sendServerChanNotification } from '../../services/notify/serverchan.js';
 import { sendPushPlusNotification } from '../../services/notify/pushplus.js';
 import { sendDiscordNotification } from '../../services/notify/discord.js';
+import { extractRequestLocale, getServerMessage } from '../locale.js';
+
+function getTestNotificationResultMessage(type, locale, success) {
+  const service = getServerMessage(`test_notification_service_${type}`, locale);
+  return getServerMessage(
+    success ? 'test_notification_success_template' : 'test_notification_failure_template',
+    locale,
+    { service }
+  );
+}
 
 async function handleTestNotification(request, env) {
+  const locale = extractRequestLocale(request);
+
   try {
     const config = await getConfig(env);
     const body = await request.json();
@@ -24,14 +36,14 @@ async function handleTestNotification(request, env) {
 
     if (!type) {
       return new Response(
-        JSON.stringify({ success: false, message: '缺少测试类型参数 type' }),
+        JSON.stringify({ success: false, message: getServerMessage('test_notification_missing_type', locale) }),
         { status: 400, headers: { 'Content-Type': 'application/json' } }
       );
     }
 
     if (!supportedTypes.includes(type)) {
       return new Response(
-        JSON.stringify({ success: false, message: '不支持的测试类型: ' + type }),
+        JSON.stringify({ success: false, message: getServerMessage('test_notification_unsupported_type_prefix', locale) + type }),
         { status: 400, headers: { 'Content-Type': 'application/json' } }
       );
     }
@@ -45,7 +57,7 @@ async function handleTestNotification(request, env) {
 
       const content = '*测试通知*\n\n这是一条测试通知，用于验证Telegram通知功能是否正常工作。\n\n发送时间: ' + sentAt;
       success = await sendTelegramNotification(content, testConfig);
-      message = success ? 'Telegram通知发送成功' : 'Telegram通知发送失败，请检查配置';
+      message = getTestNotificationResultMessage(type, locale, success);
     } else if (type === 'notifyx') {
       const testConfig = {
         ...config,
@@ -59,7 +71,7 @@ async function handleTestNotification(request, env) {
       const description = '测试NotifyX通知功能';
 
       success = await sendNotifyXNotification(title, content, description, testConfig);
-      message = success ? 'NotifyX通知发送成功' : 'NotifyX通知发送失败，请检查配置';
+      message = getTestNotificationResultMessage(type, locale, success);
     } else if (type === 'webhook') {
       const testConfig = {
         ...config,
@@ -77,7 +89,7 @@ async function handleTestNotification(request, env) {
       const content = '这是一条测试通知，用于验证Webhook 通知功能是否正常工作。\n\n发送时间: ' + sentAt;
 
       success = await sendWebhookNotification(title, content, testConfig);
-      message = success ? 'Webhook 通知发送成功' : 'Webhook 通知发送失败，请检查配置';
+      message = getTestNotificationResultMessage(type, locale, success);
     } else if (type === 'wechatbot') {
       const testConfig = {
         ...config,
@@ -93,7 +105,7 @@ async function handleTestNotification(request, env) {
       const content = '这是一条测试通知，用于验证企业微信机器人功能是否正常工作。\n\n发送时间: ' + sentAt;
 
       success = await sendWechatBotNotification(title, content, testConfig);
-      message = success ? '企业微信机器人通知发送成功' : '企业微信机器人通知发送失败，请检查配置';
+      message = getTestNotificationResultMessage(type, locale, success);
     } else if (type === 'email') {
       const testConfig = {
         ...config,
@@ -109,7 +121,7 @@ async function handleTestNotification(request, env) {
       const content = '这是一条测试通知，用于验证邮件通知功能是否正常工作。\n\n发送时间: ' + sentAt;
 
       success = await sendEmailNotification(title, content, testConfig);
-      message = success ? '邮件通知发送成功' : '邮件通知发送失败，请检查配置';
+      message = getTestNotificationResultMessage(type, locale, success);
     } else if (type === 'bark') {
       const testConfig = {
         ...config,
@@ -124,7 +136,7 @@ async function handleTestNotification(request, env) {
       const content = '这是一条测试通知，用于验证Bark通知功能是否正常工作。\n\n发送时间: ' + sentAt;
 
       success = await sendBarkNotification(title, content, testConfig);
-      message = success ? 'Bark通知发送成功' : 'Bark通知发送失败，请检查配置';
+      message = getTestNotificationResultMessage(type, locale, success);
     } else if (type === 'gotify') {
       const testConfig = {
         ...config,
@@ -138,7 +150,7 @@ async function handleTestNotification(request, env) {
       const content = '这是一条测试通知，用于验证Gotify通知功能是否正常工作。\n\n发送时间: ' + sentAt;
 
       success = await sendGotifyNotification(title, content, testConfig);
-      message = success ? 'Gotify通知发送成功' : 'Gotify通知发送失败，请检查配置';
+      message = getTestNotificationResultMessage(type, locale, success);
     } else if (type === 'serverchan') {
       const testConfig = {
         ...config,
@@ -151,7 +163,7 @@ async function handleTestNotification(request, env) {
       const content = '这是一条测试通知，用于验证Server酱通知功能是否正常工作。\n\n发送时间: ' + sentAt;
 
       success = await sendServerChanNotification(title, content, testConfig);
-      message = success ? 'Server酱通知发送成功' : 'Server酱通知发送失败，请检查配置';
+      message = getTestNotificationResultMessage(type, locale, success);
     } else if (type === 'pushplus') {
       const testConfig = {
         ...config,
@@ -166,7 +178,7 @@ async function handleTestNotification(request, env) {
       const content = '这是一条测试通知，用于验证PushPlus通知功能是否正常工作。\n\n发送时间: ' + sentAt;
 
       success = await sendPushPlusNotification(title, content, testConfig);
-      message = success ? 'PushPlus通知发送成功' : 'PushPlus通知发送失败，请检查配置';
+      message = getTestNotificationResultMessage(type, locale, success);
     } else if (type === 'discord') {
       const testConfig = {
         ...config,
@@ -181,7 +193,7 @@ async function handleTestNotification(request, env) {
       const content = '这是一条测试通知，用于验证 Discord Bot 私信功能是否正常工作。\n\n发送时间: ' + sentAt;
 
       success = await sendDiscordNotification('Discord 私信测试通知', content, testConfig);
-      message = success ? 'Discord 私信发送成功' : 'Discord 私信发送失败，请检查配置和服务器设置';
+      message = getTestNotificationResultMessage(type, locale, success);
     }
 
     return new Response(
@@ -191,7 +203,7 @@ async function handleTestNotification(request, env) {
   } catch (error) {
     console.error('测试通知失败:', error);
     return new Response(
-      JSON.stringify({ success: false, message: '测试通知失败: ' + error.message }),
+      JSON.stringify({ success: false, message: getServerMessage('test_notification_failed_prefix', locale) + error.message }),
       { status: 500, headers: { 'Content-Type': 'application/json' } }
     );
   }

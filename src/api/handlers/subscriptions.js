@@ -14,12 +14,21 @@ import { sendNotificationToAllChannels } from '../../services/notify/index.js';
 import { lunarCalendar } from '../../core/lunar.js';
 import { formatTimeInTimezone, formatTimezoneDisplay } from '../../core/time.js';
 import { extractTagsFromSubscriptions } from '../utils.js';
+import { extractRequestLocale, getServerMessage } from '../locale.js';
 
-async function testSingleSubscriptionNotification(id, env) {
+function formatLocalizedServerMessage(key, locale, replacements = {}) {
+  let message = getServerMessage(key, locale);
+  for (const [name, value] of Object.entries(replacements)) {
+    message = message.replaceAll(`{${name}}`, String(value));
+  }
+  return message;
+}
+
+async function testSingleSubscriptionNotification(id, env, locale) {
   try {
     const subscription = await getSubscription(id, env);
     if (!subscription) {
-      return { success: false, message: '未找到该订阅' };
+      return { success: false, message: getServerMessage('subscription_not_found', locale) };
     }
     const config = await getConfig(env);
 
@@ -70,26 +79,27 @@ async function testSingleSubscriptionNotification(id, env) {
     const failedCount = notifyResult?.failedCount || 0;
 
     if (attempted === 0) {
-      return { success: false, message: '未启用任何通知渠道，请先在系统配置中开启至少一种通知方式' };
+      return { success: false, message: getServerMessage('subscription_test_no_channels', locale) };
     }
 
     if (successCount === 0) {
-      return { success: false, message: `测试通知发送失败（已尝试 ${attempted} 个渠道）` };
+      return { success: false, message: formatLocalizedServerMessage('subscription_test_failed_attempted', locale, { attempted }) };
     }
 
     if (failedCount > 0) {
-      return { success: true, message: `测试通知已发送：成功 ${successCount} 个，失败 ${failedCount} 个渠道` };
+      return { success: true, message: formatLocalizedServerMessage('subscription_test_partial_success', locale, { successCount, failedCount }) };
     }
 
-    return { success: true, message: `测试通知发送成功（共 ${successCount} 个渠道）` };
+    return { success: true, message: formatLocalizedServerMessage('subscription_test_full_success', locale, { successCount }) };
   } catch (error) {
     console.error('[手动测试] 发送失败:', error);
-    return { success: false, message: '发送时发生错误: ' + error.message };
+    return { success: false, message: getServerMessage('subscription_test_send_error_prefix', locale) + error.message };
   }
 }
 
 async function handleSubscriptions(request, env, path) {
   const method = request.method;
+  const locale = extractRequestLocale(request);
 
   if (path === '/subscriptions') {
     if (method === 'GET') {
@@ -121,7 +131,7 @@ async function handleSubscriptions(request, env, path) {
     }
 
     if (parts[3] === 'test-notify' && method === 'POST') {
-      const result = await testSingleSubscriptionNotification(id, env);
+      const result = await testSingleSubscriptionNotification(id, env, locale);
       return new Response(JSON.stringify(result), { status: result.success ? 200 : 400, headers: { 'Content-Type': 'application/json' } });
     }
 
@@ -140,7 +150,7 @@ async function handleSubscriptions(request, env, path) {
     if (parts[3] === 'payments' && method === 'GET') {
       const subscription = await getSubscription(id, env);
       if (!subscription) {
-        return new Response(JSON.stringify({ success: false, message: '订阅不存在' }), { status: 404, headers: { 'Content-Type': 'application/json' } });
+        return new Response(JSON.stringify({ success: false, message: getServerMessage('subscription_not_found', locale) }), { status: 404, headers: { 'Content-Type': 'application/json' } });
       }
       return new Response(JSON.stringify({ success: true, payments: subscription.paymentHistory || [] }), { headers: { 'Content-Type': 'application/json' } });
     }

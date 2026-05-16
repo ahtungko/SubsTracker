@@ -1624,7 +1624,11 @@ const lunarBiz = {
           tbody.innerHTML = '<tr><td colspan="6" class="text-center py-4"><i class="fas fa-spinner fa-spin mr-2"></i>加载中...</td></tr>';
         }
 
-        const response = await fetch('/api/subscriptions');
+        const response = await fetch('/api/subscriptions', {
+          headers: {
+            ...window.AppLocale.getRequestHeaders(window.AppLocale.getPreferredLocale())
+          }
+        });
         const data = await response.json();
 
         subscriptionsCache = Array.isArray(data) ? data : [];
@@ -1643,13 +1647,13 @@ const lunarBiz = {
     async function testSubscriptionNotification(e) {
         const button = e.target.closest('button');
         if (!button) {
-          showToast('未找到测试按钮，请刷新页面后重试', 'error');
+          showToast(window.AppLocale.getMessage('admin_test_button_missing', window.AppLocale.getPreferredLocale()), 'error');
           return;
         }
 
         const id = button.dataset.id;
         if (!id) {
-          showToast('订阅 ID 缺失，无法发送测试通知', 'error');
+          showToast(window.AppLocale.getMessage('admin_test_missing_subscription_id', window.AppLocale.getPreferredLocale()), 'error');
           return;
         }
 
@@ -1658,23 +1662,33 @@ const lunarBiz = {
         button.disabled = true;
 
         try {
-            const response = await fetch('/api/subscriptions/' + id + '/test-notify', { method: 'POST' });
+            const response = await fetch('/api/subscriptions/' + id + '/test-notify', {
+              method: 'POST',
+              headers: {
+                ...window.AppLocale.getRequestHeaders(window.AppLocale.getPreferredLocale())
+              }
+            });
             let result = null;
             try {
               result = await response.json();
             } catch (_) {
-              result = { success: false, message: '服务返回了无法解析的响应' };
+              result = {
+                success: false,
+                message: window.AppLocale.getMessage('test_notification_invalid_response', window.AppLocale.getPreferredLocale())
+              };
             }
 
             if (response.ok && result.success) {
-                showToast(result.message || '测试通知发送成功', 'success');
+                showToast(result.message, 'success');
             } else {
-                const errorMessage = (result && result.message) ? result.message : ('HTTP ' + response.status);
-                showToast('测试通知发送失败: ' + errorMessage, 'error', 4500);
+                const errorMessage = (result && result.message)
+                  ? result.message
+                  : (window.AppLocale.getMessage('test_notification_http_prefix', window.AppLocale.getPreferredLocale()) + response.status);
+                showToast(errorMessage, 'error', 4500);
             }
         } catch (error) {
             console.error('测试通知失败:', error);
-            showToast('发送测试通知时发生网络错误，请稍后重试', 'error');
+            showToast(window.AppLocale.getMessage('admin_test_network_error', window.AppLocale.getPreferredLocale()), 'error');
         } finally {
             button.innerHTML = originalContent;
             button.disabled = false;
@@ -1686,12 +1700,16 @@ const lunarBiz = {
         const id = button.dataset.id;
 
         try {
-            const response = await fetch('/api/subscriptions/' + id);
+            const response = await fetch('/api/subscriptions/' + id, {
+                headers: {
+                    ...window.AppLocale.getRequestHeaders(window.AppLocale.getPreferredLocale())
+                }
+            });
             const subscription = await response.json();
             showRenewFormModal(subscription);
         } catch (error) {
             console.error('获取订阅信息失败:', error);
-            showToast('获取订阅信息时发生错误', 'error');
+            showToast(window.AppLocale.getMessage('admin_fetch_subscription_failed', window.AppLocale.getPreferredLocale()), 'error');
         }
     }
 
@@ -1907,7 +1925,10 @@ const lunarBiz = {
         try {
             const response = await fetch('/api/subscriptions/' + subscriptionId + '/renew', {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
+                headers: {
+                    'Content-Type': 'application/json',
+                    ...window.AppLocale.getRequestHeaders(window.AppLocale.getPreferredLocale())
+                },
                 body: JSON.stringify(options)
             });
             const result = await response.json();
@@ -1944,7 +1965,11 @@ const lunarBiz = {
         const id = button.dataset.id;
 
         try {
-            const response = await fetch('/api/subscriptions/' + id + '/payments');
+            const response = await fetch('/api/subscriptions/' + id + '/payments', {
+                headers: {
+                    ...window.AppLocale.getRequestHeaders(window.AppLocale.getPreferredLocale())
+                }
+            });
             const result = await response.json();
 
             if (!result.success) {
@@ -1953,7 +1978,11 @@ const lunarBiz = {
             }
 
             const payments = result.payments || [];
-            const subscriptionResponse = await fetch('/api/subscriptions/' + id);
+            const subscriptionResponse = await fetch('/api/subscriptions/' + id, {
+                headers: {
+                    ...window.AppLocale.getRequestHeaders(window.AppLocale.getPreferredLocale())
+                }
+            });
             const subscriptionData = await subscriptionResponse.json();
             const subscription = subscriptionData;
 
@@ -2089,7 +2118,10 @@ const lunarBiz = {
 
         try {
             const response = await fetch(`/api/subscriptions/${subscriptionId}/payments/${paymentId}`, {
-                method: 'DELETE'
+                method: 'DELETE',
+                headers: {
+                    ...window.AppLocale.getRequestHeaders(window.AppLocale.getPreferredLocale())
+                }
             });
             const result = await response.json();
 
@@ -2111,11 +2143,19 @@ const lunarBiz = {
     window.editPaymentRecord = async function(subscriptionId, paymentId) {
         try {
             // 获取订阅信息
-            const subResponse = await fetch(`/api/subscriptions/${subscriptionId}`);
+            const subResponse = await fetch(`/api/subscriptions/${subscriptionId}`, {
+                headers: {
+                    ...window.AppLocale.getRequestHeaders(window.AppLocale.getPreferredLocale())
+                }
+            });
             const subscription = await subResponse.json();
 
             // 获取支付历史
-            const payResponse = await fetch(`/api/subscriptions/${subscriptionId}/payments`);
+            const payResponse = await fetch(`/api/subscriptions/${subscriptionId}/payments`, {
+                headers: {
+                    ...window.AppLocale.getRequestHeaders(window.AppLocale.getPreferredLocale())
+                }
+            });
             const payResult = await payResponse.json();
 
             const payment = payResult.payments.find(p => p.id === paymentId);
@@ -2220,7 +2260,10 @@ const lunarBiz = {
         try {
             const response = await fetch(`/api/subscriptions/${subscriptionId}/payments/${paymentId}`, {
                 method: 'PUT',
-                headers: { 'Content-Type': 'application/json' },
+                headers: {
+                    'Content-Type': 'application/json',
+                    ...window.AppLocale.getRequestHeaders(window.AppLocale.getPreferredLocale())
+                },
                 body: JSON.stringify(paymentData)
             });
             const result = await response.json();
@@ -2266,7 +2309,10 @@ const lunarBiz = {
       try {
         const response = await fetch('/api/subscriptions/' + id + '/toggle-status', {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
+          headers: {
+            'Content-Type': 'application/json',
+            ...window.AppLocale.getRequestHeaders(window.AppLocale.getPreferredLocale())
+          },
           body: JSON.stringify({ isActive: isActivate })
         });
         
@@ -3045,7 +3091,10 @@ const lunarBiz = {
         
         const response = await fetch(url, {
           method: method,
-          headers: { 'Content-Type': 'application/json' },
+          headers: {
+            'Content-Type': 'application/json',
+            ...window.AppLocale.getRequestHeaders(window.AppLocale.getPreferredLocale())
+          },
           body: JSON.stringify(subscription)
         });
         
@@ -3073,7 +3122,11 @@ const lunarBiz = {
       const id = e.target.dataset.id || e.target.parentElement.dataset.id;
       
       try {
-        const response = await fetch('/api/subscriptions/' + id);
+        const response = await fetch('/api/subscriptions/' + id, {
+          headers: {
+            ...window.AppLocale.getRequestHeaders(window.AppLocale.getPreferredLocale())
+          }
+        });
         const subscription = await response.json();
         
         if (subscription) {
@@ -3141,7 +3194,7 @@ const lunarBiz = {
         }
       } catch (error) {
         console.error('获取订阅信息失败:', error);
-        showToast('获取订阅信息失败', 'error');
+        showToast(window.AppLocale.getMessage('admin_fetch_subscription_failed', window.AppLocale.getPreferredLocale()), 'error');
         isEditingLoading = false; // 异常时也要释放锁
       }
     }
@@ -3160,7 +3213,10 @@ const lunarBiz = {
       
       try {
         const response = await fetch('/api/subscriptions/' + id, {
-          method: 'DELETE'
+          method: 'DELETE',
+          headers: {
+            ...window.AppLocale.getRequestHeaders(window.AppLocale.getPreferredLocale())
+          }
         });
         
         if (response.ok) {
@@ -3209,7 +3265,11 @@ const lunarBiz = {
     // 实时显示系统时间和时区（前端统一本地时区显示）
     async function showSystemTime() {
       try {
-        const response = await fetch('/api/config');
+        const response = await fetch('/api/config', {
+          headers: {
+            ...window.AppLocale.getRequestHeaders(window.AppLocale.getPreferredLocale())
+          }
+        });
         const config = await response.json();
         window.DEBUG_LOGS = config.DEBUG_LOGS === true;
 

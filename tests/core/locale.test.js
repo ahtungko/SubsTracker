@@ -117,3 +117,29 @@ test('getMessage falls back to English for unsupported login locales', () => {
 test('getMessage falls back to the key when no translation exists', () => {
   assert.equal(getMessage('missing_message_key', 'zh-CN'), 'missing_message_key');
 });
+
+
+test('getMessage returns localized admin and dashboard runtime error strings', () => {
+  assert.equal(getMessage('admin_test_button_missing', 'zh-CN'), '\u672a\u627e\u5230\u6d4b\u8bd5\u6309\u94ae\uff0c\u8bf7\u5237\u65b0\u9875\u9762\u540e\u91cd\u8bd5');
+  assert.equal(getMessage('admin_test_button_missing', 'en-US'), 'Test button not found. Please refresh and try again.');
+  assert.equal(getMessage('admin_test_missing_subscription_id', 'zh-CN'), '\u8ba2\u9605 ID \u7f3a\u5931\uff0c\u65e0\u6cd5\u53d1\u9001\u6d4b\u8bd5\u901a\u77e5');
+  assert.equal(getMessage('admin_test_network_error', 'en-US'), 'A network error occurred while sending the test notification. Please try again later.');
+  assert.equal(getMessage('test_notification_invalid_response', 'zh-CN'), '\u670d\u52a1\u8fd4\u56de\u4e86\u65e0\u6cd5\u89e3\u6790\u7684\u54cd\u5e94');
+  assert.equal(getMessage('test_notification_http_prefix', 'en-US'), 'HTTP ');
+  assert.equal(getMessage('config_test_gotify_server_required', 'en-US'), 'Please enter the Gotify Server URL first.');
+  assert.equal(getMessage('config_test_discord_user_id_required', 'zh-CN'), '\u8bf7\u5148\u586b\u5199 Discord \u7528\u6237 ID');
+  assert.equal(getMessage('admin_fetch_subscription_failed', 'zh-CN'), '\u83b7\u53d6\u8ba2\u9605\u4fe1\u606f\u5931\u8d25');
+  assert.equal(getMessage('dashboard_load_failed', 'zh-CN'), '\u52a0\u8f7d\u5931\u8d25');
+  assert.equal(getMessage('dashboard_load_failed_prefix', 'en-US'), 'Failed to load:');
+});
+
+test('getMessage returns localized config save runtime strings', () => {
+  assert.equal(getMessage('config_save_in_progress', 'zh-CN'), '\u4fdd\u5b58\u4e2d...');
+  assert.equal(getMessage('config_save_in_progress', 'en-US'), 'Saving...');
+  assert.equal(getMessage('config_save_success', 'zh-CN'), '\u914d\u7f6e\u4fdd\u5b58\u6210\u529f');
+  assert.equal(getMessage('config_save_success', 'en-US'), 'Settings saved');
+  assert.equal(getMessage('config_save_failed_unknown', 'zh-CN'), '\u914d\u7f6e\u4fdd\u5b58\u5931\u8d25\uff1a\u672a\u77e5\u9519\u8bef');
+  assert.equal(getMessage('config_save_failed_unknown', 'en-US'), 'Settings save failed: Unknown error');
+  assert.equal(getMessage('config_save_failed_retry', 'zh-CN'), '\u4fdd\u5b58\u914d\u7f6e\u5931\u8d25\uff0c\u8bf7\u7a0d\u540e\u518d\u8bd5');
+  assert.equal(getMessage('config_save_failed_retry', 'en-US'), 'Failed to save settings. Please try again later.');
+});
