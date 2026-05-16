@@ -2,8 +2,10 @@ import {
   DEFAULT_UI_LOCALE,
   SUPPORTED_TIMEZONE_IDS,
   TIMEZONE_LABELS,
+  UI_MESSAGES,
   normalizeUiLocale,
-  getTimezoneDisplayName
+  getTimezoneDisplayName,
+  getMessage
 } from '../core/locale.js';
 
 function buildBrowserLocaleResources() {
@@ -12,8 +14,10 @@ function buildBrowserLocaleResources() {
     const DEFAULT_UI_LOCALE = ${JSON.stringify(DEFAULT_UI_LOCALE)};
     const SUPPORTED_TIMEZONE_IDS = ${JSON.stringify(SUPPORTED_TIMEZONE_IDS)};
     const TIMEZONE_LABELS = ${JSON.stringify(TIMEZONE_LABELS)};
+    const UI_MESSAGES = ${JSON.stringify(UI_MESSAGES)};
     const normalizeUiLocale = ${normalizeUiLocale.toString()};
     const getTimezoneDisplayName = ${getTimezoneDisplayName.toString()};
+    const getMessage = ${getMessage.toString()};
 
     function getPreferredLocale() {
       const preferredLocale = Array.isArray(navigator.languages) && navigator.languages.length > 0
@@ -70,13 +74,49 @@ function buildBrowserLocaleResources() {
       }
     }
 
+    function applyAttributeTranslations(root, selector, attributeName, datasetKey, locale) {
+      const nodes = root.querySelectorAll(selector);
+      nodes.forEach((node) => {
+        const key = node.getAttribute(datasetKey);
+        if (!key) return;
+        node.setAttribute(attributeName, getMessage(key, locale));
+      });
+    }
+
+    function applyTranslations(root = document, locale) {
+      const resolvedLocale = normalizeUiLocale(locale || getPreferredLocale());
+      const nodes = root.querySelectorAll('[data-i18n]');
+
+      nodes.forEach((node) => {
+        const key = node.getAttribute('data-i18n') || node.dataset?.i18n;
+        if (!key) return;
+        node.textContent = getMessage(key, resolvedLocale);
+      });
+
+      applyAttributeTranslations(root, '[data-i18n-aria-label]', 'aria-label', 'data-i18n-aria-label', resolvedLocale);
+      applyAttributeTranslations(root, '[data-i18n-title]', 'title', 'data-i18n-title', resolvedLocale);
+    }
+
+    function applyDocumentMetadata({ titleKey } = {}, root = document, locale) {
+      const resolvedLocale = normalizeUiLocale(locale || getPreferredLocale());
+      if (titleKey) {
+        root.title = getMessage(titleKey, resolvedLocale);
+      }
+      if (root.documentElement) {
+        root.documentElement.lang = resolvedLocale === 'zh' ? 'zh-CN' : 'en';
+      }
+    }
+
     window.AppLocale = Object.freeze({
       DEFAULT_UI_LOCALE,
       SUPPORTED_TIMEZONE_IDS,
       normalizeUiLocale,
       getPreferredLocale,
       getTimezoneDisplayName,
-      formatTimezoneDisplay
+      formatTimezoneDisplay,
+      getMessage,
+      applyTranslations,
+      applyDocumentMetadata
     });
   })();
 </script>`;

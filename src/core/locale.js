@@ -67,6 +67,121 @@ const TIMEZONE_LABELS = {
   }
 };
 
+const UI_MESSAGES = {
+  zh: {
+    app_name: '订阅管理系统',
+    page_title_dashboard: '仪表盘 - SubsTracker',
+    page_title_admin: '订阅管理系统',
+    page_title_config: '系统配置 - 订阅管理系统',
+    page_title_login: '登录 - 订阅管理系统',
+    login_heading: '订阅管理系统',
+    login_subtitle: '登录管理您的订阅提醒',
+    login_label_username: '用户名',
+    login_label_password: '密码',
+    login_submit: '登录',
+    login_submitting: '登录中...',
+    login_error_invalid_credentials: '用户名或密码错误',
+    login_error_generic: '发生错误，请稍后再试',
+    aria_toggle_navigation_menu: '切换导航菜单',
+    nav_dashboard: '仪表盘',
+    nav_subscriptions: '订阅列表',
+    nav_settings: '系统配置',
+    nav_logout: '退出登录',
+    dashboard_page_heading: '📊 仪表板',
+    dashboard_page_subtitle: '订阅费用和活动概览（统计金额已折合为 MYR）',
+    dashboard_section_scheduler_status: '自动提醒任务状态',
+    dashboard_badge_cron_observability: 'Cron 可观测性',
+    dashboard_section_recent_payments: '最近支付',
+    dashboard_badge_last_7_days: '过去7天',
+    dashboard_section_upcoming_renewals: '即将续费',
+    dashboard_badge_next_7_days: '未来7天',
+    dashboard_section_scheduler_history: '自动提醒任务历史（最近10次）',
+    dashboard_section_expense_by_type: '按类型支出排行',
+    dashboard_badge_yearly_summary_myr: '年度统计 (折合MYR)',
+    dashboard_section_expense_by_category: '按分类支出统计',
+    admin_page_heading: '订阅列表',
+    admin_page_subtitle: '使用搜索与分类快速定位订阅，开启农历显示可同时查看农历日期',
+    admin_add_subscription: '添加新订阅',
+    config_page_heading: '系统配置',
+    config_section_admin_account: '管理员账户',
+    config_label_admin_username: '用户名',
+    config_label_admin_password: '密码',
+    config_section_display_settings: '显示设置',
+    config_label_theme_mode: '主题模式',
+    config_theme_light: '🌞 浅色模式',
+    config_theme_dark: '🌙 暗黑模式',
+    config_theme_system: '🖥️ 跟随系统',
+    config_show_lunar: '在通知中显示农历日期',
+    config_show_lunar_help: '控制是否在通知消息中包含农历日期信息',
+    config_section_timezone_settings: '时区设置',
+    config_label_timezone: '时区选择',
+    config_timezone_help: '该项仅用于兼容旧配置与展示参考；后端调度与提醒计算统一使用 UTC，页面时间始终按当前设备时区显示。',
+    config_section_notification_settings: '通知设置',
+    config_label_notification_hours: '通知时段（UTC）',
+    config_notification_hours_help: '可输入多个小时，使用逗号或空格分隔；留空则默认每天执行一次任务即可',
+    config_notification_hint_title: '提示',
+    config_notification_hint_body_1: '后台统一按 UTC 判断通知时段。示例：北京时间 08:00 对应 UTC 00，请在此填 00。',
+    config_notification_hint_body_2: '若 Cron 已设置为每小时执行，可用该字段限制实际发送提醒的小时段。',
+    config_save: '保存设置'
+  },
+  en: {
+    app_name: 'Subscription Manager',
+    page_title_dashboard: 'Dashboard - SubsTracker',
+    page_title_admin: 'Subscription Manager',
+    page_title_config: 'Settings - Subscription Manager',
+    page_title_login: 'Login - Subscription Manager',
+    login_heading: 'Subscription Manager',
+    login_subtitle: 'Sign in to manage your subscription reminders',
+    login_label_username: 'Username',
+    login_label_password: 'Password',
+    login_submit: 'Sign In',
+    login_submitting: 'Signing in...',
+    login_error_invalid_credentials: 'Incorrect username or password',
+    login_error_generic: 'Something went wrong. Please try again later',
+    aria_toggle_navigation_menu: 'Toggle navigation menu',
+    nav_dashboard: 'Dashboard',
+    nav_subscriptions: 'Subscriptions',
+    nav_settings: 'Settings',
+    nav_logout: 'Log Out',
+    dashboard_page_heading: '📊 Dashboard',
+    dashboard_page_subtitle: 'Subscription costs and activity overview (all totals converted to MYR)',
+    dashboard_section_scheduler_status: 'Reminder Job Status',
+    dashboard_badge_cron_observability: 'Cron Observability',
+    dashboard_section_recent_payments: 'Recent Payments',
+    dashboard_badge_last_7_days: 'Last 7 Days',
+    dashboard_section_upcoming_renewals: 'Upcoming Renewals',
+    dashboard_badge_next_7_days: 'Next 7 Days',
+    dashboard_section_scheduler_history: 'Reminder Job History (Last 10 Runs)',
+    dashboard_section_expense_by_type: 'Spending by Type',
+    dashboard_badge_yearly_summary_myr: 'Yearly Summary (MYR)',
+    dashboard_section_expense_by_category: 'Spending by Category',
+    admin_page_heading: 'Subscriptions',
+    admin_page_subtitle: 'Use search and categories to find subscriptions quickly, and enable lunar display to see lunar dates too',
+    admin_add_subscription: 'Add Subscription',
+    config_page_heading: 'Settings',
+    config_section_admin_account: 'Admin Account',
+    config_label_admin_username: 'Username',
+    config_label_admin_password: 'Password',
+    config_section_display_settings: 'Display Settings',
+    config_label_theme_mode: 'Theme Mode',
+    config_theme_light: '🌞 Light Mode',
+    config_theme_dark: '🌙 Dark Mode',
+    config_theme_system: '🖥️ Follow System',
+    config_show_lunar: 'Show lunar dates in notifications',
+    config_show_lunar_help: 'Controls whether lunar-date information is included in notification messages',
+    config_section_timezone_settings: 'Timezone Settings',
+    config_label_timezone: 'Timezone',
+    config_timezone_help: 'This field is only kept for legacy compatibility and display reference; backend scheduling and reminder calculations use UTC, while page time always follows the current device timezone.',
+    config_section_notification_settings: 'Notification Settings',
+    config_label_notification_hours: 'Notification Hours (UTC)',
+    config_notification_hours_help: 'Enter one or more hours separated by commas or spaces; leave blank to keep the default once-per-day job behavior',
+    config_notification_hint_title: 'Tip',
+    config_notification_hint_body_1: 'The backend always evaluates notification windows in UTC. Example: 08:00 Beijing time corresponds to UTC 00, so enter 00 here.',
+    config_notification_hint_body_2: 'If Cron runs hourly, you can use this field to limit which hours actually send reminders.',
+    config_save: 'Save Settings'
+  }
+};
+
 function normalizeUiLocale(rawLocale) {
   if (typeof rawLocale !== 'string') {
     return DEFAULT_UI_LOCALE;
@@ -96,10 +211,20 @@ function getTimezoneDisplayName(timezone, locale = DEFAULT_UI_LOCALE) {
   return localizedLabels[timezone] || fallbackLabels[timezone] || timezone;
 }
 
+function getMessage(key, locale = DEFAULT_UI_LOCALE) {
+  const resolvedLocale = normalizeUiLocale(locale);
+  const localizedMessages = UI_MESSAGES[resolvedLocale] || UI_MESSAGES[DEFAULT_UI_LOCALE] || {};
+  const fallbackMessages = UI_MESSAGES[DEFAULT_UI_LOCALE] || {};
+
+  return localizedMessages[key] || fallbackMessages[key] || key;
+}
+
 export {
   DEFAULT_UI_LOCALE,
   SUPPORTED_TIMEZONE_IDS,
   TIMEZONE_LABELS,
+  UI_MESSAGES,
   normalizeUiLocale,
-  getTimezoneDisplayName
+  getTimezoneDisplayName,
+  getMessage
 };
