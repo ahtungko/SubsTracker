@@ -1,4 +1,4 @@
-import { sendNotifyXNotification } from './notifyx.js';
+﻿import { sendNotifyXNotification } from './notifyx.js';
 import { sendTelegramNotification } from './telegram.js';
 import { sendWebhookNotification } from './webhook.js';
 import { sendWechatBotNotification } from './wechat.js';
@@ -8,9 +8,11 @@ import { sendGotifyNotification } from './gotify.js';
 import { sendServerChanNotification } from './serverchan.js';
 import { sendPushPlusNotification } from './pushplus.js';
 import { sendDiscordNotification } from './discord.js';
+import { getNotificationLocale, getNotificationMessage } from './locale.js';
 
 async function sendNotificationToAllChannels(title, commonContent, config, logPrefix = '[定时任务]', options = {}) {
   const metadata = options.metadata || {};
+  const notificationLocale = getNotificationLocale(config);
   const enabledNotifiers = Array.isArray(config.ENABLED_NOTIFIERS) ? config.ENABLED_NOTIFIERS : [];
   const result = {
     attempted: 0,
@@ -27,7 +29,8 @@ async function sendNotificationToAllChannels(title, commonContent, config, logPr
   if (enabledNotifiers.includes('notifyx')) {
     result.attempted += 1;
     const notifyxContent = `## ${title}\n\n${commonContent}`;
-    const success = await sendNotifyXNotification(title, notifyxContent, `订阅提醒`, config);
+    const notifyxDescription = getNotificationMessage('notification_notifyx_description', notificationLocale);
+    const success = await sendNotifyXNotification(title, notifyxContent, notifyxDescription, config);
     result.channelResults.notifyx = success;
     success ? result.successCount++ : result.failedCount++;
     console.log(`${logPrefix} 发送NotifyX通知 ${success ? '成功' : '失败'}`);

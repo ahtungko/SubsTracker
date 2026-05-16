@@ -167,3 +167,53 @@ test('Discord test notifications honor trimmed request-body overrides for token 
     recipient_id: 'override-user'
   });
 });
+
+
+test('Discord test-notification outbound content uses NOTIFICATION_LOCALE rather than browser locale', async (t) => {
+  const env = createEnv({
+    JWT_SECRET: 'jwt-secret',
+    TIMEZONE: 'America/New_York',
+    NOTIFICATION_LOCALE: 'zh',
+    DISCORD_BOT_TOKEN: 'saved-token',
+    DISCORD_USER_ID: 'saved-user'
+  });
+
+  const calls = [];
+  const originalFetch = global.fetch;
+  const originalDate = global.Date;
+
+  global.Date = FixedDate;
+  global.fetch = async (url, init) => {
+    calls.push({ url, body: init?.body ?? '' });
+
+    if (url === 'https://discord.com/api/v10/users/@me/channels') {
+      return { ok: true, json: async () => ({ id: 'dm-channel-id' }), text: async () => '' };
+    }
+    if (url === 'https://discord.com/api/v10/channels/dm-channel-id/messages') {
+      return { ok: true, json: async () => ({ id: 'message-id' }), text: async () => '' };
+    }
+    throw new Error(`Unexpected fetch URL: ${url}`);
+  };
+
+  t.after(() => {
+    global.fetch = originalFetch;
+    global.Date = originalDate;
+  });
+
+  const request = new Request('https://example.test/api/test-notification', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'X-Locale': 'en-US'
+    },
+    body: JSON.stringify({ type: 'discord' })
+  });
+
+  const response = await handleTestNotification(request, env);
+  const json = await response.json();
+
+  assert.equal(response.status, 200);
+  assert.equal(json.success, true);
+  const payload = JSON.parse(calls[1].body);
+  assert.match(payload.embeds[0].description, /\u8fd9\u662f\u4e00\u6761\u6d4b\u8bd5\u901a\u77e5/);
+});

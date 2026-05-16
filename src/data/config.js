@@ -27,6 +27,7 @@ const DEFAULT_CONFIG = {
   ENABLED_NOTIFIERS: ['notifyx'],
   THEME_MODE: 'system',
   TIMEZONE: 'UTC',
+  NOTIFICATION_LOCALE: 'en',
   NOTIFICATION_HOURS: [],
   THIRD_PARTY_API_TOKEN: '',
   DEBUG_LOGS: false,
@@ -38,6 +39,12 @@ const DEFAULT_CONFIG = {
   PUSHPLUS_TOPIC: '',
   PUSHPLUS_CHANNEL: ''
 };
+
+function normalizeNotificationLocale(rawLocale) {
+  if (typeof rawLocale !== 'string') return 'en';
+  const locale = rawLocale.trim().toLowerCase();
+  return locale === 'zh' ? 'zh' : 'en';
+}
 
 async function getConfig(env) {
   if (!env.SUBSCRIPTIONS_KV) {
@@ -59,7 +66,8 @@ async function getConfig(env) {
   return {
     ...DEFAULT_CONFIG,
     ...config,
-    JWT_SECRET: jwtSecret
+    JWT_SECRET: jwtSecret,
+    NOTIFICATION_LOCALE: normalizeNotificationLocale(config.NOTIFICATION_LOCALE || DEFAULT_CONFIG.NOTIFICATION_LOCALE)
   };
 }
 
@@ -71,6 +79,7 @@ async function updateConfig(env, newConfig) {
     ADMIN_PASSWORD: newConfig.ADMIN_PASSWORD || config.ADMIN_PASSWORD,
     THEME_MODE: newConfig.THEME_MODE || 'system',
     TIMEZONE: newConfig.TIMEZONE || config.TIMEZONE || 'UTC',
+    NOTIFICATION_LOCALE: normalizeNotificationLocale(newConfig.NOTIFICATION_LOCALE || config.NOTIFICATION_LOCALE || 'en'),
     SHOW_LUNAR: newConfig.SHOW_LUNAR === true,
     NOTIFYX_API_KEY: newConfig.NOTIFYX_API_KEY || '',
     RESEND_API_KEY: newConfig.RESEND_API_KEY || '',
@@ -89,6 +98,7 @@ async function setConfig(env, config) {
 export {
   DEFAULT_CONFIG,
   getConfig,
+  normalizeNotificationLocale,
   updateConfig,
   setConfig
 };

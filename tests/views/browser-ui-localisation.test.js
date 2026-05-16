@@ -373,3 +373,14 @@ test('dashboard page localises browser-only load fallbacks via AppLocale message
   assert.equal(dashboardPageHtml.includes("window.AppLocale.getMessage('dashboard_load_failed'"), true);
   assert.equal(dashboardPageHtml.includes("window.AppLocale.getMessage('dashboard_load_failed_prefix'"), true);
 });
+
+
+test('config page exposes notification locale setting', () => {
+  assert.equal(configPageHtml.includes('id="notificationLocale"'), true);
+  assert.equal(configPageHtml.includes('data-i18n="config_label_notification_locale"'), true);
+  assert.equal(configPageHtml.includes('data-i18n="config_notification_locale_help"'), true);
+  assert.equal(configPageHtml.includes("document.getElementById('notificationLocale').value = config.NOTIFICATION_LOCALE || 'en';"), true);
+  assert.equal(configPageHtml.includes("NOTIFICATION_LOCALE: document.getElementById('notificationLocale').value.trim(),"), true);
+  assert.equal(configPageHtml.includes('<option value="zh">'), true);
+  assert.equal(configPageHtml.includes('<option value="en">'), true);
+});

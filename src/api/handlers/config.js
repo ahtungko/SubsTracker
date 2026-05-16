@@ -1,4 +1,4 @@
-import { getConfig, setConfig } from '../../data/config.js';
+import { getConfig, normalizeNotificationLocale, setConfig } from '../../data/config.js';
 import { generateRandomSecret, sanitizeNotificationHours } from '../utils.js';
 import { extractRequestLocale, getServerMessage } from '../locale.js';
 
@@ -125,6 +125,9 @@ async function handleUpdateConfig(request, env) {
 
       ENABLED_NOTIFIERS: newConfig.ENABLED_NOTIFIERS || ['notifyx'],
       TIMEZONE: newConfig.TIMEZONE || config.TIMEZONE || 'UTC',
+      NOTIFICATION_LOCALE: normalizeNotificationLocale(
+        newConfig.NOTIFICATION_LOCALE ?? config.NOTIFICATION_LOCALE ?? 'en'
+      ),
 
       THIRD_PARTY_API_TOKEN: mergeSecretField(config, newConfig, 'THIRD_PARTY_API_TOKEN', clearSecretFields),
 

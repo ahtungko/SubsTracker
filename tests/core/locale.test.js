@@ -87,6 +87,13 @@ test('getMessage returns English UI copy for en locales', () => {
   assert.equal(getMessage('config_save', 'en-GB'), 'Save Settings');
 });
 
+test('getMessage returns localized notification locale field strings', () => {
+  assert.equal(getMessage('config_label_notification_locale', 'zh-CN'), '\u901a\u77e5\u8bed\u8a00');
+  assert.equal(getMessage('config_label_notification_locale', 'en-US'), 'Notification Language');
+  assert.equal(getMessage('config_notification_locale_help', 'zh-CN'), '\u6b64\u8bbe\u7f6e\u63a7\u5236\u63d0\u9192\u90ae\u4ef6\u3001Discord \u79c1\u4fe1\u53ca\u5176\u4ed6\u5bf9\u5916\u901a\u77e5\u6240\u4f7f\u7528\u7684\u8bed\u8a00\u3002');
+  assert.equal(getMessage('config_notification_locale_help', 'en-US'), 'This setting controls the language used in reminder emails, Discord DMs, and other outbound notifications.');
+});
+
 test('getMessage returns localized browser-title strings', () => {
   assert.equal(getMessage('page_title_dashboard', 'zh-CN'), '仪表盘 - SubsTracker');
   assert.equal(getMessage('page_title_dashboard', 'en-US'), 'Dashboard - SubsTracker');

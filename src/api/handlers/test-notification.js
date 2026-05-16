@@ -10,6 +10,7 @@ import { sendGotifyNotification } from '../../services/notify/gotify.js';
 import { sendServerChanNotification } from '../../services/notify/serverchan.js';
 import { sendPushPlusNotification } from '../../services/notify/pushplus.js';
 import { sendDiscordNotification } from '../../services/notify/discord.js';
+import { getNotificationLocale, getNotificationMessage } from '../../services/notify/locale.js';
 import { extractRequestLocale, getServerMessage } from '../locale.js';
 
 function getTestNotificationResultMessage(type, locale, success) {
@@ -21,11 +22,61 @@ function getTestNotificationResultMessage(type, locale, success) {
   );
 }
 
+function getNotificationServiceLabel(type, notificationLocale) {
+  if (type === 'discord') {
+    return getNotificationMessage('notification_service_discord', notificationLocale);
+  }
+  if (type === 'email') {
+    return getNotificationMessage('notification_service_email', notificationLocale);
+  }
+
+  const serviceLabels = {
+    zh: {
+      telegram: 'Telegram通知功能',
+      notifyx: 'NotifyX通知功能',
+      webhook: 'Webhook 通知功能',
+      wechatbot: '企业微信机器人功能',
+      bark: 'Bark通知功能',
+      gotify: 'Gotify通知功能',
+      serverchan: 'Server酱通知功能',
+      pushplus: 'PushPlus通知功能'
+    },
+    en: {
+      telegram: 'Telegram notifications',
+      notifyx: 'NotifyX notifications',
+      webhook: 'webhook notifications',
+      wechatbot: 'WeCom bot notifications',
+      bark: 'Bark notifications',
+      gotify: 'Gotify notifications',
+      serverchan: 'ServerChan notifications',
+      pushplus: 'PushPlus notifications'
+    }
+  };
+
+  return serviceLabels[notificationLocale]?.[type] || type;
+}
+
+function buildLocalizedTestNotification(type, notificationLocale, sentAt) {
+  const title = getNotificationMessage('notification_test_title', notificationLocale);
+  const service = getNotificationServiceLabel(type, notificationLocale);
+  const body = getNotificationMessage('notification_test_body_generic', notificationLocale, { service });
+  const sentAtLabel = getNotificationMessage('reminder_sent_at', notificationLocale);
+
+  return {
+    title,
+    service,
+    body,
+    sentAtLabel,
+    plainContent: `${body}\n\n${sentAtLabel}: ${sentAt}`
+  };
+}
+
 async function handleTestNotification(request, env) {
   const locale = extractRequestLocale(request);
 
   try {
     const config = await getConfig(env);
+    const notificationLocale = getNotificationLocale(config);
     const body = await request.json();
     let success = false;
     let message = '';
@@ -48,6 +99,8 @@ async function handleTestNotification(request, env) {
       );
     }
 
+    const notificationCopy = buildLocalizedTestNotification(type, notificationLocale, sentAt);
+
     if (type === 'telegram') {
       const testConfig = {
         ...config,
@@ -55,7 +108,7 @@ async function handleTestNotification(request, env) {
         TG_CHAT_ID: typeof body.TG_CHAT_ID === 'string' && body.TG_CHAT_ID.trim().length > 0 ? body.TG_CHAT_ID.trim() : config.TG_CHAT_ID
       };
 
-      const content = '*测试通知*\n\n这是一条测试通知，用于验证Telegram通知功能是否正常工作。\n\n发送时间: ' + sentAt;
+      const content = `*${notificationCopy.title}*\n\n${notificationCopy.body}\n\n${notificationCopy.sentAtLabel}: ${sentAt}`;
       success = await sendTelegramNotification(content, testConfig);
       message = getTestNotificationResultMessage(type, locale, success);
     } else if (type === 'notifyx') {
@@ -66,9 +119,9 @@ async function handleTestNotification(request, env) {
           : config.NOTIFYX_API_KEY
       };
 
-      const title = '测试通知';
-      const content = '## 这是一条测试通知\n\n用于验证NotifyX通知功能是否正常工作。\n\n发送时间: ' + sentAt;
-      const description = '测试NotifyX通知功能';
+      const title = notificationCopy.title;
+      const content = `## ${notificationCopy.title}\n\n${notificationCopy.body}\n\n${notificationCopy.sentAtLabel}: ${sentAt}`;
+      const description = notificationCopy.service;
 
       success = await sendNotifyXNotification(title, content, description, testConfig);
       message = getTestNotificationResultMessage(type, locale, success);
@@ -85,10 +138,7 @@ async function handleTestNotification(request, env) {
         WEBHOOK_TEMPLATE: body.WEBHOOK_TEMPLATE || config.WEBHOOK_TEMPLATE
       };
 
-      const title = '测试通知';
-      const content = '这是一条测试通知，用于验证Webhook 通知功能是否正常工作。\n\n发送时间: ' + sentAt;
-
-      success = await sendWebhookNotification(title, content, testConfig);
+      success = await sendWebhookNotification(notificationCopy.title, notificationCopy.plainContent, testConfig);
       message = getTestNotificationResultMessage(type, locale, success);
     } else if (type === 'wechatbot') {
       const testConfig = {
@@ -101,10 +151,7 @@ async function handleTestNotification(request, env) {
         WECHATBOT_AT_ALL: body.WECHATBOT_AT_ALL || config.WECHATBOT_AT_ALL
       };
 
-      const title = '测试通知';
-      const content = '这是一条测试通知，用于验证企业微信机器人功能是否正常工作。\n\n发送时间: ' + sentAt;
-
-      success = await sendWechatBotNotification(title, content, testConfig);
+      success = await sendWechatBotNotification(notificationCopy.title, notificationCopy.plainContent, testConfig);
       message = getTestNotificationResultMessage(type, locale, success);
     } else if (type === 'email') {
       const testConfig = {
@@ -117,10 +164,7 @@ async function handleTestNotification(request, env) {
         EMAIL_TO: body.EMAIL_TO || config.EMAIL_TO
       };
 
-      const title = '测试通知';
-      const content = '这是一条测试通知，用于验证邮件通知功能是否正常工作。\n\n发送时间: ' + sentAt;
-
-      success = await sendEmailNotification(title, content, testConfig);
+      success = await sendEmailNotification(notificationCopy.title, notificationCopy.plainContent, testConfig);
       message = getTestNotificationResultMessage(type, locale, success);
     } else if (type === 'bark') {
       const testConfig = {
@@ -132,10 +176,7 @@ async function handleTestNotification(request, env) {
         BARK_IS_ARCHIVE: body.BARK_IS_ARCHIVE || config.BARK_IS_ARCHIVE
       };
 
-      const title = '测试通知';
-      const content = '这是一条测试通知，用于验证Bark通知功能是否正常工作。\n\n发送时间: ' + sentAt;
-
-      success = await sendBarkNotification(title, content, testConfig);
+      success = await sendBarkNotification(notificationCopy.title, notificationCopy.plainContent, testConfig);
       message = getTestNotificationResultMessage(type, locale, success);
     } else if (type === 'gotify') {
       const testConfig = {
@@ -146,10 +187,7 @@ async function handleTestNotification(request, env) {
           : config.GOTIFY_APP_TOKEN
       };
 
-      const title = '测试通知';
-      const content = '这是一条测试通知，用于验证Gotify通知功能是否正常工作。\n\n发送时间: ' + sentAt;
-
-      success = await sendGotifyNotification(title, content, testConfig);
+      success = await sendGotifyNotification(notificationCopy.title, notificationCopy.plainContent, testConfig);
       message = getTestNotificationResultMessage(type, locale, success);
     } else if (type === 'serverchan') {
       const testConfig = {
@@ -159,10 +197,7 @@ async function handleTestNotification(request, env) {
           : config.SERVERCHAN_SENDKEY
       };
 
-      const title = '测试通知';
-      const content = '这是一条测试通知，用于验证Server酱通知功能是否正常工作。\n\n发送时间: ' + sentAt;
-
-      success = await sendServerChanNotification(title, content, testConfig);
+      success = await sendServerChanNotification(notificationCopy.title, notificationCopy.plainContent, testConfig);
       message = getTestNotificationResultMessage(type, locale, success);
     } else if (type === 'pushplus') {
       const testConfig = {
@@ -174,10 +209,7 @@ async function handleTestNotification(request, env) {
         PUSHPLUS_CHANNEL: body.PUSHPLUS_CHANNEL || config.PUSHPLUS_CHANNEL
       };
 
-      const title = '测试通知';
-      const content = '这是一条测试通知，用于验证PushPlus通知功能是否正常工作。\n\n发送时间: ' + sentAt;
-
-      success = await sendPushPlusNotification(title, content, testConfig);
+      success = await sendPushPlusNotification(notificationCopy.title, notificationCopy.plainContent, testConfig);
       message = getTestNotificationResultMessage(type, locale, success);
     } else if (type === 'discord') {
       const testConfig = {
@@ -190,9 +222,7 @@ async function handleTestNotification(request, env) {
           : config.DISCORD_USER_ID
       };
 
-      const content = '这是一条测试通知，用于验证 Discord Bot 私信功能是否正常工作。\n\n发送时间: ' + sentAt;
-
-      success = await sendDiscordNotification('Discord 私信测试通知', content, testConfig);
+      success = await sendDiscordNotification(`${notificationCopy.service} - ${notificationCopy.title}`, notificationCopy.plainContent, testConfig);
       message = getTestNotificationResultMessage(type, locale, success);
     }
 

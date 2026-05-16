@@ -2,6 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 
 import { sendNotificationToAllChannels } from '../../../src/services/notify/index.js';
+import { sendDiscordNotification } from '../../../src/services/notify/discord.js';
 
 test('dispatcher sends Discord DMs through the Discord API flow', async (t) => {
   const calls = [];
@@ -164,4 +165,35 @@ test('dispatcher clamps oversized Discord embed title and description before sen
   assert.ok(payload.embeds[0].description.length <= 4096);
   assert.match(payload.embeds[0].title, /…$/);
   assert.match(payload.embeds[0].description, /…$/);
+});
+
+
+test('Discord footer uses localized notification signature when provided in config', async (t) => {
+  const calls = [];
+  const originalFetch = global.fetch;
+
+  global.fetch = async (url, init) => {
+    calls.push({ url, body: init?.body ?? '' });
+    if (url === 'https://discord.com/api/v10/users/@me/channels') {
+      return { ok: true, json: async () => ({ id: 'dm-channel-id' }), text: async () => '' };
+    }
+    if (url === 'https://discord.com/api/v10/channels/dm-channel-id/messages') {
+      return { ok: true, json: async () => ({ id: 'message-id' }), text: async () => '' };
+    }
+    throw new Error(`Unexpected fetch URL: ${url}`);
+  };
+
+  t.after(() => {
+    global.fetch = originalFetch;
+  });
+
+  await sendDiscordNotification('Reminder', 'Localized body', {
+    ENABLED_NOTIFIERS: ['discord'],
+    DISCORD_BOT_TOKEN: 'bot-token',
+    DISCORD_USER_ID: 'user-1',
+    NOTIFICATION_SIGNATURE: '\u8ba2\u9605\u7ba1\u7406\u7cfb\u7edf'
+  });
+
+  const payload = JSON.parse(calls[1].body);
+  assert.equal(payload.embeds[0].footer.text, '\u8ba2\u9605\u7ba1\u7406\u7cfb\u7edf');
 });

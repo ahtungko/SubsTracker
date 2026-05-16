@@ -1,5 +1,6 @@
 import { formatTimeInTimezone, formatTimezoneDisplay } from '../../core/time.js';
 import { lunarCalendar } from '../../core/lunar.js';
+import { getNotificationLocale, getNotificationMessage } from './locale.js';
 
 function resolveReminderSetting(subscription) {
   const defaultDays = subscription && subscription.reminderDays !== undefined ? Number(subscription.reminderDays) : 7;
@@ -50,12 +51,16 @@ function shouldTriggerReminder(reminder, daysDiff, hoursDiff) {
 function formatNotificationContent(subscriptions, config) {
   const showLunar = config.SHOW_LUNAR === true;
   const timezone = config?.TIMEZONE || 'UTC';
+  const notificationLocale = getNotificationLocale(config);
   let content = '';
 
   for (const sub of subscriptions) {
-    const typeText = sub.customType || '其他';
-    const periodText = (sub.periodValue && sub.periodUnit) ? `(周期: ${sub.periodValue} ${ { day: '天', month: '月', year: '年' }[sub.periodUnit] || sub.periodUnit})` : '';
-    const categoryText = sub.category ? sub.category : '未分类';
+    const typeText = sub.customType || getNotificationMessage('reminder_fallback_type', notificationLocale);
+    const periodUnit = getNotificationMessage(`reminder_period_unit_${sub.periodUnit}`, notificationLocale);
+    const periodText = (sub.periodValue && sub.periodUnit)
+      ? ` (${getNotificationMessage('reminder_period_wrapper', notificationLocale, { value: sub.periodValue, unit: periodUnit })})`
+      : '';
+    const categoryText = sub.category ? sub.category : getNotificationMessage('reminder_fallback_category', notificationLocale);
     const reminderSetting = resolveReminderSetting(sub);
 
     const expiryDateObj = new Date(sub.expiryDate);
@@ -64,57 +69,63 @@ function formatNotificationContent(subscriptions, config) {
     let lunarExpiryText = '';
     if (showLunar) {
       const lunarExpiry = lunarCalendar.solar2lunar(expiryDateObj.getFullYear(), expiryDateObj.getMonth() + 1, expiryDateObj.getDate());
-      lunarExpiryText = lunarExpiry ? `\n农历日期: ${lunarExpiry.fullStr}` : '';
+      lunarExpiryText = lunarExpiry ? `\n${getNotificationMessage('reminder_label_lunar_date', notificationLocale)}: ${lunarExpiry.fullStr}` : '';
     }
 
     let statusText = '';
     let statusEmoji = '';
     if (sub.daysRemaining === 0) {
       statusEmoji = '⚠️';
-      statusText = '今天到期！';
+      statusText = getNotificationMessage('reminder_due_today', notificationLocale);
     } else if (sub.daysRemaining < 0) {
       statusEmoji = '🚨';
-      statusText = `已过期 ${Math.abs(sub.daysRemaining)} 天`;
+      statusText = getNotificationMessage('reminder_expired_days', notificationLocale, { days: Math.abs(sub.daysRemaining) });
     } else {
       statusEmoji = '📅';
-      statusText = `将在 ${sub.daysRemaining} 天后到期`;
+      statusText = getNotificationMessage('reminder_due_in_days', notificationLocale, { days: sub.daysRemaining });
     }
 
     const reminderSuffix = reminderSetting.value === 0
-      ? '（仅到期时提醒）'
-      : (reminderSetting.unit === 'hour' ? '（小时级提醒）' : '');
+      ? getNotificationMessage('reminder_suffix_due_only', notificationLocale)
+      : (reminderSetting.unit === 'hour' ? getNotificationMessage('reminder_suffix_hour_level', notificationLocale) : '');
     const reminderText = reminderSetting.unit === 'hour'
-      ? `提醒策略: 提前 ${reminderSetting.value} 小时${reminderSuffix}`
-      : `提醒策略: 提前 ${reminderSetting.value} 天${reminderSuffix}`;
+      ? getNotificationMessage('reminder_strategy_hours', notificationLocale, { value: reminderSetting.value, suffix: reminderSuffix })
+      : getNotificationMessage('reminder_strategy_days', notificationLocale, { value: reminderSetting.value, suffix: reminderSuffix });
 
-    const calendarType = sub.useLunar ? '农历' : '公历';
-    const autoRenewText = sub.autoRenew ? '是' : '否';
+    const calendarType = sub.useLunar
+      ? getNotificationMessage('reminder_calendar_lunar', notificationLocale)
+      : getNotificationMessage('reminder_calendar_solar', notificationLocale);
+    const autoRenewText = sub.autoRenew
+      ? getNotificationMessage('reminder_auto_renew_yes', notificationLocale)
+      : getNotificationMessage('reminder_auto_renew_no', notificationLocale);
     const currencySymbols = {
       MYR: 'RM', CNY: '¥', USD: '$', HKD: 'HK$', TWD: 'NT$',
       JPY: '¥', EUR: '€', GBP: '£', KRW: '₩', TRY: '₺'
     };
     const amountConfigured = sub.amount !== null && sub.amount !== undefined && !Number.isNaN(Number(sub.amount));
     const amountCurrency = currencySymbols[sub.currency || 'MYR'] || 'RM';
-    const amountText = amountConfigured ? `\n金额: ${amountCurrency}${Number(sub.amount).toFixed(2)}/周期` : '';
+    const amountText = amountConfigured
+      ? `\n${getNotificationMessage('reminder_label_amount', notificationLocale)}: ${amountCurrency}${Number(sub.amount).toFixed(2)}/${getNotificationMessage('reminder_amount_suffix', notificationLocale)}`
+      : '';
 
     const subscriptionContent = `${statusEmoji} **${sub.name}**
-类型: ${typeText} ${periodText}
-分类: ${categoryText}${amountText}
-日历类型: ${calendarType}
-到期日期: ${formattedExpiryDate}${lunarExpiryText}
-自动续期: ${autoRenewText}
+${getNotificationMessage('reminder_label_type', notificationLocale)}: ${typeText}${periodText}
+${getNotificationMessage('reminder_label_category', notificationLocale)}: ${categoryText}${amountText}
+${getNotificationMessage('reminder_label_calendar_type', notificationLocale)}: ${calendarType}
+${getNotificationMessage('reminder_label_expiry_date', notificationLocale)}: ${formattedExpiryDate}${lunarExpiryText}
+${getNotificationMessage('reminder_label_auto_renew', notificationLocale)}: ${autoRenewText}
 ${reminderText}
-到期状态: ${statusText}`;
+${getNotificationMessage('reminder_label_status', notificationLocale)}: ${statusText}`;
 
-    let finalContent = sub.notes ? 
-      subscriptionContent + `\n备注: ${sub.notes}` : 
+    const finalContent = sub.notes ?
+      subscriptionContent + `\n${getNotificationMessage('reminder_label_notes', notificationLocale)}: ${sub.notes}` :
       subscriptionContent;
 
     content += finalContent + '\n\n';
   }
 
   const currentTime = formatTimeInTimezone(new Date(), timezone, 'datetime');
-  content += `发送时间: ${currentTime}\n当前时区: ${formatTimezoneDisplay(timezone)}`;
+  content += `${getNotificationMessage('reminder_sent_at', notificationLocale)}: ${currentTime}\n${getNotificationMessage('reminder_current_timezone', notificationLocale)}: ${formatTimezoneDisplay(timezone)}`;
 
   return content;
 }

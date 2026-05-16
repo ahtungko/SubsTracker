@@ -1,4 +1,5 @@
 import { formatTimeInTimezone } from '../../core/time.js';
+import { getNotificationLocale, getNotificationMessage } from './locale.js';
 
 async function sendEmailNotification(title, content, config) {
   try {
@@ -8,6 +9,13 @@ async function sendEmailNotification(title, content, config) {
     }
 
     console.log('[邮件通知] 开始发送邮件到: ' + config.EMAIL_TO);
+
+    const notificationLocale = getNotificationLocale(config);
+    const footerText = getNotificationMessage('notification_email_footer', notificationLocale);
+    const signatureText = typeof config.NOTIFICATION_SIGNATURE === 'string' && config.NOTIFICATION_SIGNATURE.trim().length > 0
+      ? config.NOTIFICATION_SIGNATURE.trim()
+      : getNotificationMessage('notification_email_signature', notificationLocale);
+    const sentAtLabel = getNotificationMessage('reminder_sent_at', notificationLocale);
 
     const htmlContent = `
 <!DOCTYPE html>
@@ -32,16 +40,16 @@ async function sendEmailNotification(title, content, config) {
 <body>
     <div class="container">
         <div class="header">
-            <h1>📅 ${title}</h1>
+            <h1>📧 ${title}</h1>
         </div>
         <div class="content">
             <div class="highlight">
                 ${content.replace(/\n/g, '<br>')}
             </div>
-            <p>此邮件由订阅管理系统自动发送，请及时处理相关订阅事务。</p>
+            <p>${footerText}</p>
         </div>
         <div class="footer">
-            <p>订阅管理系统 | 发送时间: ${formatTimeInTimezone(new Date(), config?.TIMEZONE || 'UTC', 'datetime')}</p>
+            <p>${signatureText} | ${sentAtLabel}: ${formatTimeInTimezone(new Date(), config?.TIMEZONE || 'UTC', 'datetime')}</p>
         </div>
     </div>
 </body>

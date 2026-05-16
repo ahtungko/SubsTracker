@@ -1,4 +1,5 @@
-import { formatTimeInTimezone } from '../../core/time.js';
+﻿import { formatTimeInTimezone } from '../../core/time.js';
+import { getNotificationLocale, getNotificationMessage } from './locale.js';
 
 async function sendWebhookNotification(title, content, config, metadata = {}) {
   try {
@@ -21,13 +22,17 @@ async function sendWebhookNotification(title, content, config, metadata = {}) {
       }
     }
 
+    const notificationLocale = getNotificationLocale(config);
     const tagsArray = Array.isArray(metadata.tags)
       ? metadata.tags.filter(tag => typeof tag === 'string' && tag.trim().length > 0).map(tag => tag.trim())
       : [];
     const tagsBlock = tagsArray.length ? tagsArray.map(tag => `- ${tag}`).join('\n') : '';
-    const tagsLine = tagsArray.length ? '标签：' + tagsArray.join('、') : '';
+    const tagsLine = tagsArray.length
+      ? getNotificationMessage('webhook_tags_line', notificationLocale, { tags: tagsArray.join(', ') })
+      : '';
     const timestamp = formatTimeInTimezone(new Date(), config?.TIMEZONE || 'UTC', 'datetime');
-    const formattedMessage = [title, content, tagsLine, `发送时间：${timestamp}`]
+    const sentAtLabel = getNotificationMessage('webhook_sent_at_label', notificationLocale);
+    const formattedMessage = [title, content, tagsLine, `${sentAtLabel}: ${timestamp}`]
       .filter(section => section && section.trim().length > 0)
       .join('\n\n');
 

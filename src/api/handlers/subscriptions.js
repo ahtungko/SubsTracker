@@ -11,6 +11,7 @@ import {
 } from '../../data/subscriptions.js';
 import { getConfig } from '../../data/config.js';
 import { sendNotificationToAllChannels } from '../../services/notify/index.js';
+import { getNotificationLocale, getNotificationMessage } from '../../services/notify/locale.js';
 import { lunarCalendar } from '../../core/lunar.js';
 import { formatTimeInTimezone, formatTimezoneDisplay } from '../../core/time.js';
 import { extractTagsFromSubscriptions } from '../utils.js';
@@ -24,6 +25,29 @@ function formatLocalizedServerMessage(key, locale, replacements = {}) {
   return message;
 }
 
+function getManualTestCopy(notificationLocale) {
+  const isZh = notificationLocale === 'zh';
+
+  return {
+    titlePrefix: isZh ? '手动测试通知' : 'Manual test notification',
+    detailsTitle: isZh ? '订阅详情' : 'Subscription details',
+    typeLabel: isZh ? '类型' : 'Type',
+    categoryLabel: isZh ? '分类' : 'Category',
+    amountLabel: isZh ? '金额' : 'Amount',
+    billingCycleLabel: isZh ? '周期' : 'cycle',
+    calendarTypeLabel: isZh ? '日历类型' : 'Calendar type',
+    expiryDateLabel: isZh ? '到期日期' : 'Expiry date',
+    lunarLabel: isZh ? '农历' : 'Lunar',
+    autoRenewLabel: isZh ? '自动续期' : 'Auto renew',
+    notesLabel: isZh ? '备注' : 'Notes',
+    sentAtLabel: getNotificationMessage('reminder_sent_at', notificationLocale),
+    timezoneLabel: getNotificationMessage('reminder_current_timezone', notificationLocale),
+    uncategorized: isZh ? '未分类' : 'Uncategorized',
+    none: isZh ? '无' : 'None',
+    otherType: isZh ? '其他' : 'Other'
+  };
+}
+
 async function testSingleSubscriptionNotification(id, env, locale) {
   try {
     const subscription = await getSubscription(id, env);
@@ -31,8 +55,10 @@ async function testSingleSubscriptionNotification(id, env, locale) {
       return { success: false, message: getServerMessage('subscription_not_found', locale) };
     }
     const config = await getConfig(env);
+    const notificationLocale = getNotificationLocale(config);
+    const copy = getManualTestCopy(notificationLocale);
 
-    const title = `手动测试通知: ${subscription.name}`;
+    const title = `${copy.titlePrefix}: ${subscription.name}`;
 
     const showLunar = config.SHOW_LUNAR === true;
     let lunarExpiryText = '';
@@ -40,34 +66,38 @@ async function testSingleSubscriptionNotification(id, env, locale) {
     if (showLunar) {
       const expiryDateObj = new Date(subscription.expiryDate);
       const lunarExpiry = lunarCalendar.solar2lunar(expiryDateObj.getFullYear(), expiryDateObj.getMonth() + 1, expiryDateObj.getDate());
-      lunarExpiryText = lunarExpiry ? ` (农历: ${lunarExpiry.fullStr})` : '';
+      lunarExpiryText = lunarExpiry ? ` (${copy.lunarLabel}: ${lunarExpiry.fullStr})` : '';
     }
 
     const timezone = config?.TIMEZONE || 'UTC';
     const formattedExpiryDate = formatTimeInTimezone(new Date(subscription.expiryDate), timezone, 'date');
     const currentTime = formatTimeInTimezone(new Date(), timezone, 'datetime');
 
-    const calendarType = subscription.useLunar ? '农历' : '公历';
-    const autoRenewText = subscription.autoRenew ? '是' : '否';
+    const calendarType = subscription.useLunar
+      ? getNotificationMessage('reminder_calendar_lunar', notificationLocale)
+      : getNotificationMessage('reminder_calendar_solar', notificationLocale);
+    const autoRenewText = subscription.autoRenew
+      ? getNotificationMessage('reminder_auto_renew_yes', notificationLocale)
+      : getNotificationMessage('reminder_auto_renew_no', notificationLocale);
     const currencySymbols = {
       MYR: 'RM', CNY: '¥', USD: '$', HKD: 'HK$', TWD: 'NT$',
       JPY: '¥', EUR: '€', GBP: '£', KRW: '₩', TRY: '₺'
     };
     const amountConfigured = subscription.amount !== null && subscription.amount !== undefined && !Number.isNaN(Number(subscription.amount));
     const amountCurrency = currencySymbols[subscription.currency || 'MYR'] || 'RM';
-    const amountText = amountConfigured ? `\n金额: ${amountCurrency}${Number(subscription.amount).toFixed(2)}/周期` : '';
+    const amountText = amountConfigured ? `\n${copy.amountLabel}: ${amountCurrency}${Number(subscription.amount).toFixed(2)}/${copy.billingCycleLabel}` : '';
 
-    const categoryText = subscription.category ? subscription.category : '未分类';
+    const categoryText = subscription.category ? subscription.category : copy.uncategorized;
 
-    const commonContent = `**订阅详情**
-类型: ${subscription.customType || '其他'}${amountText}
-分类: ${categoryText}
-日历类型: ${calendarType}
-到期日期: ${formattedExpiryDate}${lunarExpiryText}
-自动续期: ${autoRenewText}
-备注: ${subscription.notes || '无'}
-发送时间: ${currentTime}
-当前时区: ${formatTimezoneDisplay(timezone)}`;
+    const commonContent = `**${copy.detailsTitle}**
+${copy.typeLabel}: ${subscription.customType || copy.otherType}${amountText}
+${copy.categoryLabel}: ${categoryText}
+${copy.calendarTypeLabel}: ${calendarType}
+${copy.expiryDateLabel}: ${formattedExpiryDate}${lunarExpiryText}
+${copy.autoRenewLabel}: ${autoRenewText}
+${copy.notesLabel}: ${subscription.notes || copy.none}
+${copy.sentAtLabel}: ${currentTime}
+${copy.timezoneLabel}: ${formatTimezoneDisplay(timezone)}`;
 
     const tags = extractTagsFromSubscriptions([subscription]);
     const notifyResult = await sendNotificationToAllChannels(title, commonContent, config, '[手动测试]', {

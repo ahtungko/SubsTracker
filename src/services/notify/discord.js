@@ -1,3 +1,5 @@
+import { getNotificationLocale, getNotificationMessage } from './locale.js';
+
 const DISCORD_EMBED_TITLE_MAX_LENGTH = 256;
 const DISCORD_EMBED_DESCRIPTION_MAX_LENGTH = 4096;
 const TRUNCATION_MARKER = '…';
@@ -48,11 +50,15 @@ async function sendDiscordNotification(title, content, config) {
     const dmChannel = await dmChannelResponse.json();
 
     if (!dmChannel?.id) {
-      console.error('[Discord Bot] \u521b\u5efa DM \u9891\u9053\u5931\u8d25: \u672a\u8fd4\u56de\u9891\u9053 ID');
+      console.error('[Discord Bot] 创建 DM 频道失败: 未返回频道 ID');
       return false;
     }
 
-    const embedTitle = clampDiscordEmbedText(`\u{1F514} ${String(title || '')}`, DISCORD_EMBED_TITLE_MAX_LENGTH);
+    const notificationLocale = getNotificationLocale(config);
+    const footerText = typeof config.NOTIFICATION_SIGNATURE === 'string' && config.NOTIFICATION_SIGNATURE.trim().length > 0
+      ? config.NOTIFICATION_SIGNATURE.trim()
+      : getNotificationMessage('notification_email_signature', notificationLocale);
+    const embedTitle = clampDiscordEmbedText(`🔔 ${String(title || '')}`, DISCORD_EMBED_TITLE_MAX_LENGTH);
     const description = clampDiscordEmbedText(
       String(content || '').replace(/(\*\*|`|#+\s)/g, ''),
       DISCORD_EMBED_DESCRIPTION_MAX_LENGTH
@@ -72,7 +78,7 @@ async function sendDiscordNotification(title, content, config) {
             color: 5814783,
             timestamp: new Date().toISOString(),
             footer: {
-              text: '订阅管理系统'
+              text: footerText
             }
           }
         ]

@@ -1,8 +1,9 @@
-import { getConfig } from '../data/config.js';
+﻿import { getConfig } from '../data/config.js';
 import { getAllSubscriptions } from '../data/subscriptions.js';
 import { getCurrentTimeInTimezone, MS_PER_HOUR, MS_PER_DAY, getTimezoneMidnightTimestamp } from '../core/time.js';
 import { formatNotificationContent, shouldTriggerReminder } from './notify/reminder.js';
 import { sendNotificationToAllChannels } from './notify/index.js';
+import { getNotificationLocale, getNotificationMessage } from './notify/locale.js';
 import { lunarCalendar, lunarBiz } from '../core/lunar.js';
 
 async function saveSchedulerStatus(env, status) {
@@ -41,6 +42,7 @@ async function dedupeNotifications(env, subscriptions, bucketKey) {
 async function checkExpiringSubscriptions(env) {
   try {
     const config = await getConfig(env);
+    const notificationLocale = getNotificationLocale(config);
     const timezone = 'UTC';
     const currentTime = getCurrentTimeInTimezone('UTC');
     const todayMidnight = getTimezoneMidnightTimestamp(currentTime, 'UTC');
@@ -204,7 +206,8 @@ async function checkExpiringSubscriptions(env) {
         } else {
           console.log(`[定时任务] 发送 ${dedupeResult.deduped.length} 条提醒通知（去重跳过 ${dedupeResult.skipped} 条）`);
           const commonContent = formatNotificationContent(dedupeResult.deduped, config);
-          const sendResult = await sendNotificationToAllChannels('订阅到期/续费提醒', commonContent, config, '[定时任务]');
+          const title = getNotificationMessage('notification_scheduled_reminder_title', notificationLocale);
+          const sendResult = await sendNotificationToAllChannels(title, commonContent, config, '[定时任务]');
           status.sent = true;
           status.sendResult = sendResult;
           status.reason = sendResult && sendResult.attempted > 0
