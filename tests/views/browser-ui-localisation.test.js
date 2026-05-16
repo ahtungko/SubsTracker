@@ -210,3 +210,101 @@ test('login page inline script still compiles after localisation changes', () =>
   assert.doesNotThrow(() => new Function(match[1]));
 });
 
+test('login page dynamic submit and error messages follow zh-CN locale', async () => {
+  const runtimeModule = await import(pathToFileURL(runtimeJsPath).href + `?t=${Date.now()}`);
+  const runtimeScript = stripScriptTags(runtimeModule.buildBrowserLocaleResources());
+  const loginScriptMatch = loginPageHtml.match(/<script[^>]*>([\s\S]*?)<\/script>/i);
+  assert.ok(loginScriptMatch, 'expected login page HTML to contain an inline script');
+
+  async function runLoginAttempt(fetchBehavior) {
+    const usernameInput = { value: 'demo' };
+    const passwordInput = { value: 'secret' };
+    const button = { innerHTML: 'Sign In', disabled: false };
+    const errorMsg = { textContent: '' };
+    let submittingText = '';
+    const form = {
+      listeners: {},
+      addEventListener(type, handler) {
+        this.listeners[type] = handler;
+      },
+      querySelector(selector) {
+        return selector === 'button' ? button : null;
+      }
+    };
+
+    const documentStub = {
+      title: '',
+      documentElement: { lang: 'en' },
+      getElementById(id) {
+        if (id === 'loginForm') return form;
+        if (id === 'username') return usernameInput;
+        if (id === 'password') return passwordInput;
+        if (id === 'errorMsg') return errorMsg;
+        throw new Error(`Unexpected element id: ${id}`);
+      },
+      querySelectorAll() {
+        return [];
+      }
+    };
+
+    const sandbox = {
+      window: { location: { href: '' } },
+      document: documentStub,
+      navigator: { language: 'zh-CN', languages: ['zh-CN'] },
+      Intl,
+      Date,
+      console,
+      fetch: async (...args) => {
+        submittingText = button.innerHTML;
+        return fetchBehavior(...args);
+      }
+    };
+
+    vm.createContext(sandbox);
+    vm.runInContext(runtimeScript, sandbox, { filename: 'browser-ui-localisation-runtime.js' });
+    assert.equal(sandbox.window.AppLocale.getPreferredLocale(), 'zh');
+
+    vm.runInContext(loginScriptMatch[1], sandbox, { filename: 'login-page-inline-script.js' });
+
+    assert.equal(typeof form.listeners.submit, 'function');
+    await form.listeners.submit({
+      preventDefault() {},
+      target: form
+    });
+
+    return { button, errorMsg, submittingText, documentStub, sandbox };
+  }
+
+  const invalidCredentialsResult = await runLoginAttempt(async () => ({
+    json: async () => ({ success: false })
+  }));
+  assert.equal(
+    invalidCredentialsResult.submittingText.includes(
+      invalidCredentialsResult.sandbox.window.AppLocale.getMessage('login_submitting', 'zh-CN')
+    ),
+    true
+  );
+  assert.equal(invalidCredentialsResult.button.innerHTML, 'Sign In');
+  assert.equal(invalidCredentialsResult.button.disabled, false);
+  assert.equal(
+    invalidCredentialsResult.errorMsg.textContent,
+    invalidCredentialsResult.sandbox.window.AppLocale.getMessage('login_error_invalid_credentials', 'zh-CN')
+  );
+
+  const genericErrorResult = await runLoginAttempt(async () => {
+    throw new Error('network failure');
+  });
+  assert.equal(
+    genericErrorResult.submittingText.includes(
+      genericErrorResult.sandbox.window.AppLocale.getMessage('login_submitting', 'zh-CN')
+    ),
+    true
+  );
+  assert.equal(genericErrorResult.button.innerHTML, 'Sign In');
+  assert.equal(genericErrorResult.button.disabled, false);
+  assert.equal(
+    genericErrorResult.errorMsg.textContent,
+    genericErrorResult.sandbox.window.AppLocale.getMessage('login_error_generic', 'zh-CN')
+  );
+});
+
