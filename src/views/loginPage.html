@@ -35,10 +35,62 @@
     html.dark .login-box .text-gray-800 { color: #f3f4f6; }
     html.dark .login-box .text-gray-600,
     html.dark .login-box .text-gray-700 { color: #cbd5e1; }
+    .locale-switcher {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.25rem;
+      padding: 0.25rem;
+      border: 1px solid rgba(148, 163, 184, 0.35);
+      border-radius: 9999px;
+      background-color: rgba(255, 255, 255, 0.7);
+    }
+    .locale-switcher-option {
+      border: 0;
+      background: transparent;
+      border-radius: 9999px;
+      padding: 0.35rem 0.75rem;
+      font-size: 0.875rem;
+      font-weight: 600;
+      color: #4b5563;
+      transition: all 0.2s ease;
+      cursor: pointer;
+    }
+    .locale-switcher-option:hover {
+      background-color: rgba(99, 102, 241, 0.12);
+      color: #4338ca;
+    }
+    .locale-switcher-option.is-active {
+      background-color: #4f46e5;
+      color: #ffffff;
+    }
+    html.dark .locale-switcher {
+      background-color: rgba(17, 24, 39, 0.6);
+      border-color: rgba(148, 163, 184, 0.25);
+    }
+    html.dark .locale-switcher-option {
+      color: #cbd5e1;
+    }
+    html.dark .locale-switcher-option:hover {
+      background-color: rgba(129, 140, 248, 0.2);
+      color: #e0e7ff;
+    }
+    html.dark .locale-switcher-option.is-active {
+      background-color: #818cf8;
+      color: #111827;
+    }
   </style>
 </head>
 <body class="login-container flex items-center justify-center">
   <div class="login-box p-8 rounded-xl w-full max-w-md">
+    <div class="flex justify-end mb-4">
+      <div class="flex items-center gap-2 text-sm">
+        <span class="text-gray-500 font-medium" data-i18n="login_language_label">Language</span>
+        <div id="loginLocaleSwitcher" class="locale-switcher">
+          <button type="button" class="locale-switcher-option" data-ui-locale-option="zh" aria-pressed="false">中文</button>
+          <button type="button" class="locale-switcher-option" data-ui-locale-option="en" aria-pressed="false">EN</button>
+        </div>
+      </div>
+    </div>
     <div class="text-center mb-8">
       <h1 class="text-2xl font-bold text-gray-800"><i class="fas fa-calendar-check mr-2"></i><span data-i18n="login_heading">订阅管理系统</span></h1>
       <p class="text-gray-600 mt-2" data-i18n="login_subtitle">登录管理您的订阅提醒</p>
@@ -71,17 +123,57 @@
   </div>
   
   <script>
-    window.AppLocale.applyDocumentMetadata({ titleKey: 'page_title_login' });
-    window.AppLocale.applyTranslations();
+    const loginForm = document.getElementById('loginForm');
+    const errorMsg = document.getElementById('errorMsg');
+    const localeButtons = Array.from(document.querySelectorAll('[data-ui-locale-option]'));
 
-    document.getElementById('loginForm').addEventListener('submit', async (e) => {
+    function setIdleSubmitLabel(button, locale = window.AppLocale.getPreferredLocale()) {
+      button.innerHTML = '<i class="fas fa-sign-in-alt mr-2"></i>' + window.AppLocale.getMessage('login_submit', locale);
+      button.disabled = false;
+    }
+
+    function syncLocaleButtons(locale = window.AppLocale.getPreferredLocale()) {
+      localeButtons.forEach((button) => {
+        const isActive = button.getAttribute('data-ui-locale-option') === locale;
+        button.classList.toggle('is-active', isActive);
+        button.setAttribute('aria-pressed', isActive ? 'true' : 'false');
+      });
+    }
+
+    function applyLoginLocale(locale = window.AppLocale.getPreferredLocale()) {
+      window.AppLocale.applyDocumentMetadata({ titleKey: 'page_title_login' }, document, locale);
+      window.AppLocale.applyTranslations(document, locale);
+      syncLocaleButtons(locale);
+
+      const submitButton = loginForm.querySelector('button');
+      if (submitButton && !submitButton.disabled) {
+        setIdleSubmitLabel(submitButton, locale);
+      }
+
+      if (errorMsg.dataset.errorKey) {
+        errorMsg.textContent = window.AppLocale.getMessage(errorMsg.dataset.errorKey, locale);
+      }
+    }
+
+    localeButtons.forEach((button) => {
+      button.addEventListener('click', () => {
+        const locale = button.getAttribute('data-ui-locale-option');
+        window.AppLocale.setStoredLocale(locale);
+        applyLoginLocale(window.AppLocale.getPreferredLocale());
+      });
+    });
+
+    applyLoginLocale();
+
+    loginForm.addEventListener('submit', async (e) => {
       e.preventDefault();
       const username = document.getElementById('username').value;
       const password = document.getElementById('password').value;
       const preferredLocale = window.AppLocale.getPreferredLocale();
       
       const button = e.target.querySelector('button');
-      const originalContent = button.innerHTML;
+      errorMsg.dataset.errorKey = '';
+      errorMsg.textContent = '';
       button.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>' + window.AppLocale.getMessage('login_submitting', preferredLocale);
       button.disabled = true;
       
@@ -99,15 +191,16 @@
         
         if (result.success) {
           window.location.href = '/admin';
-        } else {
-          document.getElementById('errorMsg').textContent = window.AppLocale.getMessage('login_error_invalid_credentials', preferredLocale);
-          button.innerHTML = originalContent;
-          button.disabled = false;
+          return;
         }
+
+        errorMsg.dataset.errorKey = 'login_error_invalid_credentials';
+        errorMsg.textContent = window.AppLocale.getMessage(errorMsg.dataset.errorKey, preferredLocale);
+        setIdleSubmitLabel(button, preferredLocale);
       } catch (error) {
-        document.getElementById('errorMsg').textContent = window.AppLocale.getMessage('login_error_generic', preferredLocale);
-        button.innerHTML = originalContent;
-        button.disabled = false;
+        errorMsg.dataset.errorKey = 'login_error_generic';
+        errorMsg.textContent = window.AppLocale.getMessage(errorMsg.dataset.errorKey, preferredLocale);
+        setIdleSubmitLabel(button, preferredLocale);
       }
     });
   </script>

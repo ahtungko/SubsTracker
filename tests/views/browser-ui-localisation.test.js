@@ -365,8 +365,13 @@ test('login page localises title metadata and static body labels', () => {
   assert.equal(loginPageHtml.includes('data-i18n="login_label_username"'), true);
   assert.equal(loginPageHtml.includes('data-i18n="login_label_password"'), true);
   assert.equal(loginPageHtml.includes('data-i18n="login_submit"'), true);
-  assert.equal(loginPageHtml.includes("window.AppLocale.applyDocumentMetadata({ titleKey: 'page_title_login' });"), true);
-  assert.equal(loginPageHtml.includes('window.AppLocale.applyTranslations();'), true);
+  assert.equal(loginPageHtml.includes('data-i18n="login_language_label"'), true);
+  assert.equal(loginPageHtml.includes('id="loginLocaleSwitcher"'), true);
+  assert.equal(loginPageHtml.includes('data-ui-locale-option="zh"'), true);
+  assert.equal(loginPageHtml.includes('data-ui-locale-option="en"'), true);
+  assert.equal(loginPageHtml.includes("window.AppLocale.applyDocumentMetadata({ titleKey: 'page_title_login' }, document, locale);"), true);
+  assert.equal(loginPageHtml.includes('window.AppLocale.applyTranslations(document, locale);'), true);
+  assert.equal(loginPageHtml.includes("window.AppLocale.setStoredLocale(locale);"), true);
 });
 
 test('login page inline script still compiles after localisation changes', () => {
@@ -385,7 +390,7 @@ test('login page dynamic submit and error messages follow zh-CN locale', async (
     const usernameInput = { value: 'demo' };
     const passwordInput = { value: 'secret' };
     const button = { innerHTML: 'Sign In', disabled: false };
-    const errorMsg = { textContent: '' };
+    const errorMsg = { textContent: '', dataset: {} };
     let submittingText = '';
     const form = {
       listeners: {},
@@ -449,7 +454,12 @@ test('login page dynamic submit and error messages follow zh-CN locale', async (
     ),
     true
   );
-  assert.equal(invalidCredentialsResult.button.innerHTML, 'Sign In');
+  assert.equal(
+    invalidCredentialsResult.button.innerHTML.includes(
+      invalidCredentialsResult.sandbox.window.AppLocale.getMessage('login_submit', 'zh-CN')
+    ),
+    true
+  );
   assert.equal(invalidCredentialsResult.button.disabled, false);
   assert.equal(
     invalidCredentialsResult.errorMsg.textContent,
@@ -465,7 +475,12 @@ test('login page dynamic submit and error messages follow zh-CN locale', async (
     ),
     true
   );
-  assert.equal(genericErrorResult.button.innerHTML, 'Sign In');
+  assert.equal(
+    genericErrorResult.button.innerHTML.includes(
+      genericErrorResult.sandbox.window.AppLocale.getMessage('login_submit', 'zh-CN')
+    ),
+    true
+  );
   assert.equal(genericErrorResult.button.disabled, false);
   assert.equal(
     genericErrorResult.errorMsg.textContent,
