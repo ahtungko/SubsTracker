@@ -79,6 +79,8 @@ test('locale catalog exports English default and the supported timezone ids used
   assert.equal(UI_MESSAGES.en.page_title_login, 'Login - Subscription Manager');
   assert.equal(UI_MESSAGES.zh.login_submit, '登录');
   assert.equal(UI_MESSAGES.en.login_submit, 'Sign In');
+  assert.equal(UI_MESSAGES.zh.login_language_label, '界面语言');
+  assert.equal(UI_MESSAGES.en.login_language_label, 'Language');
   assert.equal(UI_MESSAGES.zh.aria_toggle_navigation_menu, '切换导航菜单');
   assert.equal(UI_MESSAGES.en.aria_toggle_navigation_menu, 'Toggle navigation menu');
 });
@@ -110,6 +112,11 @@ test('getMessage returns localized login page strings', () => {
   assert.equal(getMessage('page_title_login', 'zh-CN'), '登录 - 订阅管理系统');
   assert.equal(getMessage('login_heading', 'en-US'), 'Subscription Manager');
   assert.equal(getMessage('login_submit', 'en-US'), 'Sign In');
+});
+
+test('getMessage returns localized login language switcher strings', () => {
+  assert.equal(getMessage('login_language_label', 'zh-CN'), '界面语言');
+  assert.equal(getMessage('login_language_label', 'en-US'), 'Language');
 });
 
 test('getMessage returns localized accessibility labels', () => {
