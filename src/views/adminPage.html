@@ -576,16 +576,16 @@
                   <div class="flex justify-between items-center mb-4">
                     <button type="button" id="startDatePrevMonth" class="text-gray-600 hover:text-gray-800"><i class="fas fa-chevron-left"></i></button>
                     <div class="flex items-center space-x-2">
-                      <span id="startDateMonth" class="font-medium text-gray-900 cursor-pointer hover:text-indigo-600">1月</span>
+                      <span id="startDateMonth" class="font-medium text-gray-900 cursor-pointer hover:text-indigo-600">Jan</span>
                       <span class="text-gray-400">|</span>
                       <span id="startDateYear" class="font-medium text-gray-900 cursor-pointer hover:text-indigo-600">2024</span>
                     </div>
                     <button type="button" id="startDateNextMonth" class="text-gray-600 hover:text-gray-800"><i class="fas fa-chevron-right"></i></button>
                   </div>
-                  <div id="startDateMonthPicker" class="hidden mb-4"><div class="flex justify-between items-center mb-3"><span class="font-medium text-gray-900">选择月份</span><button type="button" id="startDateBackToCalendar" class="text-gray-600 hover:text-gray-800"><i class="fas fa-times"></i></button></div><div class="grid grid-cols-3 gap-2"><button type="button" class="month-option px-3 py-2 text-sm rounded hover:bg-gray-100" data-month="0">1月</button><button type="button" class="month-option px-3 py-2 text-sm rounded hover:bg-gray-100" data-month="1">2月</button><button type="button" class="month-option px-3 py-2 text-sm rounded hover:bg-gray-100" data-month="2">3月</button><button type="button" class="month-option px-3 py-2 text-sm rounded hover:bg-gray-100" data-month="3">4月</button><button type="button" class="month-option px-3 py-2 text-sm rounded hover:bg-gray-100" data-month="4">5月</button><button type="button" class="month-option px-3 py-2 text-sm rounded hover:bg-gray-100" data-month="5">6月</button><button type="button" class="month-option px-3 py-2 text-sm rounded hover:bg-gray-100" data-month="6">7月</button><button type="button" class="month-option px-3 py-2 text-sm rounded hover:bg-gray-100" data-month="7">8月</button><button type="button" class="month-option px-3 py-2 text-sm rounded hover:bg-gray-100" data-month="8">9月</button><button type="button" class="month-option px-3 py-2 text-sm rounded hover:bg-gray-100" data-month="9">10月</button><button type="button" class="month-option px-3 py-2 text-sm rounded hover:bg-gray-100" data-month="10">11月</button><button type="button" class="month-option px-3 py-2 text-sm rounded hover:bg-gray-100" data-month="11">12月</button></div></div>
-                  <div id="startDateYearPicker" class="hidden mb-4"><div class="flex justify-between items-center mb-3"><span class="font-medium text-gray-900">选择年份</span><button type="button" id="startDateBackToCalendarFromYear" class="text-gray-600 hover:text-gray-800"><i class="fas fa-times"></i></button></div><div class="flex justify-between items-center mb-3"><button type="button"  id="startDatePrevYearDecade" class="text-gray-600 hover:text-gray-800"><i class="fas fa-chevron-left"></i></button><span id="startDateYearRange" class="font-medium text-gray-900">2020-2029</span><button type="button"  id="startDateNextYearDecade" class="text-gray-600 hover:text-gray-800"><i class="fas fa-chevron-right"></i></button></div><div id="startDateYearGrid" class="grid grid-cols-3 gap-2"></div></div>
-                  <div class="grid grid-cols-7 gap-2 mb-3"><div class="text-center text-sm font-semibold text-gray-600 py-2">日</div><div class="text-center text-sm font-semibold text-gray-600 py-2">一</div><div class="text-center text-sm font-semibold text-gray-600 py-2">二</div><div class="text-center text-sm font-semibold text-gray-600 py-2">三</div><div class="text-center text-sm font-semibold text-gray-600 py-2">四</div><div class="text-center text-sm font-semibold text-gray-600 py-2">五</div><div class="text-center text-sm font-semibold text-gray-600 py-2">六</div></div><div id="startDateCalendar" class="grid grid-cols-7 gap-2"></div>
-                  <div class="mt-4 pt-3 border-t border-gray-200"><button type="button" id="startDateGoToToday" class="w-full px-3 py-2 text-sm text-indigo-600 hover:bg-indigo-50 rounded-md"><i class="fas fa-calendar-day mr-2"></i>回到今天</button></div>
+                  <div id="startDateMonthPicker" class="hidden mb-4"><div class="flex justify-between items-center mb-3"><span class="font-medium text-gray-900" data-i18n="admin_date_picker_select_month">Select Month</span><button type="button" id="startDateBackToCalendar" class="text-gray-600 hover:text-gray-800"><i class="fas fa-times"></i></button></div><div class="grid grid-cols-3 gap-2"><button type="button" class="month-option px-3 py-2 text-sm rounded hover:bg-gray-100" data-month="0">Jan</button><button type="button" class="month-option px-3 py-2 text-sm rounded hover:bg-gray-100" data-month="1">Feb</button><button type="button" class="month-option px-3 py-2 text-sm rounded hover:bg-gray-100" data-month="2">Mar</button><button type="button" class="month-option px-3 py-2 text-sm rounded hover:bg-gray-100" data-month="3">Apr</button><button type="button" class="month-option px-3 py-2 text-sm rounded hover:bg-gray-100" data-month="4">May</button><button type="button" class="month-option px-3 py-2 text-sm rounded hover:bg-gray-100" data-month="5">Jun</button><button type="button" class="month-option px-3 py-2 text-sm rounded hover:bg-gray-100" data-month="6">Jul</button><button type="button" class="month-option px-3 py-2 text-sm rounded hover:bg-gray-100" data-month="7">Aug</button><button type="button" class="month-option px-3 py-2 text-sm rounded hover:bg-gray-100" data-month="8">Sep</button><button type="button" class="month-option px-3 py-2 text-sm rounded hover:bg-gray-100" data-month="9">Oct</button><button type="button" class="month-option px-3 py-2 text-sm rounded hover:bg-gray-100" data-month="10">Nov</button><button type="button" class="month-option px-3 py-2 text-sm rounded hover:bg-gray-100" data-month="11">Dec</button></div></div>
+                  <div id="startDateYearPicker" class="hidden mb-4"><div class="flex justify-between items-center mb-3"><span class="font-medium text-gray-900" data-i18n="admin_date_picker_select_year">Select Year</span><button type="button" id="startDateBackToCalendarFromYear" class="text-gray-600 hover:text-gray-800"><i class="fas fa-times"></i></button></div><div class="flex justify-between items-center mb-3"><button type="button"  id="startDatePrevYearDecade" class="text-gray-600 hover:text-gray-800"><i class="fas fa-chevron-left"></i></button><span id="startDateYearRange" class="font-medium text-gray-900">2020-2029</span><button type="button"  id="startDateNextYearDecade" class="text-gray-600 hover:text-gray-800"><i class="fas fa-chevron-right"></i></button></div><div id="startDateYearGrid" class="grid grid-cols-3 gap-2"></div></div>
+                  <div class="grid grid-cols-7 gap-2 mb-3"><div class="text-center text-sm font-semibold text-gray-600 py-2" data-i18n="admin_weekday_sun">Sun</div><div class="text-center text-sm font-semibold text-gray-600 py-2" data-i18n="admin_weekday_mon">Mon</div><div class="text-center text-sm font-semibold text-gray-600 py-2" data-i18n="admin_weekday_tue">Tue</div><div class="text-center text-sm font-semibold text-gray-600 py-2" data-i18n="admin_weekday_wed">Wed</div><div class="text-center text-sm font-semibold text-gray-600 py-2" data-i18n="admin_weekday_thu">Thu</div><div class="text-center text-sm font-semibold text-gray-600 py-2" data-i18n="admin_weekday_fri">Fri</div><div class="text-center text-sm font-semibold text-gray-600 py-2" data-i18n="admin_weekday_sat">Sat</div></div><div id="startDateCalendar" class="grid grid-cols-7 gap-2"></div>
+                  <div class="mt-4 pt-3 border-t border-gray-200"><button type="button" id="startDateGoToToday" class="w-full px-3 py-2 text-sm text-indigo-600 hover:bg-indigo-50 rounded-md"><i class="fas fa-calendar-day mr-2"></i><span data-i18n="admin_calendar_today">Back to Today</span></button></div>
                </div>
             </div>
             <div id="startDateLunar" class="lunar-display pl-1"></div>
@@ -621,13 +621,13 @@
                 <div id="expiryDatePicker" class="custom-date-picker hidden absolute top-full left-0 z-50 bg-white border border-gray-300 rounded-md shadow-lg p-4 w-full">
                     <div class="flex justify-between items-center mb-4">
                       <button type="button" id="expiryDatePrevMonth" class="text-gray-600 hover:text-gray-800"><i class="fas fa-chevron-left"></i></button>
-                      <div class="flex items-center space-x-2"><span id="expiryDateMonth" class="font-medium text-gray-900 cursor-pointer hover:text-indigo-600">1月</span><span class="text-gray-400">|</span><span id="expiryDateYear" class="font-medium text-gray-900 cursor-pointer hover:text-indigo-600">2024</span></div>
+                      <div class="flex items-center space-x-2"><span id="expiryDateMonth" class="font-medium text-gray-900 cursor-pointer hover:text-indigo-600">Jan</span><span class="text-gray-400">|</span><span id="expiryDateYear" class="font-medium text-gray-900 cursor-pointer hover:text-indigo-600">2024</span></div>
                       <button type="button" id="expiryDateNextMonth" class="text-gray-600 hover:text-gray-800"><i class="fas fa-chevron-right"></i></button>
                     </div>
-                    <div id="expiryDateMonthPicker" class="hidden mb-4"><div class="flex justify-between items-center mb-3"><span class="font-medium text-gray-900">选择月份</span><button type="button" id="expiryDateBackToCalendar" class="text-gray-600 hover:text-gray-800"><i class="fas fa-times"></i></button></div><div class="grid grid-cols-3 gap-2"><button type="button" class="month-option px-3 py-2 text-sm rounded hover:bg-gray-100" data-month="0">1月</button><button type="button" class="month-option px-3 py-2 text-sm rounded hover:bg-gray-100" data-month="1">2月</button><button type="button" class="month-option px-3 py-2 text-sm rounded hover:bg-gray-100" data-month="2">3月</button><button type="button" class="month-option px-3 py-2 text-sm rounded hover:bg-gray-100" data-month="3">4月</button><button type="button" class="month-option px-3 py-2 text-sm rounded hover:bg-gray-100" data-month="4">5月</button><button type="button" class="month-option px-3 py-2 text-sm rounded hover:bg-gray-100" data-month="5">6月</button><button type="button" class="month-option px-3 py-2 text-sm rounded hover:bg-gray-100" data-month="6">7月</button><button type="button" class="month-option px-3 py-2 text-sm rounded hover:bg-gray-100" data-month="7">8月</button><button type="button" class="month-option px-3 py-2 text-sm rounded hover:bg-gray-100" data-month="8">9月</button><button type="button" class="month-option px-3 py-2 text-sm rounded hover:bg-gray-100" data-month="9">10月</button><button type="button" class="month-option px-3 py-2 text-sm rounded hover:bg-gray-100" data-month="10">11月</button><button type="button" class="month-option px-3 py-2 text-sm rounded hover:bg-gray-100" data-month="11">12月</button></div></div>
-                    <div id="expiryDateYearPicker" class="hidden mb-4"><div class="flex justify-between items-center mb-3"><span class="font-medium text-gray-900">选择年份</span><button type="button" id="expiryDateBackToCalendarFromYear" class="text-gray-600 hover:text-gray-800"><i class="fas fa-times"></i></button></div><div class="flex justify-between items-center mb-3"><button type="button" id="expiryDatePrevYearDecade" class="text-gray-600 hover:text-gray-800"><i class="fas fa-chevron-left"></i></button><span id="expiryDateYearRange" class="font-medium text-gray-900">2020-2029</span><button type="button" id="expiryDateNextYearDecade" class="text-gray-600 hover:text-gray-800"><i class="fas fa-chevron-right"></i></button></div><div id="expiryDateYearGrid" class="grid grid-cols-3 gap-2"></div></div>
-                    <div class="grid grid-cols-7 gap-2 mb-3"><div class="text-center text-sm font-semibold text-gray-600 py-2">日</div><div class="text-center text-sm font-semibold text-gray-600 py-2">一</div><div class="text-center text-sm font-semibold text-gray-600 py-2">二</div><div class="text-center text-sm font-semibold text-gray-600 py-2">三</div><div class="text-center text-sm font-semibold text-gray-600 py-2">四</div><div class="text-center text-sm font-semibold text-gray-600 py-2">五</div><div class="text-center text-sm font-semibold text-gray-600 py-2">六</div></div><div id="expiryDateCalendar" class="grid grid-cols-7 gap-2"></div>
-                    <div class="mt-4 pt-3 border-t border-gray-200"><button type="button" id="expiryDateGoToToday" class="w-full px-3 py-2 text-sm text-indigo-600 hover:bg-indigo-50 rounded-md"><i class="fas fa-calendar-day mr-2"></i>回到今天</button></div>
+                    <div id="expiryDateMonthPicker" class="hidden mb-4"><div class="flex justify-between items-center mb-3"><span class="font-medium text-gray-900" data-i18n="admin_date_picker_select_month">Select Month</span><button type="button" id="expiryDateBackToCalendar" class="text-gray-600 hover:text-gray-800"><i class="fas fa-times"></i></button></div><div class="grid grid-cols-3 gap-2"><button type="button" class="month-option px-3 py-2 text-sm rounded hover:bg-gray-100" data-month="0">Jan</button><button type="button" class="month-option px-3 py-2 text-sm rounded hover:bg-gray-100" data-month="1">Feb</button><button type="button" class="month-option px-3 py-2 text-sm rounded hover:bg-gray-100" data-month="2">Mar</button><button type="button" class="month-option px-3 py-2 text-sm rounded hover:bg-gray-100" data-month="3">Apr</button><button type="button" class="month-option px-3 py-2 text-sm rounded hover:bg-gray-100" data-month="4">May</button><button type="button" class="month-option px-3 py-2 text-sm rounded hover:bg-gray-100" data-month="5">Jun</button><button type="button" class="month-option px-3 py-2 text-sm rounded hover:bg-gray-100" data-month="6">Jul</button><button type="button" class="month-option px-3 py-2 text-sm rounded hover:bg-gray-100" data-month="7">Aug</button><button type="button" class="month-option px-3 py-2 text-sm rounded hover:bg-gray-100" data-month="8">Sep</button><button type="button" class="month-option px-3 py-2 text-sm rounded hover:bg-gray-100" data-month="9">Oct</button><button type="button" class="month-option px-3 py-2 text-sm rounded hover:bg-gray-100" data-month="10">Nov</button><button type="button" class="month-option px-3 py-2 text-sm rounded hover:bg-gray-100" data-month="11">Dec</button></div></div>
+                    <div id="expiryDateYearPicker" class="hidden mb-4"><div class="flex justify-between items-center mb-3"><span class="font-medium text-gray-900" data-i18n="admin_date_picker_select_year">Select Year</span><button type="button" id="expiryDateBackToCalendarFromYear" class="text-gray-600 hover:text-gray-800"><i class="fas fa-times"></i></button></div><div class="flex justify-between items-center mb-3"><button type="button" id="expiryDatePrevYearDecade" class="text-gray-600 hover:text-gray-800"><i class="fas fa-chevron-left"></i></button><span id="expiryDateYearRange" class="font-medium text-gray-900">2020-2029</span><button type="button" id="expiryDateNextYearDecade" class="text-gray-600 hover:text-gray-800"><i class="fas fa-chevron-right"></i></button></div><div id="expiryDateYearGrid" class="grid grid-cols-3 gap-2"></div></div>
+                    <div class="grid grid-cols-7 gap-2 mb-3"><div class="text-center text-sm font-semibold text-gray-600 py-2" data-i18n="admin_weekday_sun">Sun</div><div class="text-center text-sm font-semibold text-gray-600 py-2" data-i18n="admin_weekday_mon">Mon</div><div class="text-center text-sm font-semibold text-gray-600 py-2" data-i18n="admin_weekday_tue">Tue</div><div class="text-center text-sm font-semibold text-gray-600 py-2" data-i18n="admin_weekday_wed">Wed</div><div class="text-center text-sm font-semibold text-gray-600 py-2" data-i18n="admin_weekday_thu">Thu</div><div class="text-center text-sm font-semibold text-gray-600 py-2" data-i18n="admin_weekday_fri">Fri</div><div class="text-center text-sm font-semibold text-gray-600 py-2" data-i18n="admin_weekday_sat">Sat</div></div><div id="expiryDateCalendar" class="grid grid-cols-7 gap-2"></div>
+                    <div class="mt-4 pt-3 border-t border-gray-200"><button type="button" id="expiryDateGoToToday" class="w-full px-3 py-2 text-sm text-indigo-600 hover:bg-indigo-50 rounded-md"><i class="fas fa-calendar-day mr-2"></i><span data-i18n="admin_calendar_today">Back to Today</span></button></div>
                 </div>
               </div>
               <div id="expiryDateLunar" class="lunar-display pl-1 mb-1"></div>
@@ -1333,8 +1333,8 @@ const lunarBiz = {
 
     function getCurrencySymbol(currency) {
       const currencySymbols = {
-        'MYR': 'RM', 'CNY': 'Â¥', 'USD': '$', 'HKD': 'HK$', 'TWD': 'NT$',
-        'JPY': 'Â¥', 'EUR': 'â‚¬', 'GBP': 'Â£', 'KRW': 'â‚©', 'TRY': 'â‚º', 'KGS': 'ÑÐ¾Ð¼'
+        'MYR': 'RM', 'CNY': '¥', 'USD': '$', 'HKD': 'HK$', 'TWD': 'NT$',
+        'JPY': '¥', 'EUR': '€', 'GBP': '£', 'KRW': '₩', 'TRY': '₺', 'KGS': 'сом'
       };
       return currencySymbols[currency] || 'RM';
     }
@@ -1807,8 +1807,8 @@ const lunarBiz = {
         
         // currency symbol map
         const currencySymbols = {
-          'MYR': 'RM', 'CNY': 'Â¥', 'USD': '$', 'HKD': 'HK$', 'TWD': 'NT$', 
-          'JPY': 'Â¥', 'EUR': 'â‚¬', 'GBP': 'Â£', 'KRW': 'â‚©', 'TRY': 'â‚º', 'KGS': 'ÑÐ¾Ð¼'
+          'MYR': 'RM', 'CNY': '¥', 'USD': '$', 'HKD': 'HK$', 'TWD': 'NT$', 
+          'JPY': '¥', 'EUR': '€', 'GBP': '£', 'KRW': '₩', 'TRY': '₺', 'KGS': 'сом'
         };
         const currency = subscription.currency || 'MYR';
         const symbol = currencySymbols[currency] || 'RM';
@@ -2586,6 +2586,7 @@ const lunarBiz = {
         
         // 初始化显示（静默，避免编辑弹窗初始化时误报）
         this.syncFromInputValue({ silent: true });
+        this.updateMonthOptionLabels();
         this.render();
         this.renderYearGrid();
       }
@@ -2709,8 +2710,9 @@ const lunarBiz = {
         const month = this.currentDate.getMonth();
         
         // 更新月份年份显示
-        this.monthElement.textContent = (month + 1) + '月';
+        this.monthElement.textContent = msg(`admin_month_${month + 1}`);
         this.yearElement.textContent = year;
+        this.updateMonthOptionLabels();
         
         // 清空日历
         this.calendar.innerHTML = '';
@@ -2778,6 +2780,7 @@ const lunarBiz = {
         this.hideAllViews();
         if (this.monthPicker) {
           this.monthPicker.classList.remove('hidden');
+          this.updateMonthOptionLabels();
           // 高亮当前月份
           const monthOptions = this.monthPicker.querySelectorAll('.month-option');
           monthOptions.forEach((option, index) => {
@@ -2787,6 +2790,14 @@ const lunarBiz = {
             }
           });
         }
+      }
+
+      updateMonthOptionLabels() {
+        if (!this.monthPicker) return;
+        const monthOptions = this.monthPicker.querySelectorAll('.month-option');
+        monthOptions.forEach((option, index) => {
+          option.textContent = msg(`admin_month_${index + 1}`);
+        });
       }
       
       // 显示年份选择器

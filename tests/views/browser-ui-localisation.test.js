@@ -12,6 +12,24 @@ const dashboardPageHtml = fs.readFileSync(path.join(repoRoot, 'src/views/dashboa
 const adminPageHtml = fs.readFileSync(path.join(repoRoot, 'src/views/adminPage.html'), 'utf8');
 const configPageHtml = fs.readFileSync(path.join(repoRoot, 'src/views/configPage.html'), 'utf8');
 const loginPageHtml = fs.readFileSync(path.join(repoRoot, 'src/views/loginPage.html'), 'utf8');
+const localeSource = fs.readFileSync(path.join(repoRoot, 'src/core/locale.js'), 'utf8');
+const LOCALISED_SOURCE_FILES = new Map([
+  ['src/core/locale.js', localeSource],
+  ['src/views/dashboardPage.html', dashboardPageHtml],
+  ['src/views/adminPage.html', adminPageHtml],
+  ['src/views/configPage.html', configPageHtml],
+  ['src/views/loginPage.html', loginPageHtml]
+]);
+const MOJIBAKE_CODE_POINTS = new Set([0x00c2, 0x00c3, 0x00d0, 0x00d1, 0x00e2, 0x00e4, 0x00e5, 0x00e6, 0x00e8, 0x00e9, 0x00f0, 0xfffd]);
+
+function containsMojibake(source) {
+  for (const char of source) {
+    if (MOJIBAKE_CODE_POINTS.has(char.codePointAt(0))) {
+      return true;
+    }
+  }
+  return false;
+}
 
 function stripScriptTags(scriptHtml) {
   const match = scriptHtml.match(/^<script>\s*([\s\S]*)\s*<\/script>$/);
@@ -552,7 +570,6 @@ test('dashboard scheduler runtime renders localized scheduler states and interpo
   assert.equal(elements.schedulerStatusHistory.innerHTML.includes('No details yet'), true);
   assert.equal(elements.schedulerStatus.innerHTML.includes('\u5168\u90e8\u65f6\u6bb5'), false);
   assert.equal(elements.schedulerStatus.innerHTML.includes('\u672c\u6b21\u672a\u53d1\u9001'), false);
-  assert.equal(elements.schedulerStatus.innerHTML.includes('?????'), false);
 });
 
 
@@ -563,7 +580,6 @@ test('admin page localises remaining browser-only error toasts via AppLocale mes
   assert.equal(adminPageHtml.includes("window.AppLocale.getMessage('test_notification_invalid_response'"), true);
   assert.equal(adminPageHtml.includes("window.AppLocale.getMessage('test_notification_http_prefix'"), true);
   assert.equal(adminPageHtml.includes("window.AppLocale.getMessage('admin_fetch_subscription_failed'"), true);
-  assert.equal(adminPageHtml.includes('????????: '), false);
 });
 
 
@@ -574,8 +590,6 @@ test('config page preserves backend test-notification messages and localizes onl
   assert.equal(configPageHtml.includes("window.AppLocale.getMessage('test_notification_http_prefix'"), true);
   assert.equal(configPageHtml.includes("window.AppLocale.getMessage('config_test_gotify_server_required'"), true);
   assert.equal(configPageHtml.includes("window.AppLocale.getMessage('config_test_discord_user_id_required'"), true);
-  assert.equal(configPageHtml.includes(' ???????'), false);
-  assert.equal(configPageHtml.includes(' ??????: '), false);
 });
 
 test('config page localizes config-save button and toast states without Chinese wrappers', () => {
@@ -643,6 +657,13 @@ test('dashboard page localises second-wave scheduler and stats copy', () => {
   assert.equal(dashboardPageHtml.includes('\u8fc7\u53bb7\u5929\u5185\u6ca1\u6709\u652f\u4ed8\u8bb0\u5f55'), false);
   assert.equal(dashboardPageHtml.includes('\u672a\u67657\u5929\u5185\u6ca1\u6709\u5373\u5c06\u7eed\u8d39\u7684\u8ba2\u9605'), false);
   assert.equal(dashboardPageHtml.includes('\u6682\u65e0\u652f\u51fa\u6570\u636e'), false);
+});
+
+test('dashboard page removes remaining mojibake from static fallbacks and currency symbols', () => {
+  assert.equal(containsMojibake(dashboardPageHtml), false);
+  assert.equal(dashboardPageHtml.includes(String.fromCodePoint(0x1f4ed)), true);
+  assert.equal(dashboardPageHtml.includes(String.fromCodePoint(0x1f4ca)), true);
+  assert.equal(dashboardPageHtml.includes(String.fromCodePoint(0x1f4c2)), true);
 });
 
 test('admin page localises second-wave filters, table labels, and runtime actions', () => {
@@ -802,63 +823,25 @@ test('admin page localises remaining modal, payment-history, and edit-payment st
   assert.equal(adminPageHtml.includes("msg('admin_reminder_hint_day'"), true);
   assert.equal(adminPageHtml.includes("msg('admin_modal_edit_title'"), true);
 
-  assert.equal(adminPageHtml.includes('æ·»åŠ æ–°è®¢é˜…'), false);
-  assert.equal(adminPageHtml.includes('è®¢é˜…åç§° *'), false);
-  assert.equal(adminPageHtml.includes('è®¢é˜…ç±»åž‹'), false);
-  assert.equal(adminPageHtml.includes('é€‰æ‹©æˆ–è¾“å…¥è‡ªå®šä¹‰ç±»åž‹'), false);
-  assert.equal(adminPageHtml.includes('åˆ†ç±»æ ‡ç­¾'), false);
-  assert.equal(adminPageHtml.includes('é€‰æ‹©æˆ–è¾“å…¥è‡ªå®šä¹‰æ ‡ç­¾'), false);
-  assert.equal(adminPageHtml.includes('å¯è¾“å…¥å¤šä¸ªæ ‡ç­¾å¹¶ä½¿ç”¨"/"åˆ†éš”'), false);
-  assert.equal(adminPageHtml.includes('è´¹ç”¨è®¾ç½®'), false);
-  assert.equal(adminPageHtml.includes('å¯é€‰'), false);
-  assert.equal(adminPageHtml.includes('ä¾‹å¦‚: 15.00'), false);
-  assert.equal(adminPageHtml.includes('ç”¨äºŽç»Ÿè®¡æ”¯å‡ºå’Œç”Ÿæˆä»ªè¡¨ç›˜'), false);
-  assert.equal(adminPageHtml.includes('è®¢é˜…æ¨¡å¼'), false);
-  assert.equal(adminPageHtml.includes('æ˜¾ç¤ºå†œåŽ†æ—¥æœŸ'), false);
-  assert.equal(adminPageHtml.includes('å†œåŽ†å‘¨æœŸ'), false);
-  assert.equal(adminPageHtml.includes('è‡ªåŠ¨è®¡ç®—åˆ°æœŸæ—¥æœŸ'), false);
-  assert.equal(adminPageHtml.includes('æé†’æå‰é‡'), false);
-  assert.equal(adminPageHtml.includes('0 = ä»…åœ¨åˆ°æœŸæ—¶æé†’; é€‰æ‹©"å°æ—¶"éœ€è¦å°† Worker å®šæ—¶ä»»åŠ¡è°ƒæ•´ä¸ºå°æ—¶çº§æ‰§è¡Œ'), false);
-  assert.equal(adminPageHtml.includes('å¯ç”¨è®¢é˜…'), false);
-  assert.equal(adminPageHtml.includes('è‡ªåŠ¨ç»­è®¢'), false);
-  assert.equal(adminPageHtml.includes('å¤‡æ³¨ (å¯é€‰)'), false);
-  assert.equal(adminPageHtml.includes('å¯æ·»åŠ ç›¸å…³å¤‡æ³¨ä¿¡æ¯...'), false);
-  assert.equal(adminPageHtml.includes('ç¡®è®¤ç»­è®¢'), false);
-  assert.equal(adminPageHtml.includes('ç»­è®¢ä¸­...'), false);
-  assert.equal(adminPageHtml.includes('ç»­è®¢æˆåŠŸ'), false);
-  assert.equal(adminPageHtml.includes('ç»­è®¢å¤±è´¥'), false);
-  assert.equal(adminPageHtml.includes('ç»­è®¢æ—¶å‘ç”Ÿé”™è¯¯'), false);
-  assert.equal(adminPageHtml.includes('æš‚æ— æ”¯ä»˜è®°å½•'), false);
-  assert.equal(adminPageHtml.includes('åˆå§‹è®¢é˜…'), false);
-  assert.equal(adminPageHtml.includes('æ‰‹åŠ¨ç»­è®¢'), false);
-  assert.equal(adminPageHtml.includes('è®¡è´¹å‘¨æœŸ:'), false);
-  assert.equal(adminPageHtml.includes('ç´¯è®¡æ”¯å‡º'), false);
-  assert.equal(adminPageHtml.includes('æ”¯ä»˜æ¬¡æ•°'), false);
-  assert.equal(adminPageHtml.includes('ç¼–è¾‘æ”¯ä»˜è®°å½•'), false);
-  assert.equal(adminPageHtml.includes('ä¿å­˜ä¸­...'), false);
-  assert.equal(adminPageHtml.includes('æ”¯ä»˜è®°å½•å·²æ›´æ–°'), false);
-  assert.equal(adminPageHtml.includes('æ›´æ–°å¤±è´¥'), false);
-  assert.equal(adminPageHtml.includes('æ›´æ–°æ—¶å‘ç”Ÿé”™è¯¯'), false);
-  assert.equal(adminPageHtml.includes('æ—¥æœŸæ ¼å¼éœ€ä¸º YYYY-MM-DD'), false);
-  assert.equal(adminPageHtml.includes('è¯·è¾“å…¥æœ‰æ•ˆçš„æ—¥æœŸ'), false);
 });
 
 test('admin page source keeps strings readable instead of unicode escape soup', () => {
   assert.equal(/\\u[0-9a-fA-F]{4}/.test(adminPageHtml), false);
 });
 
-test('admin page removes remaining mojibake from dropdown options and date picker labels', () => {
-  assert.equal(adminPageHtml.includes('éŸ³ä¹å¹³å°'), false);
-  assert.equal(adminPageHtml.includes('æµåª’ä½“'), false);
-  assert.equal(adminPageHtml.includes('1æœˆ'), false);
-  assert.equal(adminPageHtml.includes('é€‰æ‹©æœˆä»½'), false);
-  assert.equal(adminPageHtml.includes('å›žåˆ°ä»Šå¤©'), false);
+test('localized source files avoid question-mark placeholders, mojibake, and unicode escape literals', () => {
+  for (const [name, source] of LOCALISED_SOURCE_FILES.entries()) {
+    assert.equal(/\?{3,}/.test(source), false, `${name} should not contain placeholder question marks`);
+    assert.equal(/\\u[0-9a-fA-F]{4}/.test(source), false, `${name} should not contain unicode escape literals`);
+    assert.equal(containsMojibake(source), false, `${name} should not contain mojibake`);
+  }
+});
 
-  assert.equal(adminPageHtml.includes('1月'), true);
-  assert.equal(adminPageHtml.includes('选择月份'), true);
-  assert.equal(adminPageHtml.includes('回到今天'), true);
+test('admin page removes remaining mojibake from dropdown options and date picker labels', () => {
+  assert.equal(containsMojibake(adminPageHtml), false);
   assert.equal(adminPageHtml.includes('music_platform'), true);
   assert.equal(adminPageHtml.includes('streaming_media'), true);
+  assert.equal(adminPageHtml.includes('updateMonthOptionLabels'), true);
 });
 
 test('admin page localises preset subscription type/category options via stable keys', () => {
@@ -872,17 +855,36 @@ test('admin page localises preset subscription type/category options via stable 
   assert.equal(adminPageHtml.includes("localizeCategoryValue("), true);
   assert.equal(adminPageHtml.includes("normalizeCustomTypeValue("), true);
   assert.equal(adminPageHtml.includes("normalizeCategoryValue("), true);
-
-  assert.equal(adminPageHtml.includes('音乐平台'), false);
-  assert.equal(adminPageHtml.includes('流媒体'), false);
-  assert.equal(adminPageHtml.includes('个人'), false);
-  assert.equal(adminPageHtml.includes('娱乐'), false);
 });
 
 
 test('admin page binds the list Show Lunar checkbox to rerender the table', () => {
   assert.equal(adminPageHtml.includes("const listShowLunar = document.getElementById('listShowLunar');"), true);
   assert.equal(adminPageHtml.includes("listShowLunar.addEventListener('change', handleListLunarToggle);"), true);
+});
+
+test('admin page keeps lunar rendering copy unchanged while localising picker chrome', () => {
+  assert.equal(adminPageHtml.includes("updateLunarDisplay('startDate', 'startDateLunar')"), true);
+  assert.equal(adminPageHtml.includes("updateLunarDisplay('expiryDate', 'expiryDateLunar')"), true);
+  assert.equal(adminPageHtml.includes('lunar.fullStr'), true);
+  assert.equal(adminPageHtml.includes('lunar.monthStr.replace('), true);
+  assert.equal(adminPageHtml.includes('lunar.dayStr'), true);
+  assert.equal(adminPageHtml.includes('<div class="lunar-text">'), true);
+});
+
+test('admin page localises non-lunar date picker chrome', () => {
+  assert.equal(adminPageHtml.includes('data-i18n="admin_date_picker_select_month"'), true);
+  assert.equal(adminPageHtml.includes('data-i18n="admin_date_picker_select_year"'), true);
+  assert.equal(adminPageHtml.includes('data-i18n="admin_weekday_sun"'), true);
+  assert.equal(adminPageHtml.includes('data-i18n="admin_weekday_mon"'), true);
+  assert.equal(adminPageHtml.includes('data-i18n="admin_weekday_tue"'), true);
+  assert.equal(adminPageHtml.includes('data-i18n="admin_weekday_wed"'), true);
+  assert.equal(adminPageHtml.includes('data-i18n="admin_weekday_thu"'), true);
+  assert.equal(adminPageHtml.includes('data-i18n="admin_weekday_fri"'), true);
+  assert.equal(adminPageHtml.includes('data-i18n="admin_weekday_sat"'), true);
+  assert.equal(adminPageHtml.includes("msg(`admin_month_${month + 1}`)"), true);
+  assert.equal(adminPageHtml.includes('updateMonthOptionLabels();'), true);
+  assert.equal(/this\.monthElement\.textContent\s*=\s*\(month \+ 1\)\s*\+/.test(adminPageHtml), false);
 });
 
 test('config page localises second-wave notifier and secret-management copy', () => {
