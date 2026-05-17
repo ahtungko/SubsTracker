@@ -1,6 +1,7 @@
 import { getAllSubscriptions } from '../../data/subscriptions.js';
 import { getDynamicRates, calculateMonthlyExpense, calculateYearlyExpense, getRecentPayments, getUpcomingRenewals, getExpenseByType, getExpenseByCategory } from '../../core/currency.js';
 import { getCurrentTimeInTimezone, MS_PER_DAY } from '../../core/time.js';
+import { localizeCategoryValue, localizeCustomTypeValue } from '../../core/subscriptionTaxonomy.js';
 import { extractRequestLocale, getServerMessage } from '../locale.js';
 
 async function handleDashboardStats(requestOrEnv, envOrConfig, maybeConfig) {
@@ -26,10 +27,22 @@ async function handleDashboardStats(requestOrEnv, envOrConfig, maybeConfig) {
     const rates = await getDynamicRates(env);
     const monthlyExpense = calculateMonthlyExpense(subscriptions, timezone, rates);
     const yearlyExpense = calculateYearlyExpense(subscriptions, timezone, rates);
-    const recentPayments = getRecentPayments(subscriptions, timezone);
-    const upcomingRenewals = getUpcomingRenewals(subscriptions, timezone);
-    const expenseByType = getExpenseByType(subscriptions, timezone, rates);
-    const expenseByCategory = getExpenseByCategory(subscriptions, timezone, rates);
+    const recentPayments = getRecentPayments(subscriptions, timezone).map(item => ({
+      ...item,
+      customType: localizeCustomTypeValue(item.customType, locale)
+    }));
+    const upcomingRenewals = getUpcomingRenewals(subscriptions, timezone).map(item => ({
+      ...item,
+      customType: localizeCustomTypeValue(item.customType, locale)
+    }));
+    const expenseByType = getExpenseByType(subscriptions, timezone, rates).map(item => ({
+      ...item,
+      type: localizeCustomTypeValue(item.type, locale)
+    }));
+    const expenseByCategory = getExpenseByCategory(subscriptions, timezone, rates).map(item => ({
+      ...item,
+      category: localizeCategoryValue(item.category, locale)
+    }));
 
     const activeSubscriptions = subscriptions.filter(s => s.isActive);
     const now = getCurrentTimeInTimezone(timezone);

@@ -227,6 +227,20 @@ test('getMessage returns shared config and admin strings', () => {
   assert.equal(getMessage('admin_edit_payment_title', 'en-US'), 'Edit Payment Record');
 });
 
+
+test('getMessage returns localized admin modal and payment-flow strings', () => {
+  assert.equal(getMessage('admin_modal_add_title', 'zh-CN'), '\u6dfb\u52a0\u65b0\u8ba2\u9605');
+  assert.equal(getMessage('admin_modal_add_title', 'en-US'), 'Add Subscription');
+  assert.equal(getMessage('admin_renew_payment_date', 'zh-CN'), '\u652f\u4ed8\u65e5\u671f');
+  assert.equal(getMessage('admin_renew_payment_date', 'en-US'), 'Payment Date');
+  assert.equal(getMessage('admin_payment_history_empty', 'zh-CN'), '\u6682\u65e0\u652f\u4ed8\u8bb0\u5f55');
+  assert.equal(getMessage('admin_payment_history_empty', 'en-US'), 'No payment records yet');
+  assert.equal(getMessage('admin_save_in_progress', 'zh-CN'), '\u4fdd\u5b58\u4e2d...');
+  assert.equal(getMessage('admin_save_in_progress', 'en-US'), 'Saving...');
+  assert.equal(getMessage('admin_date_invalid_format', 'zh-CN'), '\u65e5\u671f\u683c\u5f0f\u9700\u4e3a YYYY-MM-DD');
+  assert.equal(getMessage('admin_date_invalid_value', 'en-US'), 'Please enter a valid date');
+});
+
 test('locale source keeps zh strings readable instead of unicode escape soup', () => {
   assert.equal(localeSource.includes('\\u641c\\u7d22\\u540d\\u79f0\\u3001\\u7c7b\\u578b'), false);
   assert.equal(localeSource.includes('\\u672c\\u6708\\u6298\\u5408\\u652f\\u51fa'), false);

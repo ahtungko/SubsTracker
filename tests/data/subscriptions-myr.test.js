@@ -126,3 +126,72 @@ test('updateSubscription backfills empty stored currency to MYR without rewritin
   assert.equal(second.success, true);
   assert.equal(second.subscription.currency, 'CNY');
 });
+
+test('getAllSubscriptions migrates legacy preset customType and category labels to stable keys', async () => {
+  const env = createEnv([
+    {
+      id: 'legacy-1',
+      name: 'Legacy Labels',
+      expiryDate: '2030-01-01T00:00:00.000Z',
+      customType: '音乐平台',
+      category: '个人/娱乐',
+      currency: 'MYR',
+      paymentHistory: [],
+      isActive: true
+    }
+  ]);
+
+  const subscriptions = await getAllSubscriptions(env);
+
+  assert.equal(subscriptions[0].customType, 'music_platform');
+  assert.equal(subscriptions[0].category, 'personal/entertainment');
+});
+
+test('createSubscription normalizes localized preset type and category input to stable keys', async () => {
+  const env = createEnv();
+
+  const result = await createSubscription({
+    name: 'YouTube Music',
+    expiryDate: '2030-01-01T00:00:00.000Z',
+    customType: 'Music Platform',
+    category: 'Personal/Entertainment',
+    amount: 10
+  }, env);
+
+  assert.equal(result.success, true);
+  assert.equal(result.subscription.customType, 'music_platform');
+  assert.equal(result.subscription.category, 'personal/entertainment');
+});
+
+test('updateSubscription normalizes localized preset type and category input to stable keys', async () => {
+  const env = createEnv([
+    {
+      id: 'taxonomy-1',
+      name: 'Spotify',
+      expiryDate: '2030-01-01T00:00:00.000Z',
+      periodValue: 1,
+      periodUnit: 'month',
+      customType: '',
+      category: '',
+      notes: '',
+      amount: 15,
+      currency: 'MYR',
+      paymentHistory: [],
+      isActive: true,
+      autoRenew: true,
+      useLunar: false,
+      createdAt: '2029-01-01T00:00:00.000Z'
+    }
+  ]);
+
+  const result = await updateSubscription('taxonomy-1', {
+    name: 'Spotify',
+    expiryDate: '2030-01-01T00:00:00.000Z',
+    customType: '音乐平台',
+    category: '个人/娱乐'
+  }, env);
+
+  assert.equal(result.success, true);
+  assert.equal(result.subscription.customType, 'music_platform');
+  assert.equal(result.subscription.category, 'personal/entertainment');
+});

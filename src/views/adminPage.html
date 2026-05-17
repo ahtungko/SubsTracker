@@ -1,4 +1,4 @@
-
+﻿
 <!DOCTYPE html>
 <html>
 <head>
@@ -481,7 +481,7 @@
     <div class="relative w-auto max-w-2xl mx-4 md:mx-auto my-12 bg-white rounded-lg shadow-xl">
       <div class="bg-gray-50 px-6 py-4 border-b border-gray-200 rounded-t-lg">
         <div class="flex items-center justify-between">
-          <h3 id="modalTitle" class="text-lg font-medium text-gray-900">添加新订阅</h3>
+          <h3 id="modalTitle" class="text-lg font-medium text-gray-900" data-i18n="admin_modal_add_title">Add Subscription</h3>
           <button id="closeModal" class="text-gray-400 hover:text-gray-600">
             <i class="fas fa-times text-xl"></i>
           </button>
@@ -491,33 +491,31 @@
       <form id="subscriptionForm" class="p-6 space-y-5">
         <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
           <div>
-            <label for="name" class="block text-sm font-medium text-gray-700 mb-1">订阅名称 *</label>
+            <label for="name" class="block text-sm font-medium text-gray-700 mb-1" data-i18n="admin_label_name">Subscription Name *</label>
             <input type="text" id="name" required
               class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 bg-white">
             <div class="error-message text-red-500" data-for="name"></div>
           </div>
           
           <div class="custom-dropdown-wrapper">
-            <label for="customType" class="block text-sm font-medium text-gray-700 mb-1">订阅类型</label>
-            <input type="text" id="customType" placeholder="选择或输入自定义类型" autocomplete="off"
+            <label for="customType" class="block text-sm font-medium text-gray-700 mb-1" data-i18n="admin_label_custom_type">Subscription Type</label>
+            <input type="text" id="customType" placeholder="Select or enter a custom type" data-i18n-placeholder="admin_placeholder_custom_type" autocomplete="off"
               class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 bg-white">
             <div id="customTypeDropdown" class="custom-dropdown-list"></div>
           </div>
 
           <div class="custom-dropdown-wrapper">
-            <label for="category" class="block text-sm font-medium text-gray-700 mb-1">分类标签</label>
-            <input type="text" id="category" placeholder="选择或输入自定义标签" autocomplete="off"
+            <label for="category" class="block text-sm font-medium text-gray-700 mb-1" data-i18n="admin_label_category">Category Tags</label>
+            <input type="text" id="category" placeholder="Select or enter custom tags" data-i18n-placeholder="admin_placeholder_category" autocomplete="off"
               class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 bg-white">
             <div id="categoryDropdown" class="custom-dropdown-list"></div>
-            <p class="mt-1 text-xs text-gray-500">可输入多个标签并使用"/"分隔</p>
+            <p class="mt-1 text-xs text-gray-500" data-i18n="admin_category_help">You can enter multiple tags separated by "/"</p>
           </div>
         </div>
 
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
-            <label class="block text-sm font-medium text-gray-700 mb-1">
-              费用设置 <span class="text-gray-400 text-xs ml-1">可选</span>
-            </label>
+            <label class="block text-sm font-medium text-gray-700 mb-1"><span data-i18n="admin_cost_settings">Cost Settings</span> <span class="text-gray-400 text-xs ml-1" data-i18n="admin_optional">Optional</span></label>
             <div class="flex space-x-2">
               <div class="w-24 shrink-0"> 
                 <select id="currency" class="h-10 w-full px-2 border border-gray-300 rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 bg-white text-sm">
@@ -531,33 +529,34 @@
                   <option value="GBP">GBP (&pound;)</option>   // GBP
                   <option value="KRW">KRW (&#8361;)</option>   // KRW
                   <option value="TRY">TRY (&#8378;)</option>   // TRY
+                  <option value="KGS">KGS (&#1089;&#1086;&#1084;)</option>      // KGS
                 </select>
               </div>
               <div class="relative flex-1">
-                <input type="number" id="amount" step="0.01" min="0" placeholder="例如: 15.00"
+                <input type="number" id="amount" step="0.01" min="0" placeholder="Example: 15.00" data-i18n-placeholder="admin_placeholder_amount"
                   class="h-10 w-full px-3 border border-gray-300 rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500" />
               </div>
             </div>
-            <p class="mt-1 text-xs text-gray-500">用于统计支出和生成仪表盘</p>
+            <p class="mt-1 text-xs text-gray-500" data-i18n="admin_cost_help">Used for expense reporting and dashboard totals</p>
           </div>
 
           <div>
              <div class="flex justify-between items-center mb-1">
-                <label for="subscriptionMode" class="block text-sm font-medium text-gray-700">订阅模式</label>
+                <label for="subscriptionMode" class="block text-sm font-medium text-gray-700" data-i18n="admin_label_subscription_mode">Subscription Mode</label>
              </div>
             <select id="subscriptionMode" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 bg-white h-10">
-              <option value="cycle" selected>📅 循环订阅</option>
-              <option value="reset">⏳ 到期重置</option>
+              <option value="cycle" selected>Recurring</option>
+              <option value="reset">Reset on Expiry</option>
             </select>
             
             <div class="mt-2 flex items-center space-x-3">
                  <label class="inline-flex items-center cursor-pointer select-none">
                   <input type="checkbox" id="showLunar" class="form-checkbox h-4 w-4 text-indigo-600 rounded border-gray-300 focus:ring-indigo-500">
-                  <span class="ml-2 text-sm text-gray-600">显示农历日期</span>
+                  <span class="ml-2 text-sm text-gray-600" data-i18n="admin_show_lunar_dates">Show Lunar Dates</span>
                 </label>
                 <label class="inline-flex items-center cursor-pointer select-none">
                   <input type="checkbox" id="useLunar" class="form-checkbox h-4 w-4 text-indigo-600 rounded border-gray-300 focus:ring-indigo-500">
-                  <span class="ml-2 text-sm text-gray-600">农历周期</span>
+                  <span class="ml-2 text-sm text-gray-600" data-i18n="admin_lunar_cycle">Lunar Cycle</span>
                 </label>
             </div>
           </div>
@@ -565,7 +564,7 @@
 
         <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
           <div class="md:col-span-2">
-            <label for="startDate" class="block text-sm font-medium text-gray-700 mb-1">开始日期</label>
+            <label for="startDate" class="block text-sm font-medium text-gray-700 mb-1" data-i18n="admin_label_start_date">Start Date</label>
             <div class="relative">
               <input type="text" id="startDate"
                 class="w-full px-3 py-2 pr-10 border border-gray-300 rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 bg-white"
@@ -593,25 +592,25 @@
           </div>
           
           <div>
-            <label for="periodValue" class="block text-sm font-medium text-gray-700 mb-1">周期数值 *</label>
+            <label for="periodValue" class="block text-sm font-medium text-gray-700 mb-1" data-i18n="admin_label_period_value">Period Value *</label>
             <input type="number" id="periodValue" min="1" value="1" required
               class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 bg-white">
           </div>
           
           <div>
-            <label for="periodUnit" class="block text-sm font-medium text-gray-700 mb-1">周期单位 *</label>
+            <label for="periodUnit" class="block text-sm font-medium text-gray-700 mb-1" data-i18n="admin_label_period_unit">Period Unit *</label>
             <select id="periodUnit" required
               class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 bg-white">
-              <option value="day">天</option>
-              <option value="month" selected>月</option>
-              <option value="year">年</option>
+              <option value="day" data-i18n="admin_period_unit_day">day</option>
+              <option value="month" selected data-i18n="admin_period_unit_month">month</option>
+              <option value="year" data-i18n="admin_period_unit_year">year</option>
             </select>
           </div>
         </div>
         
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
-              <label for="expiryDate" class="block text-sm font-medium text-gray-700 mb-1">到期日期 *</label>
+              <label for="expiryDate" class="block text-sm font-medium text-gray-700 mb-1" data-i18n="admin_label_expiry_date">Expiry Date *</label>
               <div class="relative">
                 <input type="text" id="expiryDate" required
                   class="w-full px-3 py-2 pr-10 border border-gray-300 rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 bg-white"
@@ -637,14 +636,13 @@
 
           <div class="flex items-start">
               <button type="button" id="calculateExpiryBtn" class="mt-6 bg-indigo-600 hover:bg-indigo-700 text-white py-2 px-4 rounded-md shadow-sm text-sm font-medium transition-colors flex items-center justify-center h-[42px] whitespace-nowrap">
-                <i class="fas fa-calculator mr-2"></i>自动计算到期日期
-              </button>
+                <i class="fas fa-calculator mr-2"></i><span data-i18n="admin_auto_calculate_expiry">Auto-calculate Expiry Date</span></button>
           </div>
         </div>
 
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <label for="reminderValue" class="block text-sm font-medium text-gray-700 mb-1">提醒提前量</label>
+              <label for="reminderValue" class="block text-sm font-medium text-gray-700 mb-1" data-i18n="admin_label_reminder_offset">Reminder Offset</label>
               <div class="flex space-x-2">
                 <div class="relative flex-1">
                   <input type="number" id="reminderValue" min="0" value="7"
@@ -653,38 +651,36 @@
                 <div class="w-24 shrink-0">
                   <select id="reminderUnit"
                     class="w-full px-2 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 bg-white">
-                    <option value="day" selected>天</option>
-                    <option value="hour">小时</option>
+                    <option value="day" selected data-i18n="admin_reminder_unit_day">day</option>
+                    <option value="hour" data-i18n="admin_reminder_unit_hour">hour</option>
                   </select>
                 </div>
               </div>
                <div class="error-message text-red-500" data-for="reminderValue"></div>
-               <p id="reminderHint" class="mt-2 text-xs text-gray-500 leading-tight">
-                 0 = 仅在到期时提醒; 选择"小时"需要将 Worker 定时任务调整为小时级执行
-               </p>
+               <p id="reminderHint" class="mt-2 text-xs text-gray-500 leading-tight"><span data-i18n="admin_reminder_help">0 = remind only at expiry; choosing "hour" requires the Worker to run hourly</span></p>
             </div>
 
             <div>
-               <label class="block text-sm font-medium text-gray-700 mb-3">选项设置</label>
+               <label class="block text-sm font-medium text-gray-700 mb-3" data-i18n="admin_option_settings">Option Settings</label>
                <div class="flex items-center space-x-6">
                   <label class="inline-flex items-center cursor-pointer select-none group">
                     <input type="checkbox" id="isActive" checked 
                       class="form-checkbox h-5 w-5 text-indigo-600 rounded border-gray-300 focus:ring-indigo-500 transition duration-150 ease-in-out">
-                    <span class="ml-2 text-sm text-gray-700 font-medium group-hover:text-indigo-700">启用订阅</span>
+                    <span class="ml-2 text-sm text-gray-700 font-medium group-hover:text-indigo-700" data-i18n="admin_enable_subscription">Enable Subscription</span>
                   </label>
                   
                   <label class="inline-flex items-center cursor-pointer select-none group">
                     <input type="checkbox" id="autoRenew" checked 
                       class="form-checkbox h-5 w-5 text-indigo-600 rounded border-gray-300 focus:ring-indigo-500 transition duration-150 ease-in-out">
-                    <span class="ml-2 text-sm text-gray-700 font-medium group-hover:text-indigo-700">自动续订</span>
+                    <span class="ml-2 text-sm text-gray-700 font-medium group-hover:text-indigo-700" data-i18n="admin_enable_auto_renew">Enable Auto Renew</span>
                   </label>
                </div>
             </div>
         </div>
 
         <div>
-          <label for="notes" class="block text-sm font-medium text-gray-700 mb-1">备注</label>
-          <textarea id="notes" rows="2" placeholder="可添加相关备注信息..."
+          <label for="notes" class="block text-sm font-medium text-gray-700 mb-1" data-i18n="admin_label_notes">Notes</label>
+          <textarea id="notes" rows="2" placeholder="Add related notes..." data-i18n-placeholder="admin_placeholder_notes"
             class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"></textarea>
           <div class="error-message text-red-500"></div>
         </div>
@@ -694,12 +690,11 @@
         <div class="flex justify-end space-x-3 pt-4 border-t border-gray-200">
           <button type="button" id="cancelBtn" 
             class="px-5 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-50 bg-white transition-colors">
-            取消
+            <span data-i18n="admin_cancel">Cancel</span>
           </button>
           <button type="submit" 
             class="btn-primary text-white px-6 py-2 rounded-md text-sm font-medium shadow-md hover:shadow-lg transform active:scale-95 transition-all">
-            <i class="fas fa-save mr-2"></i>保存
-          </button>
+            <i class="fas fa-save mr-2"></i><span data-i18n="admin_save">Save</span></button>
         </div>
       </form>
     </div>
@@ -983,7 +978,7 @@ const lunarBiz = {
       updateLunarDisplay('startDate', 'startDateLunar');
       updateLunarDisplay('expiryDate', 'expiryDateLunar');
 
-      // 保存用户偏好
+      // ${msg('admin_save')}用户偏好
       localStorage.setItem('showLunar', showLunar.checked);
     }
 
@@ -1004,7 +999,7 @@ const lunarBiz = {
 
     function handleListLunarToggle() {
       const listShowLunar = document.getElementById('listShowLunar');
-      // 保存用户偏好
+      // ${msg('admin_save')}用户偏好
       localStorage.setItem('showLunar', listShowLunar.checked);
       // 重新加载订阅列表以应用农历显示设置
       renderSubscriptionTable();
@@ -1143,8 +1138,51 @@ const lunarBiz = {
     }
 
     const categorySeparator = /[\/,，\s]+/;
+    const TYPE_OPTION_KEYS = [
+      'streaming_media', 'video_platform', 'music_platform', 'cloud_service', 'software_subscription',
+      'domain_name', 'server', 'membership_service', 'learning_platform', 'fitness_sports',
+      'gaming', 'news_magazine', 'birthday', 'anniversary', 'other'
+    ];
+    const CATEGORY_OPTION_KEYS = [
+      'personal', 'family', 'work', 'company', 'entertainment', 'learning',
+      'development', 'productivity', 'social', 'health', 'finance'
+    ];
     let subscriptionsCache = [];
     let searchDebounceTimer = null;
+
+    function localizeCustomTypeValue(value = '') {
+      const trimmed = String(value || '').trim();
+      if (!trimmed) return '';
+      return TYPE_OPTION_KEYS.includes(trimmed) ? msg(`subscription_type_${trimmed}`) : trimmed;
+    }
+
+    function localizeCategoryValue(value = '') {
+      return String(value || '')
+        .split(categorySeparator)
+        .map(token => token.trim())
+        .filter(Boolean)
+        .map(token => CATEGORY_OPTION_KEYS.includes(token) ? msg(`subscription_category_${token}`) : token)
+        .join('/');
+    }
+
+    function normalizeCustomTypeValue(value = '') {
+      const trimmed = String(value || '').trim();
+      if (!trimmed) return '';
+      const key = TYPE_OPTION_KEYS.find(item => msg(`subscription_type_${item}`).toLowerCase() === trimmed.toLowerCase());
+      return key || trimmed;
+    }
+
+    function normalizeCategoryValue(value = '') {
+      return String(value || '')
+        .split(categorySeparator)
+        .map(token => token.trim())
+        .filter(Boolean)
+        .map(token => {
+          const key = CATEGORY_OPTION_KEYS.find(item => msg(`subscription_category_${item}`).toLowerCase() === token.toLowerCase());
+          return key || token;
+        })
+        .join('/');
+    }
 
     function normalizeCategoryTokens(category = '') {
       return category
@@ -1163,7 +1201,7 @@ const lunarBiz = {
       const categories = new Set();
 
       (subscriptions || []).forEach(subscription => {
-        normalizeCategoryTokens(subscription.category).forEach(token => categories.add(token));
+        normalizeCategoryTokens(localizeCategoryValue(subscription.category)).forEach(token => categories.add(token));
       });
 
       const sorted = Array.from(categories).sort((a, b) => a.localeCompare(b, getLocaleTag()));
@@ -1295,8 +1333,8 @@ const lunarBiz = {
 
     function getCurrencySymbol(currency) {
       const currencySymbols = {
-        'MYR': 'RM', 'CNY': '¥', 'USD': '$', 'HKD': 'HK$', 'TWD': 'NT$',
-        'JPY': '¥', 'EUR': '€', 'GBP': '£', 'KRW': '₩', 'TRY': '₺'
+        'MYR': 'RM', 'CNY': 'Â¥', 'USD': '$', 'HKD': 'HK$', 'TWD': 'NT$',
+        'JPY': 'Â¥', 'EUR': 'â‚¬', 'GBP': 'Â£', 'KRW': 'â‚©', 'TRY': 'â‚º', 'KGS': 'ÑÐ¾Ð¼'
       };
       return currencySymbols[currency] || 'RM';
     }
@@ -1320,7 +1358,7 @@ const lunarBiz = {
 
       if (selectedCategory) {
         filtered = filtered.filter(subscription =>
-          normalizeCategoryTokens(subscription.category).some(token => token.toLowerCase() === selectedCategory)
+          normalizeCategoryTokens(localizeCategoryValue(subscription.category)).some(token => token.toLowerCase() === selectedCategory)
         );
       }
 
@@ -1334,9 +1372,9 @@ const lunarBiz = {
         filtered = filtered.filter(subscription => {
           const haystack = [
             subscription.name,
-            subscription.customType,
+            localizeCustomTypeValue(subscription.customType),
             subscription.notes,
-            subscription.category
+            localizeCategoryValue(subscription.category)
           ].filter(Boolean).join(' ').toLowerCase();
           return haystack.includes(keyword);
         });
@@ -1479,7 +1517,7 @@ const lunarBiz = {
         }
 
         const nameHtml = createHoverText(subscription.name, 20, 'text-sm font-medium text-gray-900');
-        const typeHtml = createHoverText(subscription.customType || msg('admin_fallback_type_other'), 15, 'text-sm text-gray-900');
+        const typeHtml = createHoverText(localizeCustomTypeValue(subscription.customType) || msg('admin_fallback_type_other'), 15, 'text-sm text-gray-900');
         const periodHtml = periodText
           ? createHoverText(msg('admin_period_prefix') + ' ' + periodText, 20, 'text-xs text-gray-500 mt-1')
           : '';
@@ -1488,7 +1526,7 @@ const lunarBiz = {
         const modeColorClass = subscription.subscriptionMode === 'reset' ? 'text-orange-500' : 'text-blue-500';
         const modeHtml = '<div class="text-xs ' + modeColorClass + ' mt-1"><i class="fas ' + modeIconClass + ' mr-1"></i>' + modeLabel + '</div>';
 
-        const categoryTokens = normalizeCategoryTokens(subscription.category);
+        const categoryTokens = normalizeCategoryTokens(localizeCategoryValue(subscription.category));
         const categoryHtml = categoryTokens.length
           ? '<div class="flex flex-wrap gap-2 mt-2">' + categoryTokens.map(cat =>
               '<span class="px-2 py-0.5 bg-indigo-50 text-indigo-600 text-xs rounded-full"><i class="fas fa-tag mr-1"></i>' + cat + '</span>'
@@ -1629,6 +1667,11 @@ const lunarBiz = {
       modeSelect.addEventListener('change', () => renderSubscriptionTable());
     }
 
+    const listShowLunar = document.getElementById('listShowLunar');
+    if (listShowLunar) {
+      listShowLunar.addEventListener('change', handleListLunarToggle);
+    }
+
     // 获取所有订阅并按到期时间排序
     async function loadSubscriptions(showLoading = true) {
       try {
@@ -1740,7 +1783,7 @@ const lunarBiz = {
         const today = new Date().toISOString().split('T')[0];
         
         // 获取当前到期日的显示文本
-        let currentExpiryDisplay = '无';
+        let currentExpiryDisplay = msg('admin_renew_current_none');
         if (subscription.expiryDate) {
             const datePart = subscription.expiryDate.split('T')[0];
             currentExpiryDisplay = datePart;
@@ -1752,7 +1795,7 @@ const lunarBiz = {
                     const d = parseInt(parts[2], 10);
                     const lunarObj = lunarCalendar.solar2lunar(y, m, d);
                     if (lunarObj) {
-                        currentExpiryDisplay += ' (农历: ' + lunarObj.fullStr + ')';
+                        currentExpiryDisplay += ' (' + msg('admin_lunar_prefix') + ' ' + lunarObj.fullStr + ')';
                     }
                 } catch (e) {
                     console.error('农历计算失败', e);
@@ -1764,15 +1807,15 @@ const lunarBiz = {
         
         // currency symbol map
         const currencySymbols = {
-          'MYR': 'RM', 'CNY': '¥', 'USD': '$', 'HKD': 'HK$', 'TWD': 'NT$', 
-          'JPY': '¥', 'EUR': '€', 'GBP': '£', 'KRW': '₩', 'TRY': '₺'
+          'MYR': 'RM', 'CNY': 'Â¥', 'USD': '$', 'HKD': 'HK$', 'TWD': 'NT$', 
+          'JPY': 'Â¥', 'EUR': 'â‚¬', 'GBP': 'Â£', 'KRW': 'â‚©', 'TRY': 'â‚º', 'KGS': 'ÑÐ¾Ð¼'
         };
         const currency = subscription.currency || 'MYR';
         const symbol = currencySymbols[currency] || 'RM';
         const currencyLabel = "(" + currency + " " + symbol + ")";
         
         const lunarBadge = subscription.useLunar ? 
-            '<span class="text-sm bg-purple-100 text-purple-800 px-2 py-0.5 rounded-full border border-purple-200 shrink-0">农历周期</span>' : '';
+            '<span class="text-sm bg-purple-100 text-purple-800 px-2 py-0.5 rounded-full border border-purple-200 shrink-0">' + msg('admin_lunar_cycle') + '</span>' : '';
 
         // 构建 Modal HTML
         const modalHtml = 
@@ -1789,56 +1832,56 @@ const lunarBiz = {
             '' +
             '        <form id="renewForm" class="mt-4 space-y-4">' +
             '            <div>' +
-            '                <label class="block text-sm font-medium text-gray-700 mb-1">支付日期</label>' +
+            '                <label class="block text-sm font-medium text-gray-700 mb-1">' + msg('admin_renew_payment_date') + '</label>' +
             '                <input type="date" id="renewPaymentDate" value="' + today + '"' +
             '                       class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500">' +
             '            </div>' +
             '' +
             '            <div>' +
-            '                <label class="block text-sm font-medium text-gray-700 mb-1">支付金额 ' + currencyLabel + '</label>' +
+            '                <label class="block text-sm font-medium text-gray-700 mb-1">' + msg('admin_payment_amount') + ' ' + currencyLabel + '</label>' +
             '                <input type="number" id="renewAmount" value="' + defaultAmount + '" step="0.01" min="0"' +
             '                       class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500">' +
             '            </div>' +
             '' +
             '            <div>' +
             '                <div class="flex justify-between items-center mb-1">' +
-            '                    <label class="block text-sm font-medium text-gray-700">续订周期数</label>' +
+            '                    <label class="block text-sm font-medium text-gray-700">' + msg('admin_renew_period_count') + '</label>' +
             '                    ' + lunarBadge + 
             '                </div>' +
             '                <div class="flex items-center space-x-2">' +
             '                    <input type="number" id="renewPeriodMultiplier" value="1" min="1" max="120"' +
             '                           class="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"' +
             '                           oninput="updateNewExpiryPreview()">' +
-            '                    <span class="text-gray-600">个</span>' + 
+            '                    <span class="text-gray-600">' + msg('admin_placeholder_renew_count_unit') + '</span>' + 
             '                </div>' +
-            '                <p class="mt-1 text-xs text-gray-500">一次性续订多个周期（如12个月）</p>' +
+            '                <p class="mt-1 text-xs text-gray-500">' + msg('admin_renew_period_help') + '</p>' +
             '            </div>' +
             '' +
             '            <div class="bg-blue-50 rounded-lg p-4 mb-4">' +
             '                <div class="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-2 mb-3 sm:mb-2">' +
-            '                    <span class="text-gray-500 text-sm shrink-0">当前到期:</span>' +
+            '                    <span class="text-gray-500 text-sm shrink-0">' + msg('admin_renew_current_expiry') + '</span>' +
             '                    <span class="font-medium text-gray-900 text-sm break-words">' + currentExpiryDisplay + '</span>' +
             '                </div>' +
             '                <div class="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-2">' +
-            '                    <span class="text-gray-500 text-sm shrink-0">新到期日:</span>' +
-            '                    <span class="font-medium text-blue-600 text-sm break-words" id="newExpiryPreview">计算中...</span>' +
+            '                    <span class="text-gray-500 text-sm shrink-0">' + msg('admin_renew_new_expiry') + '</span>' +
+            '                    <span class="font-medium text-blue-600 text-sm break-words" id="newExpiryPreview">' + msg('admin_renew_preview_calculating') + '</span>' +
             '                </div>' +
             '            </div>' +
             '' +
             '            <div>' +
-            '                <label class="block text-sm font-medium text-gray-700 mb-1">备注 (可选)</label>' +
-            '                <input type="text" id="renewNote" placeholder="例如：年度优惠、价格调整"' +
+            '                <label class="block text-sm font-medium text-gray-700 mb-1">' + msg('admin_renew_note_optional') + '</label>' +
+            '                <input type="text" id="renewNote" placeholder="' + msg('admin_placeholder_renew_note') + '"' +
             '                       class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500">' +
             '            </div>' +
             '' +
             '            <div class="flex justify-end space-x-3 pt-3">' +
             '                <button type="button" onclick="closeRenewFormModal()"' +
             '                        class="px-4 py-2 bg-gray-500 hover:bg-gray-600 text-white rounded-md">' +
-            '                    取消' +
+            '                    ' + msg('admin_cancel') +
             '                </button>' +
             '                <button type="submit" id="confirmRenewBtn"' +
             '                        class="px-4 py-2 bg-green-500 hover:bg-green-600 text-white rounded-md">' +
-            '                    <i class="fas fa-check mr-1"></i>确认续订' +
+            '                    <i class="fas fa-check mr-1"></i>' + msg('admin_renew_confirm') +
             '                </button>' +
             '            </div>' +
             '        </form>' +
@@ -1897,13 +1940,13 @@ const lunarBiz = {
                                       String(solar.month).padStart(2, '0') + '-' + 
                                       String(solar.day).padStart(2, '0');
                                       
-                    document.getElementById('newExpiryPreview').textContent = resultStr + ' (农历: ' + fullNextLunar.fullStr + ')';
+                    document.getElementById('newExpiryPreview').textContent = resultStr + ' (' + msg('admin_lunar_prefix') + ' ' + fullNextLunar.fullStr + ')';
                 } else {
-                    document.getElementById('newExpiryPreview').textContent = '日期计算错误';
+                    document.getElementById('newExpiryPreview').textContent = msg('admin_renew_preview_error');
                 }
             } catch (e) {
                 console.error(e);
-                document.getElementById('newExpiryPreview').textContent = '计算出错';
+                document.getElementById('newExpiryPreview').textContent = msg('admin_renew_preview_error');
             }
         } else {
             // 公历计算逻辑
@@ -1938,11 +1981,11 @@ const lunarBiz = {
             paymentDate: document.getElementById('renewPaymentDate').value,
             amount: parseFloat(document.getElementById('renewAmount').value) || 0,
             periodMultiplier: parseInt(document.getElementById('renewPeriodMultiplier').value) || 1,
-            note: document.getElementById('renewNote').value || '手动续订'
+            note: document.getElementById('renewNote').value || msg('admin_renew_default_note')
         };
 
         const originalBtnContent = confirmBtn.innerHTML;
-        confirmBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-1"></i>续订中...';
+        confirmBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-1"></i>' + msg('admin_renew_in_progress');
         confirmBtn.disabled = true;
 
         try {
@@ -1957,17 +2000,17 @@ const lunarBiz = {
             const result = await response.json();
 
             if (result.success) {
-                showToast(result.message || '续订成功', 'success');
+                showToast(result.message || msg('admin_renew_success'), 'success');
                 closeRenewFormModal();
                 await loadSubscriptions(false);
             } else {
-                showToast(result.message || '续订失败', 'error');
+                showToast(result.message || msg('admin_renew_failed'), 'error');
                 confirmBtn.innerHTML = originalBtnContent;
                 confirmBtn.disabled = false;
             }
         } catch (error) {
             console.error('续订失败:', error);
-            showToast('续订时发生错误', 'error');
+            showToast(msg('admin_renew_error'), 'error');
             confirmBtn.innerHTML = originalBtnContent;
             confirmBtn.disabled = false;
         }
@@ -1996,7 +2039,7 @@ const lunarBiz = {
             const result = await response.json();
 
             if (!result.success) {
-                showToast(result.message || '获取支付历史失败', 'error');
+                showToast(result.message || msg('admin_payment_history_failed'), 'error');
                 return;
             }
 
@@ -2012,7 +2055,7 @@ const lunarBiz = {
             showPaymentHistoryModal(subscription, payments);
         } catch (error) {
             console.error('获取支付历史失败:', error);
-            showToast('获取支付历史时发生错误', 'error');
+            showToast(msg('admin_payment_history_error'), 'error');
         }
     }
 
@@ -2022,12 +2065,12 @@ const lunarBiz = {
 
         let paymentsHtml = '';
         if (payments.length === 0) {
-            paymentsHtml = '<div class="text-center text-gray-500 py-8">暂无支付记录</div>';
+            paymentsHtml = '<div class="text-center text-gray-500 py-8">' + msg('admin_payment_history_empty') + '</div>';
         } else {
             paymentsHtml = payments.reverse().map(payment => {
-                const typeLabel = payment.type === 'initial' ? '初始订阅' :
-                                payment.type === 'manual' ? '手动续订' :
-                                payment.type === 'auto' ? '自动续订' : '未知';
+                const typeLabel = payment.type === 'initial' ? msg('admin_payment_type_initial') :
+                                payment.type === 'manual' ? msg('admin_payment_type_manual') :
+                                payment.type === 'auto' ? msg('admin_payment_type_auto') : msg('admin_unknown');
                 const typeClass = payment.type === 'initial' ? 'bg-blue-100 text-blue-800' :
                                 payment.type === 'manual' ? 'bg-green-100 text-green-800' :
                                 payment.type === 'auto' ? 'bg-purple-100 text-purple-800' : 'bg-gray-100 text-gray-800';
@@ -2043,7 +2086,7 @@ const lunarBiz = {
                     const options = { year: 'numeric', month: 'short', day: 'numeric' };
                     const startStr = periodStart.toLocaleDateString('zh-CN', options);
                     const endStr = periodEnd.toLocaleDateString('zh-CN', options);
-                    periodHtml = '<div class="mt-1 ml-6 text-xs text-gray-500"><i class="fas fa-clock mr-1"></i>计费周期: ' + startStr + ' - ' + endStr + '</div>';
+                    periodHtml = '<div class="mt-1 ml-6 text-xs text-gray-500"><i class="fas fa-clock mr-1"></i>' + msg('admin_billing_period') + ' ' + startStr + ' - ' + endStr + '</div>';
                 }
 
                 const noteHtml = payment.note ? '<div class="mt-1 ml-6 text-sm text-gray-600">' + payment.note + '</div>' : '';
@@ -2097,11 +2140,11 @@ const lunarBiz = {
                     <div class="mt-4 bg-gradient-to-r from-purple-50 to-blue-50 rounded-lg p-4 mb-4">
                         <div class="grid grid-cols-2 gap-4">
                             <div class="text-center">
-                                <div class="text-sm text-gray-600">累计支出</div>
+                                <div class="text-sm text-gray-600">${msg('admin_total_spend')}</div>
                                 <div class="text-2xl font-bold text-purple-600">${getCurrencySymbol(subscription.currency)}${totalAmount.toFixed(2)}</div>
                             </div>
                             <div class="text-center">
-                                <div class="text-sm text-gray-600">支付次数</div>
+                                <div class="text-sm text-gray-600">${msg('admin_payment_count')}</div>
                                 <div class="text-2xl font-bold text-blue-600">${paymentCount}</div>
                             </div>
                         </div>
@@ -2113,7 +2156,7 @@ const lunarBiz = {
 
                     <div class="mt-4 flex justify-end">
                         <button onclick="closePaymentHistoryModal()" class="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded">
-                            关闭
+                            ${msg('admin_close')}
                         </button>
                     </div>
                 </div>
@@ -2134,7 +2177,7 @@ const lunarBiz = {
     };
 
     window.deletePaymentRecord = async function(subscriptionId, paymentId) {
-        if (!confirm('确认删除此支付记录？删除后将重新计算统计数据。')) {
+        if (!confirm(msg('admin_delete_payment_confirm'))) {
             return;
         }
 
@@ -2148,17 +2191,17 @@ const lunarBiz = {
             const result = await response.json();
 
             if (result.success) {
-                showToast(result.message || '支付记录已删除', 'success');
-                // 关闭当前模态框
+                showToast(result.message || msg('admin_payment_deleted'), 'success');
+                // ${msg('admin_close')}当前模态框
                 closePaymentHistoryModal();
                 // 刷新订阅列表
                 await loadSubscriptions(false);
             } else {
-                showToast(result.message || '删除失败', 'error');
+                showToast(result.message || msg('admin_delete_failed'), 'error');
             }
         } catch (error) {
             console.error('删除支付记录失败:', error);
-            showToast('删除时发生错误', 'error');
+            showToast(msg('admin_delete_error'), 'error');
         }
     };
 
@@ -2182,14 +2225,14 @@ const lunarBiz = {
 
             const payment = payResult.payments.find(p => p.id === paymentId);
             if (!payment) {
-                showToast('支付记录不存在', 'error');
+                showToast(msg('admin_payment_not_found'), 'error');
                 return;
             }
 
             showEditPaymentModal(subscription, payment);
         } catch (error) {
             console.error('获取支付记录失败:', error);
-            showToast('获取支付记录时发生错误', 'error');
+            showToast(msg('admin_payment_fetch_error'), 'error');
         }
     };
 
@@ -2202,7 +2245,7 @@ const lunarBiz = {
                 <div class="relative top-20 mx-auto p-5 border w-full max-w-md shadow-lg rounded-md bg-white" onclick="event.stopPropagation()">
                     <div class="flex justify-between items-center pb-3 border-b">
                         <h3 class="text-xl font-semibold text-gray-900">
-                            <i class="fas fa-edit mr-2"></i>编辑支付记录
+                            <i class="fas fa-edit mr-2"></i>${msg('admin_edit_payment_title')}
                         </h3>
                         <button onclick="closeEditPaymentModal()" class="text-gray-400 hover:text-gray-500">
                             <i class="fas fa-times text-2xl"></i>
@@ -2211,25 +2254,25 @@ const lunarBiz = {
 
                     <form id="editPaymentForm" class="mt-4 space-y-4">
                         <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-1">订阅名称</label>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">${msg('admin_subscription_name')}</label>
                             <input type="text" value="${subscription.name}" disabled
                                    class="w-full px-3 py-2 border border-gray-300 rounded-md bg-gray-100">
                         </div>
 
                         <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-1">支付日期</label>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">${msg('admin_payment_date')}</label>
                             <input type="date" id="editPaymentDate" value="${formattedDate}"
                                    class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500">
                         </div>
 
                         <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-1">支付金额 (${subscription.currency || 'MYR'} ${getCurrencySymbol(payment.currency || subscription.currency)})</label>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">${msg('admin_payment_amount')} (${subscription.currency || 'MYR'} ${getCurrencySymbol(payment.currency || subscription.currency)})</label>
                             <input type="number" id="editPaymentAmount" value="${payment.amount}" step="0.01" min="0"
                                    class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500">
                         </div>
 
                         <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-1">备注</label>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">${msg('admin_note')}</label>
                             <input type="text" id="editPaymentNote" value="${payment.note || ''}"
                                    class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500">
                         </div>
@@ -2237,11 +2280,11 @@ const lunarBiz = {
                         <div class="flex justify-end space-x-3 pt-3">
                             <button type="button" onclick="closeEditPaymentModal()"
                                     class="px-4 py-2 bg-gray-500 hover:bg-gray-600 text-white rounded-md">
-                                取消
+                                ${msg('admin_cancel')}
                             </button>
                             <button type="submit" id="confirmEditBtn"
                                     class="px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-md">
-                                <i class="fas fa-check mr-1"></i>保存
+                                <i class="fas fa-check mr-1"></i>${msg('admin_save')}
                             </button>
                         </div>
                     </form>
@@ -2251,7 +2294,7 @@ const lunarBiz = {
 
         document.body.insertAdjacentHTML('beforeend', modalHtml);
 
-        // 保存信息到表单
+        // ${msg('admin_save')}信息到表单
         document.getElementById('editPaymentForm').dataset.subscriptionId = subscription.id;
         document.getElementById('editPaymentForm').dataset.paymentId = payment.id;
 
@@ -2276,7 +2319,7 @@ const lunarBiz = {
         };
 
         const originalBtnContent = confirmBtn.innerHTML;
-        confirmBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-1"></i>保存中...';
+        confirmBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-1"></i>' + msg('admin_save_in_progress');
         confirmBtn.disabled = true;
 
         try {
@@ -2291,18 +2334,18 @@ const lunarBiz = {
             const result = await response.json();
 
             if (result.success) {
-                showToast(result.message || '支付记录已更新', 'success');
+                showToast(result.message || msg('admin_payment_updated'), 'success');
                 closeEditPaymentModal();
                 closePaymentHistoryModal();
                 await loadSubscriptions(false);
             } else {
-                showToast(result.message || '更新失败', 'error');
+                showToast(result.message || msg('admin_update_failed'), 'error');
                 confirmBtn.innerHTML = originalBtnContent;
                 confirmBtn.disabled = false;
             }
         } catch (error) {
             console.error('更新支付记录失败:', error);
-            showToast('更新时发生错误', 'error');
+            showToast(msg('admin_update_error'), 'error');
             confirmBtn.innerHTML = originalBtnContent;
             confirmBtn.disabled = false;
         }
@@ -2363,7 +2406,7 @@ const lunarBiz = {
     }
     
     document.getElementById('addSubscriptionBtn').addEventListener('click', () => {
-      document.getElementById('modalTitle').textContent = '添加新订阅';
+      document.getElementById('modalTitle').textContent = msg('admin_modal_add_title');
       document.getElementById('subscriptionModal').classList.remove('hidden');
       document.body.classList.add('overflow-hidden'); // 禁止背景滚动
 
@@ -2529,7 +2572,7 @@ const lunarBiz = {
           this.goToTodayBtn.addEventListener('click', this._goToTodayHandler);
         }
         
-        // 点击外部关闭
+        // 点击外部${msg('admin_close')}
         if (this._outsideClickHandler) {
           document.removeEventListener('click', this._outsideClickHandler);
         }
@@ -2633,7 +2676,7 @@ const lunarBiz = {
         const normalized = normalizeDateString(value);
         if (!normalized) {
           if (!silent && typeof showToast === 'function') {
-            showToast('日期格式需为 YYYY-MM-DD', 'warning');
+            showToast(msg('admin_date_invalid_format'), 'warning');
           }
           return;
         }
@@ -2645,7 +2688,7 @@ const lunarBiz = {
         const parsed = new Date(year, month - 1, day);
         if (isNaN(parsed.getTime()) || parsed.getFullYear() !== year || parsed.getMonth() !== month - 1 || parsed.getDate() !== day) {
           if (!silent && typeof showToast === 'function') {
-            showToast('请输入有效的日期', 'warning');
+            showToast(msg('admin_date_invalid_value'), 'warning');
           }
           return;
         }
@@ -2885,16 +2928,6 @@ const lunarBiz = {
     }
     
     // === 自定义下拉菜单逻辑 ===
-    const TYPE_OPTIONS = [
-      "流媒体", "视频平台", "音乐平台", "云服务", "软件订阅", 
-      "域名", "服务器", "会员服务", "学习平台", "健身/运动", 
-      "游戏", "新闻/杂志", "生日", "纪念日", "其他"
-    ];
-    
-    const CATEGORY_OPTIONS = [
-      "个人", "家庭", "工作", "公司", "娱乐", "学习", 
-      "开发", "生产力", "社交", "健康", "财务"
-    ];
 
     function initCustomDropdown(inputId, listId, options) {
       const input = document.getElementById(inputId);
@@ -2941,8 +2974,8 @@ const lunarBiz = {
       const expiryDate = document.getElementById('expiryDate');
       const cancelBtn = document.getElementById('cancelBtn');
       
-      initCustomDropdown('customType', 'customTypeDropdown', TYPE_OPTIONS); // 初始化自定义下拉菜单
-      initCustomDropdown('category', 'categoryDropdown', CATEGORY_OPTIONS);    
+      initCustomDropdown('customType', 'customTypeDropdown', TYPE_OPTION_KEYS.map(key => msg(`subscription_type_${key}`))); // 初始化自定义下拉菜单
+      initCustomDropdown('category', 'categoryDropdown', CATEGORY_OPTION_KEYS.map(key => msg(`subscription_category_${key}`)));    
       
       if (calculateExpiryBtn && !calculateExpiryBtn.dataset.bound) {
         calculateExpiryBtn.dataset.bound = 'true';
@@ -3084,14 +3117,14 @@ const lunarBiz = {
       const reminderHint = document.getElementById('reminderHint');
       if (reminderHint) {
         reminderHint.textContent = reminderUnit === 'hour'
-          ? '小时级提醒：需保证 Worker 每小时执行；0 表示仅到期时提醒'
-          : '0 = 仅在到期时提醒';
+          ? msg('admin_reminder_hint_hour')
+          : msg('admin_reminder_hint_day');
       }
 
       const subscription = {
         name: document.getElementById('name').value.trim(),
-        customType: document.getElementById('customType').value.trim(),
-        category: document.getElementById('category').value.trim(),
+        customType: normalizeCustomTypeValue(document.getElementById('customType').value.trim()),
+        category: normalizeCategoryValue(document.getElementById('category').value.trim()),
         subscriptionMode: document.getElementById('subscriptionMode').value, // 新增修改，表单提交时带上 subscriptionMode 字段
         notes: document.getElementById('notes').value.trim() || '',
         currency: document.getElementById('currency').value, // 新增修改，表单提交时带上 currency 字段
@@ -3111,7 +3144,7 @@ const lunarBiz = {
       
       const submitButton = e.target.querySelector('button[type="submit"]');
       const originalContent = submitButton.innerHTML;
-      submitButton.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>' + (id ? '更新中...' : '保存中...');
+      submitButton.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>' + msg('admin_save_in_progress');
       submitButton.disabled = true;
       
       try {
@@ -3159,12 +3192,12 @@ const lunarBiz = {
         const subscription = await response.json();
         
         if (subscription) {
-          document.getElementById('modalTitle').textContent = '编辑订阅';
+          document.getElementById('modalTitle').textContent = msg('admin_modal_edit_title');
           document.getElementById('subscriptionId').value = subscription.id;
           document.getElementById('name').value = subscription.name;
           document.getElementById('subscriptionMode').value = subscription.subscriptionMode || 'cycle'; // 默认为 cycle
-          document.getElementById('customType').value = subscription.customType || '';
-          document.getElementById('category').value = subscription.category || '';
+          document.getElementById('customType').value = localizeCustomTypeValue(subscription.customType);
+          document.getElementById('category').value = localizeCategoryValue(subscription.category);
           document.getElementById('notes').value = subscription.notes || '';
           document.getElementById('amount').value = subscription.amount !== null && subscription.amount !== undefined ? subscription.amount : '';
           document.getElementById('currency').value = subscription.currency || 'MYR'; // default MYR
@@ -3198,8 +3231,8 @@ const lunarBiz = {
           document.getElementById('reminderValue').value = reminderValue;
           if (reminderHint) {
             reminderHint.textContent = reminderUnit === 'hour'
-              ? '小时级提醒：需保证 Worker 每小时执行；0 表示仅到期时提醒'
-              : '0 = 仅在到期时提醒';
+              ? msg('admin_reminder_hint_hour')
+              : msg('admin_reminder_hint_day');
           }
           document.getElementById('useLunar').checked = !!subscription.useLunar;
           
@@ -3354,7 +3387,7 @@ const lunarBiz = {
         syncMobileMenuState();
       });
 
-      mobileMenu.querySelectorAll('a').forEach(link => {  // 点击菜单项自动关闭
+      mobileMenu.querySelectorAll('a').forEach(link => {  // 点击菜单项自动${msg('admin_close')}
         link.addEventListener('click', () => {
           mobileMenu.classList.add('hidden');
           syncMobileMenuState();
@@ -3381,4 +3414,5 @@ const lunarBiz = {
   </script>
 </body>
 </html>
+
 

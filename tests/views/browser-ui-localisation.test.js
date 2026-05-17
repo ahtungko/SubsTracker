@@ -719,8 +719,170 @@ test('admin page localises second-wave filters, table labels, and runtime action
   assert.equal(adminPageHtml.includes('\u52a0\u8f7d\u4e2d...'), false);
 });
 
+test('admin page localises remaining modal, payment-history, and edit-payment strings', () => {
+  assert.equal(adminPageHtml.includes('data-i18n="admin_modal_add_title"'), true);
+  assert.equal(adminPageHtml.includes('data-i18n="admin_label_name"'), true);
+  assert.equal(adminPageHtml.includes('data-i18n="admin_label_custom_type"'), true);
+  assert.equal(adminPageHtml.includes('data-i18n-placeholder="admin_placeholder_custom_type"'), true);
+  assert.equal(adminPageHtml.includes('data-i18n="admin_label_category"'), true);
+  assert.equal(adminPageHtml.includes('data-i18n-placeholder="admin_placeholder_category"'), true);
+  assert.equal(adminPageHtml.includes('data-i18n="admin_category_help"'), true);
+  assert.equal(adminPageHtml.includes('data-i18n="admin_cost_settings"'), true);
+  assert.equal(adminPageHtml.includes('data-i18n="admin_optional"'), true);
+  assert.equal(adminPageHtml.includes('data-i18n-placeholder="admin_placeholder_amount"'), true);
+  assert.equal(adminPageHtml.includes('data-i18n="admin_cost_help"'), true);
+  assert.equal(adminPageHtml.includes('data-i18n="admin_label_subscription_mode"'), true);
+  assert.equal(adminPageHtml.includes('data-i18n="admin_show_lunar_dates"'), true);
+  assert.equal(adminPageHtml.includes('data-i18n="admin_lunar_cycle"'), true);
+  assert.equal(adminPageHtml.includes('data-i18n="admin_label_start_date"'), true);
+  assert.equal(adminPageHtml.includes('data-i18n="admin_label_period_value"'), true);
+  assert.equal(adminPageHtml.includes('data-i18n="admin_label_period_unit"'), true);
+  assert.equal(adminPageHtml.includes('data-i18n="admin_period_unit_day"'), true);
+  assert.equal(adminPageHtml.includes('data-i18n="admin_period_unit_month"'), true);
+  assert.equal(adminPageHtml.includes('data-i18n="admin_period_unit_year"'), true);
+  assert.equal(adminPageHtml.includes('data-i18n="admin_label_expiry_date"'), true);
+  assert.equal(adminPageHtml.includes('data-i18n="admin_auto_calculate_expiry"'), true);
+  assert.equal(adminPageHtml.includes('data-i18n="admin_label_reminder_offset"'), true);
+  assert.equal(adminPageHtml.includes('data-i18n="admin_reminder_unit_day"'), true);
+  assert.equal(adminPageHtml.includes('data-i18n="admin_reminder_unit_hour"'), true);
+  assert.equal(adminPageHtml.includes('data-i18n="admin_reminder_help"'), true);
+  assert.equal(adminPageHtml.includes('data-i18n="admin_option_settings"'), true);
+  assert.equal(adminPageHtml.includes('data-i18n="admin_enable_subscription"'), true);
+  assert.equal(adminPageHtml.includes('data-i18n="admin_enable_auto_renew"'), true);
+  assert.equal(adminPageHtml.includes('data-i18n="admin_label_notes"'), true);
+  assert.equal(adminPageHtml.includes('data-i18n-placeholder="admin_placeholder_notes"'), true);
+  assert.equal(adminPageHtml.includes('data-i18n="admin_cancel"'), true);
+  assert.equal(adminPageHtml.includes('data-i18n="admin_save"'), true);
+
+  assert.equal(adminPageHtml.includes("msg('admin_renew_current_none'"), true);
+  assert.equal(adminPageHtml.includes("msg('admin_lunar_cycle'"), true);
+  assert.equal(adminPageHtml.includes("msg('admin_renew_payment_date'"), true);
+  assert.equal(adminPageHtml.includes("msg('admin_payment_amount'"), true);
+  assert.equal(adminPageHtml.includes("msg('admin_renew_period_count'"), true);
+  assert.equal(adminPageHtml.includes("msg('admin_renew_period_help'"), true);
+  assert.equal(adminPageHtml.includes("msg('admin_renew_current_expiry'"), true);
+  assert.equal(adminPageHtml.includes("msg('admin_renew_new_expiry'"), true);
+  assert.equal(adminPageHtml.includes("msg('admin_renew_preview_calculating'"), true);
+  assert.equal(adminPageHtml.includes("msg('admin_renew_note_optional'"), true);
+  assert.equal(adminPageHtml.includes("msg('admin_placeholder_renew_note'"), true);
+  assert.equal(adminPageHtml.includes("msg('admin_renew_confirm'"), true);
+  assert.equal(adminPageHtml.includes("msg('admin_renew_preview_error'"), true);
+  assert.equal(adminPageHtml.includes("msg('admin_renew_default_note'"), true);
+  assert.equal(adminPageHtml.includes("msg('admin_renew_in_progress'"), true);
+  assert.equal(adminPageHtml.includes("msg('admin_renew_success'"), true);
+  assert.equal(adminPageHtml.includes("msg('admin_renew_failed'"), true);
+  assert.equal(adminPageHtml.includes("msg('admin_renew_error'"), true);
+  assert.equal(adminPageHtml.includes("msg('admin_payment_history_failed'"), true);
+  assert.equal(adminPageHtml.includes("msg('admin_payment_history_error'"), true);
+  assert.equal(adminPageHtml.includes("msg('admin_payment_history_empty'"), true);
+  assert.equal(adminPageHtml.includes("msg('admin_payment_type_initial'"), true);
+  assert.equal(adminPageHtml.includes("msg('admin_payment_type_manual'"), true);
+  assert.equal(adminPageHtml.includes("msg('admin_payment_type_auto'"), true);
+  assert.equal(adminPageHtml.includes("msg('admin_unknown'"), true);
+  assert.equal(adminPageHtml.includes("msg('admin_billing_period'"), true);
+  assert.equal(adminPageHtml.includes("msg('admin_total_spend'"), true);
+  assert.equal(adminPageHtml.includes("msg('admin_payment_count'"), true);
+  assert.equal(adminPageHtml.includes("msg('admin_close'"), true);
+  assert.equal(adminPageHtml.includes("msg('admin_delete_payment_confirm'"), true);
+  assert.equal(adminPageHtml.includes("msg('admin_payment_deleted'"), true);
+  assert.equal(adminPageHtml.includes("msg('admin_delete_failed'"), true);
+  assert.equal(adminPageHtml.includes("msg('admin_delete_error'"), true);
+  assert.equal(adminPageHtml.includes("msg('admin_payment_not_found'"), true);
+  assert.equal(adminPageHtml.includes("msg('admin_payment_fetch_error'"), true);
+  assert.equal(adminPageHtml.includes("msg('admin_subscription_name'"), true);
+  assert.equal(adminPageHtml.includes("msg('admin_payment_date'"), true);
+  assert.equal(adminPageHtml.includes("msg('admin_note'"), true);
+  assert.equal(adminPageHtml.includes("msg('admin_save_in_progress'"), true);
+  assert.equal(adminPageHtml.includes("msg('admin_payment_updated'"), true);
+  assert.equal(adminPageHtml.includes("msg('admin_update_failed'"), true);
+  assert.equal(adminPageHtml.includes("msg('admin_update_error'"), true);
+  assert.equal(adminPageHtml.includes("msg('admin_date_invalid_format'"), true);
+  assert.equal(adminPageHtml.includes("msg('admin_date_invalid_value'"), true);
+  assert.equal(adminPageHtml.includes("msg('admin_reminder_hint_hour'"), true);
+  assert.equal(adminPageHtml.includes("msg('admin_reminder_hint_day'"), true);
+  assert.equal(adminPageHtml.includes("msg('admin_modal_edit_title'"), true);
+
+  assert.equal(adminPageHtml.includes('æ·»åŠ æ–°è®¢é˜…'), false);
+  assert.equal(adminPageHtml.includes('è®¢é˜…åç§° *'), false);
+  assert.equal(adminPageHtml.includes('è®¢é˜…ç±»åž‹'), false);
+  assert.equal(adminPageHtml.includes('é€‰æ‹©æˆ–è¾“å…¥è‡ªå®šä¹‰ç±»åž‹'), false);
+  assert.equal(adminPageHtml.includes('åˆ†ç±»æ ‡ç­¾'), false);
+  assert.equal(adminPageHtml.includes('é€‰æ‹©æˆ–è¾“å…¥è‡ªå®šä¹‰æ ‡ç­¾'), false);
+  assert.equal(adminPageHtml.includes('å¯è¾“å…¥å¤šä¸ªæ ‡ç­¾å¹¶ä½¿ç”¨"/"åˆ†éš”'), false);
+  assert.equal(adminPageHtml.includes('è´¹ç”¨è®¾ç½®'), false);
+  assert.equal(adminPageHtml.includes('å¯é€‰'), false);
+  assert.equal(adminPageHtml.includes('ä¾‹å¦‚: 15.00'), false);
+  assert.equal(adminPageHtml.includes('ç”¨äºŽç»Ÿè®¡æ”¯å‡ºå’Œç”Ÿæˆä»ªè¡¨ç›˜'), false);
+  assert.equal(adminPageHtml.includes('è®¢é˜…æ¨¡å¼'), false);
+  assert.equal(adminPageHtml.includes('æ˜¾ç¤ºå†œåŽ†æ—¥æœŸ'), false);
+  assert.equal(adminPageHtml.includes('å†œåŽ†å‘¨æœŸ'), false);
+  assert.equal(adminPageHtml.includes('è‡ªåŠ¨è®¡ç®—åˆ°æœŸæ—¥æœŸ'), false);
+  assert.equal(adminPageHtml.includes('æé†’æå‰é‡'), false);
+  assert.equal(adminPageHtml.includes('0 = ä»…åœ¨åˆ°æœŸæ—¶æé†’; é€‰æ‹©"å°æ—¶"éœ€è¦å°† Worker å®šæ—¶ä»»åŠ¡è°ƒæ•´ä¸ºå°æ—¶çº§æ‰§è¡Œ'), false);
+  assert.equal(adminPageHtml.includes('å¯ç”¨è®¢é˜…'), false);
+  assert.equal(adminPageHtml.includes('è‡ªåŠ¨ç»­è®¢'), false);
+  assert.equal(adminPageHtml.includes('å¤‡æ³¨ (å¯é€‰)'), false);
+  assert.equal(adminPageHtml.includes('å¯æ·»åŠ ç›¸å…³å¤‡æ³¨ä¿¡æ¯...'), false);
+  assert.equal(adminPageHtml.includes('ç¡®è®¤ç»­è®¢'), false);
+  assert.equal(adminPageHtml.includes('ç»­è®¢ä¸­...'), false);
+  assert.equal(adminPageHtml.includes('ç»­è®¢æˆåŠŸ'), false);
+  assert.equal(adminPageHtml.includes('ç»­è®¢å¤±è´¥'), false);
+  assert.equal(adminPageHtml.includes('ç»­è®¢æ—¶å‘ç”Ÿé”™è¯¯'), false);
+  assert.equal(adminPageHtml.includes('æš‚æ— æ”¯ä»˜è®°å½•'), false);
+  assert.equal(adminPageHtml.includes('åˆå§‹è®¢é˜…'), false);
+  assert.equal(adminPageHtml.includes('æ‰‹åŠ¨ç»­è®¢'), false);
+  assert.equal(adminPageHtml.includes('è®¡è´¹å‘¨æœŸ:'), false);
+  assert.equal(adminPageHtml.includes('ç´¯è®¡æ”¯å‡º'), false);
+  assert.equal(adminPageHtml.includes('æ”¯ä»˜æ¬¡æ•°'), false);
+  assert.equal(adminPageHtml.includes('ç¼–è¾‘æ”¯ä»˜è®°å½•'), false);
+  assert.equal(adminPageHtml.includes('ä¿å­˜ä¸­...'), false);
+  assert.equal(adminPageHtml.includes('æ”¯ä»˜è®°å½•å·²æ›´æ–°'), false);
+  assert.equal(adminPageHtml.includes('æ›´æ–°å¤±è´¥'), false);
+  assert.equal(adminPageHtml.includes('æ›´æ–°æ—¶å‘ç”Ÿé”™è¯¯'), false);
+  assert.equal(adminPageHtml.includes('æ—¥æœŸæ ¼å¼éœ€ä¸º YYYY-MM-DD'), false);
+  assert.equal(adminPageHtml.includes('è¯·è¾“å…¥æœ‰æ•ˆçš„æ—¥æœŸ'), false);
+});
+
 test('admin page source keeps strings readable instead of unicode escape soup', () => {
   assert.equal(/\\u[0-9a-fA-F]{4}/.test(adminPageHtml), false);
+});
+
+test('admin page removes remaining mojibake from dropdown options and date picker labels', () => {
+  assert.equal(adminPageHtml.includes('éŸ³ä¹å¹³å°'), false);
+  assert.equal(adminPageHtml.includes('æµåª’ä½“'), false);
+  assert.equal(adminPageHtml.includes('1æœˆ'), false);
+  assert.equal(adminPageHtml.includes('é€‰æ‹©æœˆä»½'), false);
+  assert.equal(adminPageHtml.includes('å›žåˆ°ä»Šå¤©'), false);
+
+  assert.equal(adminPageHtml.includes('1月'), true);
+  assert.equal(adminPageHtml.includes('选择月份'), true);
+  assert.equal(adminPageHtml.includes('回到今天'), true);
+  assert.equal(adminPageHtml.includes('music_platform'), true);
+  assert.equal(adminPageHtml.includes('streaming_media'), true);
+});
+
+test('admin page localises preset subscription type/category options via stable keys', () => {
+  assert.equal(adminPageHtml.includes('const TYPE_OPTIONS = ['), false);
+  assert.equal(adminPageHtml.includes('const CATEGORY_OPTIONS = ['), false);
+  assert.equal(adminPageHtml.includes('const TYPE_OPTION_KEYS = ['), true);
+  assert.equal(adminPageHtml.includes('const CATEGORY_OPTION_KEYS = ['), true);
+  assert.equal(adminPageHtml.includes("msg(`subscription_type_${key}`)"), true);
+  assert.equal(adminPageHtml.includes("msg(`subscription_category_${key}`)"), true);
+  assert.equal(adminPageHtml.includes("localizeCustomTypeValue("), true);
+  assert.equal(adminPageHtml.includes("localizeCategoryValue("), true);
+  assert.equal(adminPageHtml.includes("normalizeCustomTypeValue("), true);
+  assert.equal(adminPageHtml.includes("normalizeCategoryValue("), true);
+
+  assert.equal(adminPageHtml.includes('音乐平台'), false);
+  assert.equal(adminPageHtml.includes('流媒体'), false);
+  assert.equal(adminPageHtml.includes('个人'), false);
+  assert.equal(adminPageHtml.includes('娱乐'), false);
+});
+
+
+test('admin page binds the list Show Lunar checkbox to rerender the table', () => {
+  assert.equal(adminPageHtml.includes("const listShowLunar = document.getElementById('listShowLunar');"), true);
+  assert.equal(adminPageHtml.includes("listShowLunar.addEventListener('change', handleListLunarToggle);"), true);
 });
 
 test('config page localises second-wave notifier and secret-management copy', () => {

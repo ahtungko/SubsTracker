@@ -34,6 +34,14 @@ test('all currency symbol maps include MYR with RM symbol', () => {
   assert.match(subscriptionsHandlerJs, /MYR: 'RM'/);
 });
 
+test('KGS is available across currency option and symbol maps', () => {
+  assert.match(adminPageHtml, /<option value="KGS">KGS \((сом|&#1089;&#1086;&#1084;)\)<\/option>/);
+  assert.match(adminPageHtml, /'KGS': '(сом|[^']+)'/);
+  assert.match(dashboardPageHtml, /'KGS': '(сом|[^']+)'/);
+  assert.match(reminderJs, /KGS: '(сом|[^']+)'/);
+  assert.match(subscriptionsHandlerJs, /KGS: '(сом|[^']+)'/);
+});
+
 test('dashboard copy and totals now reference MYR instead of CNY', () => {
   assert.match(dashboardPageHtml, /MYR/);
   assert.match(dashboardPageHtml, /RM\$\{data\.monthlyExpense\.amount\.toFixed\(2\)\}/);

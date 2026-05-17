@@ -14,6 +14,7 @@ import { sendNotificationToAllChannels } from '../../services/notify/index.js';
 import { getNotificationLocale, getNotificationMessage } from '../../services/notify/locale.js';
 import { lunarCalendar } from '../../core/lunar.js';
 import { formatTimeInTimezone, formatTimezoneDisplay } from '../../core/time.js';
+import { localizeCategoryValue, localizeCustomTypeValue } from '../../core/subscriptionTaxonomy.js';
 import { extractTagsFromSubscriptions } from '../utils.js';
 import { extractRequestLocale, getServerMessage } from '../locale.js';
 
@@ -81,16 +82,16 @@ async function testSingleSubscriptionNotification(id, env, locale) {
       : getNotificationMessage('reminder_auto_renew_no', notificationLocale);
     const currencySymbols = {
       MYR: 'RM', CNY: '¥', USD: '$', HKD: 'HK$', TWD: 'NT$',
-      JPY: '¥', EUR: '€', GBP: '£', KRW: '₩', TRY: '₺'
+      JPY: '¥', EUR: '€', GBP: '£', KRW: '₩', TRY: '₺', KGS: 'сом'
     };
     const amountConfigured = subscription.amount !== null && subscription.amount !== undefined && !Number.isNaN(Number(subscription.amount));
     const amountCurrency = currencySymbols[subscription.currency || 'MYR'] || 'RM';
     const amountText = amountConfigured ? `\n${copy.amountLabel}: ${amountCurrency}${Number(subscription.amount).toFixed(2)}/${copy.billingCycleLabel}` : '';
 
-    const categoryText = subscription.category ? subscription.category : copy.uncategorized;
+    const categoryText = subscription.category ? localizeCategoryValue(subscription.category, notificationLocale) : copy.uncategorized;
 
     const commonContent = `**${copy.detailsTitle}**
-${copy.typeLabel}: ${subscription.customType || copy.otherType}${amountText}
+${copy.typeLabel}: ${localizeCustomTypeValue(subscription.customType, notificationLocale) || copy.otherType}${amountText}
 ${copy.categoryLabel}: ${categoryText}
 ${copy.calendarTypeLabel}: ${calendarType}
 ${copy.expiryDateLabel}: ${formattedExpiryDate}${lunarExpiryText}

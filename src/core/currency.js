@@ -2,7 +2,7 @@ import { MS_PER_DAY, getCurrentTimeInTimezone, getTimezoneDateParts } from './ti
 
 const CATEGORY_SEPARATOR_REGEX = /[\/\uFF0C,\s]+/;
 const DEFAULT_CURRENCY = 'MYR';
-const SUPPORTED_CURRENCIES = ['MYR', 'CNY', 'USD', 'HKD', 'TWD', 'JPY', 'EUR', 'GBP', 'KRW', 'TRY'];
+const SUPPORTED_CURRENCIES = ['MYR', 'CNY', 'USD', 'HKD', 'TWD', 'JPY', 'EUR', 'GBP', 'KRW', 'TRY', 'KGS'];
 
 // MYR-based fallback rates used when the Wise API is unavailable
 const FALLBACK_RATES = {
@@ -15,7 +15,8 @@ const FALLBACK_RATES = {
   EUR: 4.59,
   GBP: 5.30,
   KRW: 0.0030,
-  TRY: 0.10
+  TRY: 0.10,
+  KGS: 0.045
 };
 
 function normalizeCurrencyCode(currency, defaultCode = DEFAULT_CURRENCY) {

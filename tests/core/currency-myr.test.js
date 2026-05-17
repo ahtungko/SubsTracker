@@ -16,10 +16,12 @@ import {
 test('currency engine defaults and normalization now use MYR', () => {
   assert.equal(DEFAULT_CURRENCY, 'MYR');
   assert.ok(SUPPORTED_CURRENCIES.includes('MYR'));
+  assert.ok(SUPPORTED_CURRENCIES.includes('KGS'));
   assert.equal(normalizeCurrencyCode(undefined), 'MYR');
   assert.equal(normalizeCurrencyCode(''), 'MYR');
   assert.equal(normalizeCurrencyCode('   '), 'MYR');
   assert.equal(normalizeCurrencyCode('cny'), 'CNY');
+  assert.equal(normalizeCurrencyCode('kgs'), 'KGS');
   assert.equal(normalizeCurrencyCode('MYR'), 'MYR');
 });
 
@@ -65,6 +67,7 @@ test('getDynamicRates falls back to MYR-based rates when Wise token is missing',
   assert.equal(rates.MYR, 1);
   assert.equal(rates.CNY, FALLBACK_RATES.CNY);
   assert.equal(rates.USD, FALLBACK_RATES.USD);
+  assert.equal(rates.KGS, FALLBACK_RATES.KGS);
 });
 
 test('expense aggregations use 未分类 instead of mojibake placeholders', () => {

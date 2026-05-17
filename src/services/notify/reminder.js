@@ -1,6 +1,7 @@
 import { formatTimeInTimezone, formatTimezoneDisplay } from '../../core/time.js';
 import { lunarCalendar } from '../../core/lunar.js';
 import { getNotificationLocale, getNotificationMessage } from './locale.js';
+import { localizeCategoryValue, localizeCustomTypeValue } from '../../core/subscriptionTaxonomy.js';
 
 function resolveReminderSetting(subscription) {
   const defaultDays = subscription && subscription.reminderDays !== undefined ? Number(subscription.reminderDays) : 7;
@@ -55,12 +56,12 @@ function formatNotificationContent(subscriptions, config) {
   let content = '';
 
   for (const sub of subscriptions) {
-    const typeText = sub.customType || getNotificationMessage('reminder_fallback_type', notificationLocale);
+    const typeText = localizeCustomTypeValue(sub.customType, notificationLocale) || getNotificationMessage('reminder_fallback_type', notificationLocale);
     const periodUnit = getNotificationMessage(`reminder_period_unit_${sub.periodUnit}`, notificationLocale);
     const periodText = (sub.periodValue && sub.periodUnit)
       ? ` (${getNotificationMessage('reminder_period_wrapper', notificationLocale, { value: sub.periodValue, unit: periodUnit })})`
       : '';
-    const categoryText = sub.category ? sub.category : getNotificationMessage('reminder_fallback_category', notificationLocale);
+    const categoryText = sub.category ? localizeCategoryValue(sub.category, notificationLocale) : getNotificationMessage('reminder_fallback_category', notificationLocale);
     const reminderSetting = resolveReminderSetting(sub);
 
     const expiryDateObj = new Date(sub.expiryDate);
@@ -100,7 +101,7 @@ function formatNotificationContent(subscriptions, config) {
       : getNotificationMessage('reminder_auto_renew_no', notificationLocale);
     const currencySymbols = {
       MYR: 'RM', CNY: '¥', USD: '$', HKD: 'HK$', TWD: 'NT$',
-      JPY: '¥', EUR: '€', GBP: '£', KRW: '₩', TRY: '₺'
+      JPY: '¥', EUR: '€', GBP: '£', KRW: '₩', TRY: '₺', KGS: 'сом'
     };
     const amountConfigured = sub.amount !== null && sub.amount !== undefined && !Number.isNaN(Number(sub.amount));
     const amountCurrency = currencySymbols[sub.currency || 'MYR'] || 'RM';

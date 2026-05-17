@@ -3,6 +3,7 @@ import { getCurrentTimeInTimezone, getTimezoneMidnightTimestamp } from '../core/
 import { lunarCalendar, lunarBiz } from '../core/lunar.js';
 import { resolveReminderSetting } from '../services/notify/reminder.js';
 import { DEFAULT_CURRENCY, normalizeCurrencyCode } from '../core/currency.js';
+import { normalizeCategoryValue, normalizeCustomTypeValue } from '../core/subscriptionTaxonomy.js';
 
 function trimPaymentHistory(records = [], limit = 100) {
   const safeLimit = Math.min(1000, Math.max(10, Number(limit) || 100));
@@ -43,6 +44,8 @@ function normalizeSubscriptionCurrencyFields(subscription) {
 
   return {
     ...subscription,
+    customType: normalizeCustomTypeValue(subscription?.customType),
+    category: normalizeCategoryValue(subscription?.category),
     currency: normalizedCurrency,
     paymentHistory: normalizedHistory
   };
@@ -102,8 +105,8 @@ async function createSubscription(subscription, env) {
       id: Date.now().toString(),
       name: subscription.name,
       subscriptionMode: subscription.subscriptionMode || 'cycle',
-      customType: subscription.customType || '',
-      category: subscription.category ? subscription.category.trim() : '',
+      customType: normalizeCustomTypeValue(subscription.customType),
+      category: normalizeCategoryValue(subscription.category),
       startDate: subscription.startDate || null,
       expiryDate: subscription.expiryDate,
       periodValue: subscription.periodValue || 1,
@@ -220,8 +223,12 @@ async function updateSubscription(id, subscription, env) {
       ...subscriptions[index],
       name: subscription.name,
       subscriptionMode: subscription.subscriptionMode || subscriptions[index].subscriptionMode || 'cycle',
-      customType: subscription.customType || subscriptions[index].customType || '',
-      category: subscription.category !== undefined ? subscription.category.trim() : (subscriptions[index].category || ''),
+      customType: subscription.customType !== undefined
+        ? normalizeCustomTypeValue(subscription.customType)
+        : (subscriptions[index].customType || ''),
+      category: subscription.category !== undefined
+        ? normalizeCategoryValue(subscription.category)
+        : (subscriptions[index].category || ''),
       startDate: subscription.startDate || subscriptions[index].startDate,
       expiryDate: subscription.expiryDate,
       periodValue: subscription.periodValue || subscriptions[index].periodValue || 1,
