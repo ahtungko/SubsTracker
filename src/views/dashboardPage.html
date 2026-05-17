@@ -220,6 +220,57 @@
     const getPreferredLocale = () => window.AppLocale.getPreferredLocale();
     const getLocaleTag = () => window.AppLocale.getUiLocaleTag(getPreferredLocale());
     const msg = (key, params = {}) => window.AppLocale.getMessage(key, getPreferredLocale(), params);
+    const localizeSchedulerReason = (reason, reasonKey, reasonParams = {}) => {
+      if (reasonKey) {
+        return msg(reasonKey, reasonParams || {});
+      }
+
+      if (!reason) {
+        return msg('dashboard_scheduler_no_details');
+      }
+
+      if (reason === '本次未命中需要提醒的订阅') {
+        return msg('dashboard_scheduler_reason_no_matches');
+      }
+
+      const currentHourMatch = reason.match(/^当前小时 (.+) 未在通知时段内 \((.*)\)$/);
+      if (currentHourMatch) {
+        return msg('dashboard_scheduler_reason_current_hour_skipped', {
+          hour: currentHourMatch[1],
+          hours: currentHourMatch[2]
+        });
+      }
+
+      const dedupeMatch = reason.match(/^命中 (\d+) 条，但全部在去重窗口内（跳过 (\d+) 条）$/);
+      if (dedupeMatch) {
+        return msg('dashboard_scheduler_reason_dedupe_only', {
+          matched: dedupeMatch[1],
+          skipped: dedupeMatch[2]
+        });
+      }
+
+      const sendSummaryMatch = reason.match(/^已尝试发送到 (\d+) 个渠道，成功 (\d+) 个（去重跳过 (\d+) 条）$/);
+      if (sendSummaryMatch) {
+        return msg('dashboard_scheduler_reason_send_summary', {
+          attempted: sendSummaryMatch[1],
+          success: sendSummaryMatch[2],
+          skipped: sendSummaryMatch[3]
+        });
+      }
+
+      if (reason === '未启用任何通知渠道') {
+        return msg('dashboard_scheduler_reason_no_channels');
+      }
+
+      const executionErrorMatch = reason.match(/^执行异常: (.*)$/);
+      if (executionErrorMatch) {
+        return msg('dashboard_scheduler_reason_execution_error', {
+          error: executionErrorMatch[1]
+        });
+      }
+
+      return reason;
+    };
 
     // 定义货币符号映射
     const currencySymbols = {
@@ -275,7 +326,7 @@
             schedulerStatusEl.innerHTML = '<div class="empty-state"><div class="empty-state-icon">🕐</div><div class="empty-state-text">' + msg('dashboard_scheduler_empty') + '</div></div>';
           } else {
             const sendResult = status.sendResult || {};
-            const statusReason = status.reasonKey ? msg(status.reasonKey, status.reasonParams || {}) : status.reason;
+            const statusReason = localizeSchedulerReason(status.reason, status.reasonKey, status.reasonParams);
             const unknownTime = msg('dashboard_scheduler_history_unknown_time');
             const runAt = status.lastRunAt ? new Date(status.lastRunAt).toLocaleString(getLocaleTag()) : unknownTime;
             const configuredHours = Array.isArray(status.configuredHours) && status.configuredHours.length > 0
@@ -328,7 +379,7 @@
               const sent = item.sent
                 ? msg('dashboard_scheduler_history_sent')
                 : msg('dashboard_scheduler_history_not_sent');
-              const reason = item.reasonKey ? msg(item.reasonKey, item.reasonParams || {}) : (item.reason || msg('dashboard_scheduler_no_details'));
+              const reason = localizeSchedulerReason(item.reason, item.reasonKey, item.reasonParams);
               return `<div class="py-2 border-b border-gray-100 last:border-b-0 text-sm"><div class="font-medium text-gray-800">${when} · ${sent}</div><div class="text-xs text-gray-500 mt-1">${reason}</div></div>`;
             }).join('');
           }

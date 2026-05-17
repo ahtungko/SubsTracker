@@ -572,6 +572,40 @@ test('dashboard scheduler runtime renders localized scheduler states and interpo
   assert.equal(elements.schedulerStatusHistory.innerHTML.includes('No subscriptions matched this reminder run'), true);
   assert.equal(elements.schedulerStatus.innerHTML.includes('\u5168\u90e8\u65f6\u6bb5'), false);
   assert.equal(elements.schedulerStatus.innerHTML.includes('\u672c\u6b21\u672a\u53d1\u9001'), false);
+
+  fetchPayload = {
+    success: true,
+    data: {
+      schedulerStatus: {
+        lastRunAt: null,
+        configuredHours: [],
+        currentHour: 0,
+        sent: false,
+        checkedSubscriptions: 0,
+        expiringMatched: 0,
+        dedupeSkipped: 0,
+        sendResult: { attempted: 0, successCount: 0, failedCount: 0 },
+        reason: '本次未命中需要提醒的订阅'
+      },
+      schedulerStatusHistory: [
+        { lastRunAt: null, sent: false, reason: '本次未命中需要提醒的订阅' }
+      ],
+      monthlyExpense: { amount: 0, trendDirection: 'flat', trend: 0 },
+      yearlyExpense: { amount: 0, monthlyAverage: 0 },
+      activeSubscriptions: { active: 0, total: 0, expiringSoon: 0 },
+      recentPayments: [],
+      upcomingRenewals: [],
+      expenseByType: [],
+      expenseByCategory: []
+    }
+  };
+
+  await vm.runInContext('loadDashboardData()', sandbox, { filename: 'dashboard-page-inline-script.js' });
+
+  assert.equal(elements.schedulerStatus.innerHTML.includes('No subscriptions matched this reminder run'), true);
+  assert.equal(elements.schedulerStatusHistory.innerHTML.includes('No subscriptions matched this reminder run'), true);
+  assert.equal(elements.schedulerStatus.innerHTML.includes('本次未命中需要提醒的订阅'), false);
+  assert.equal(elements.schedulerStatusHistory.innerHTML.includes('本次未命中需要提醒的订阅'), false);
 });
 
 
@@ -631,7 +665,9 @@ test('dashboard page localises second-wave scheduler and stats copy', () => {
   assert.equal(dashboardPageHtml.includes("msg('dashboard_scheduler_send_result'"), true);
   assert.equal(dashboardPageHtml.includes("msg('dashboard_scheduler_send_result_label'"), true);
   assert.equal(dashboardPageHtml.includes("msg('dashboard_scheduler_no_details'"), true);
-  assert.equal(dashboardPageHtml.includes("status.reasonKey ? msg(status.reasonKey, status.reasonParams || {}) : status.reason"), true);
+  assert.equal(dashboardPageHtml.includes('const localizeSchedulerReason = (reason, reasonKey, reasonParams = {}) => {'), true);
+  assert.equal(dashboardPageHtml.includes("localizeSchedulerReason(status.reason, status.reasonKey, status.reasonParams)"), true);
+  assert.equal(dashboardPageHtml.includes("localizeSchedulerReason(item.reason, item.reasonKey, item.reasonParams)"), true);
   assert.equal(dashboardPageHtml.includes("msg('dashboard_scheduler_history_empty'"), true);
   assert.equal(dashboardPageHtml.includes("msg('dashboard_scheduler_history_unknown_time'"), true);
   assert.equal(dashboardPageHtml.includes("msg('dashboard_scheduler_history_sent'"), true);
