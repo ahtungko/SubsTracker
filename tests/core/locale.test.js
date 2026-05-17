@@ -227,6 +227,107 @@ test('getMessage returns shared config and admin strings', () => {
   assert.equal(getMessage('admin_edit_payment_title', 'en-US'), 'Edit Payment Record');
 });
 
+test('getMessage returns localized config setup and helper strings', () => {
+  assert.equal(getMessage('config_notification_hours_placeholder', 'zh-CN'), '例如：08, 12, 20 或输入 * 表示全天');
+  assert.equal(getMessage('config_notification_hours_placeholder', 'en-US'), 'For example: 08, 12, 20, or enter * for all day');
+  assert.equal(getMessage('config_generate_token', 'zh-CN'), '生成令牌');
+  assert.equal(getMessage('config_generate_token', 'en-US'), 'Generate Token');
+  assert.equal(getMessage('config_clear', 'zh-CN'), '清空');
+  assert.equal(getMessage('config_clear', 'en-US'), 'Clear');
+  assert.equal(getMessage('config_loading', 'zh-CN'), '加载中...');
+  assert.equal(getMessage('config_loading', 'en-US'), 'Loading...');
+  assert.equal(getMessage('config_section_telegram_title', 'zh-CN'), 'Telegram 配置');
+  assert.equal(getMessage('config_section_telegram_title', 'en-US'), 'Telegram Settings');
+  assert.equal(getMessage('config_test_notifyx', 'zh-CN'), '测试 NotifyX 通知');
+  assert.equal(getMessage('config_test_notifyx', 'en-US'), 'Test NotifyX Notification');
+});
+
+test('getMessage returns localized config webhook, wechatbot, and email strings', () => {
+  assert.equal(getMessage('config_webhook_url_help', 'zh-CN'), '请填写自建服务或第三方平台提供的 Webhook 地址，例如 https://your-webhook-endpoint.com/path');
+  assert.equal(getMessage('config_webhook_url_help', 'en-US'), 'Enter the Webhook URL provided by your own service or a third-party platform, for example https://your-webhook-endpoint.com/path');
+  assert.equal(getMessage('config_label_webhook_method', 'zh-CN'), '请求方法');
+  assert.equal(getMessage('config_label_webhook_method', 'en-US'), 'Request Method');
+  assert.equal(getMessage('config_label_webhook_headers', 'zh-CN'), '自定义请求头 (JSON格式，可选)');
+  assert.equal(getMessage('config_label_webhook_headers', 'en-US'), 'Custom Headers (JSON, Optional)');
+  assert.equal(getMessage('config_label_wechatbot_msg_type', 'zh-CN'), '消息类型');
+  assert.equal(getMessage('config_label_wechatbot_msg_type', 'en-US'), 'Message Type');
+  assert.equal(getMessage('config_wechatbot_msg_type_markdown', 'zh-CN'), 'Markdown消息');
+  assert.equal(getMessage('config_wechatbot_msg_type_markdown', 'en-US'), 'Markdown Message');
+  assert.equal(getMessage('config_label_email_from', 'zh-CN'), '发件人邮箱');
+  assert.equal(getMessage('config_label_email_from', 'en-US'), 'Sender Email');
+  assert.equal(getMessage('config_resend_api_key_help', 'zh-CN'), '从 Resend控制台 获取的 API Key');
+  assert.equal(getMessage('config_resend_api_key_help', 'en-US'), 'API key obtained from the Resend dashboard');
+  assert.equal(getMessage('config_email_from_name_help', 'zh-CN'), '显示在邮件中的发件人名称');
+  assert.equal(getMessage('config_email_from_name_help', 'en-US'), 'The sender name shown in emails');
+});
+
+test('getMessage returns localized config provider and runtime strings', () => {
+  assert.equal(getMessage('dashboard_scheduler_reason_no_matches', 'zh-CN'), '本次未命中需要提醒的订阅');
+  assert.equal(getMessage('dashboard_scheduler_reason_no_matches', 'en-US'), 'No subscriptions matched this reminder run');
+  assert.equal(
+    getMessage('dashboard_scheduler_reason_current_hour_skipped', 'zh-CN', { hour: '08', hours: '09,10' }),
+    '当前小时 08 未在通知时段内 (09,10)'
+  );
+  assert.equal(
+    getMessage('dashboard_scheduler_reason_current_hour_skipped', 'en-US', { hour: '08', hours: '09,10' }),
+    'Current hour 08 is outside the notification window (09,10)'
+  );
+  assert.equal(
+    getMessage('dashboard_scheduler_reason_dedupe_only', 'zh-CN', { matched: 3, skipped: 3 }),
+    '命中 3 条，但全部在去重窗口内（跳过 3 条）'
+  );
+  assert.equal(
+    getMessage('dashboard_scheduler_reason_dedupe_only', 'en-US', { matched: 3, skipped: 3 }),
+    'Matched 3 subscriptions, but all were skipped by dedupe (3 skipped)'
+  );
+  assert.equal(
+    getMessage('dashboard_scheduler_reason_send_summary', 'zh-CN', { attempted: 2, success: 1, skipped: 3 }),
+    '已尝试发送到 2 个渠道，成功 1 个（去重跳过 3 条）'
+  );
+  assert.equal(
+    getMessage('dashboard_scheduler_reason_send_summary', 'en-US', { attempted: 2, success: 1, skipped: 3 }),
+    'Attempted delivery to 2 channels, succeeded on 1 (3 dedupe skips)'
+  );
+  assert.equal(getMessage('dashboard_scheduler_reason_no_channels', 'zh-CN'), '未启用任何通知渠道');
+  assert.equal(getMessage('dashboard_scheduler_reason_no_channels', 'en-US'), 'No notification channels are enabled');
+  assert.equal(
+    getMessage('dashboard_scheduler_reason_execution_error', 'zh-CN', { error: 'boom' }),
+    '执行异常: boom'
+  );
+  assert.equal(
+    getMessage('dashboard_scheduler_reason_execution_error', 'en-US', { error: 'boom' }),
+    'Execution error: boom'
+  );
+  assert.equal(getMessage('config_section_bark_title', 'zh-CN'), 'Bark 配置');
+  assert.equal(getMessage('config_section_bark_title', 'en-US'), 'Bark Settings');
+  assert.equal(getMessage('config_label_bark_server', 'zh-CN'), '服务器地址');
+  assert.equal(getMessage('config_label_bark_server', 'en-US'), 'Server URL');
+  assert.equal(getMessage('config_label_bark_device_key', 'zh-CN'), '设备Key');
+  assert.equal(getMessage('config_label_bark_device_key', 'en-US'), 'Device Key');
+  assert.equal(getMessage('config_bark_archive_help', 'zh-CN'), '勾选后推送消息会保存到 Bark 的历史记录中');
+  assert.equal(getMessage('config_bark_archive_help', 'en-US'), 'When enabled, push notifications are saved to Bark history');
+  assert.equal(getMessage('config_section_gotify_title', 'zh-CN'), 'Gotify 配置');
+  assert.equal(getMessage('config_section_gotify_title', 'en-US'), 'Gotify Settings');
+  assert.equal(getMessage('config_section_serverchan_title', 'zh-CN'), 'Server酱 配置');
+  assert.equal(getMessage('config_section_serverchan_title', 'en-US'), 'ServerChan Settings');
+  assert.equal(getMessage('config_test_serverchan', 'zh-CN'), '测试 Server酱 通知');
+  assert.equal(getMessage('config_test_serverchan', 'en-US'), 'Test ServerChan Notification');
+  assert.equal(getMessage('config_label_pushplus_channel', 'zh-CN'), '渠道（可选）');
+  assert.equal(getMessage('config_label_pushplus_channel', 'en-US'), 'Channel (Optional)');
+  assert.equal(getMessage('config_pushplus_channel_sms', 'zh-CN'), '短信');
+  assert.equal(getMessage('config_pushplus_channel_sms', 'en-US'), 'SMS');
+  assert.equal(getMessage('config_section_discord_title', 'zh-CN'), 'Discord Bot 私信配置');
+  assert.equal(getMessage('config_section_discord_title', 'en-US'), 'Discord Bot DM Settings');
+  assert.equal(getMessage('config_label_discord_user_id', 'zh-CN'), 'Discord 用户 ID');
+  assert.equal(getMessage('config_label_discord_user_id', 'en-US'), 'Discord User ID');
+  assert.equal(getMessage('config_discord_user_placeholder', 'zh-CN'), '开启开发者模式后复制');
+  assert.equal(getMessage('config_discord_user_placeholder', 'en-US'), 'Copy this after enabling Developer Mode');
+  assert.equal(getMessage('config_load_failed_refresh', 'zh-CN'), '加载配置失败，请刷新页面重试');
+  assert.equal(getMessage('config_load_failed_refresh', 'en-US'), 'Failed to load settings. Please refresh and try again.');
+  assert.equal(getMessage('config_select_notifier_warning', 'zh-CN'), '请至少选择一种通知方式');
+  assert.equal(getMessage('config_select_notifier_warning', 'en-US'), 'Please select at least one notification channel');
+});
+
 
 test('getMessage returns localized admin modal and payment-flow strings', () => {
   assert.equal(getMessage('admin_modal_add_title', 'zh-CN'), '\u6dfb\u52a0\u65b0\u8ba2\u9605');

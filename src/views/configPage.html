@@ -177,7 +177,7 @@
           <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
             <div>
               <label for="notificationHours" class="block text-sm font-medium text-gray-700" data-i18n="config_label_notification_hours">通知时段（UTC）</label>
-              <input type="text" id="notificationHours" placeholder="例如：08, 12, 20 或输入 * 表示全天"
+              <input type="text" id="notificationHours" placeholder="For example: 08, 12, 20, or enter * for all day" data-i18n-placeholder="config_notification_hours_placeholder"
                 class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
               <p class="mt-1 text-sm text-gray-500" data-i18n="config_notification_hours_help">可输入多个小时，使用逗号或空格分隔；留空则默认每天执行一次任务即可</p>
             </div>
@@ -190,8 +190,8 @@
           <div class="mb-6">
             <label for="notificationLocale" class="block text-sm font-medium text-gray-700" data-i18n="config_label_notification_locale">Notification Language</label>
             <select id="notificationLocale" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
-              <option value="zh">中文</option>
-              <option value="en">English</option>
+              <option value="zh" data-i18n="config_notification_locale_zh">Chinese</option>
+              <option value="en" data-i18n="config_notification_locale_en">English</option>
             </select>
             <p class="mt-1 text-sm text-gray-500" data-i18n="config_notification_locale_help">This setting controls the language used in reminder emails, Discord DMs, and other outbound notifications.</p>
           </div>
@@ -241,102 +241,102 @@
             </div>
             <div class="mt-2 flex flex-wrap gap-4">
               <a href="https://www.notifyx.cn/" target="_blank" class="text-indigo-600 hover:text-indigo-800 text-sm">
-                <i class="fas fa-external-link-alt ml-1"></i> NotifyX官网
+                <i class="fas fa-external-link-alt ml-1"></i> <span data-i18n="config_link_notifyx_home">NotifyX Home</span>
               </a>
               <a href="https://webhook.site" target="_blank" class="text-indigo-600 hover:text-indigo-800 text-sm">
-                <i class="fas fa-external-link-alt ml-1"></i> Webhook 调试工具
+                <i class="fas fa-external-link-alt ml-1"></i> <span data-i18n="config_link_webhook_debug">Webhook Debug Tool</span>
               </a>
               <a href="https://developer.work.weixin.qq.com/document/path/91770" target="_blank" class="text-indigo-600 hover:text-indigo-800 text-sm">
                 <i class="fas fa-external-link-alt ml-1"></i> <span data-i18n="config_link_wechatbot_docs">WeCom Bot Docs</span>
               </a>
               <a href="https://developers.cloudflare.com/workers/tutorials/send-emails-with-resend/" target="_blank" class="text-indigo-600 hover:text-indigo-800 text-sm">
-                <i class="fas fa-external-link-alt ml-1"></i> 获取 Resend API Key
+                <i class="fas fa-external-link-alt ml-1"></i> <span data-i18n="config_link_resend_api">Get Resend API Key</span>
               </a>
               <a href="https://apps.apple.com/cn/app/bark-customed-notifications/id1403753865" target="_blank" class="text-indigo-600 hover:text-indigo-800 text-sm">
-                <i class="fas fa-external-link-alt ml-1"></i> Bark iOS应用
+                <i class="fas fa-external-link-alt ml-1"></i> <span data-i18n="config_link_bark_ios">Bark iOS App</span>
               </a>
               <a href="https://sct.ftqq.com/" target="_blank" class="text-indigo-600 hover:text-indigo-800 text-sm">
-                <i class="fas fa-external-link-alt ml-1"></i> Server酱官网
+                <i class="fas fa-external-link-alt ml-1"></i> <span data-i18n="config_link_serverchan_home">ServerChan Home</span>
               </a>
               <a href="https://www.pushplus.plus/" target="_blank" class="text-indigo-600 hover:text-indigo-800 text-sm">
-                <i class="fas fa-external-link-alt ml-1"></i> PushPlus官网
+                <i class="fas fa-external-link-alt ml-1"></i> <span data-i18n="config_link_pushplus_home">PushPlus Home</span>
               </a>
             </div>
           </div>
 
           <div class="mb-6">
-            <label for="thirdPartyToken" class="block text-sm font-medium text-gray-700">第三方 API 访问令牌</label>
+            <label for="thirdPartyToken" class="block text-sm font-medium text-gray-700" data-i18n="config_label_third_party_token">Third-party API Access Token</label>
             <div class="mt-1 flex flex-col sm:flex-row sm:items-center gap-3">
-              <input type="text" id="thirdPartyToken" placeholder="留空表示不修改；输入新值将更新"
+              <input type="text" id="thirdPartyToken" placeholder="Leave blank to keep the current value; enter a new value to update" data-i18n-placeholder="config_secret_replace_placeholder"
                 class="flex-1 border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
               <button type="button" id="generateThirdPartyToken" class="btn-info text-white px-4 py-2 rounded-md text-sm font-medium whitespace-nowrap">
-                <i class="fas fa-magic mr-2"></i>Generate Token
+                <i class="fas fa-magic mr-2"></i><span data-i18n="config_generate_token">Generate Token</span>
               </button>
               <button type="button" id="clearThirdPartyToken" class="btn-warning text-white px-4 py-2 rounded-md text-sm font-medium whitespace-nowrap">
-                <i class="fas fa-eraser mr-2"></i>清空
+                <i class="fas fa-eraser mr-2"></i><span data-i18n="config_clear">Clear</span>
               </button>
             </div>
-            <p id="THIRD_PARTY_API_TOKENStatus" class="mt-1 text-xs text-gray-500">加载中...</p>
-            <p class="mt-1 text-sm text-gray-500">调用 /api/notify/{token} 接口时需携带此令牌；留空表示禁用第三方 API 推送。</p>
+            <p id="THIRD_PARTY_API_TOKENStatus" class="mt-1 text-xs text-gray-500" data-i18n="config_loading">Loading...</p>
+            <p class="mt-1 text-sm text-gray-500" data-i18n="config_third_party_token_help">Calls to /api/notify/{token} must include this token; leave blank to disable third-party API pushes.</p>
           </div>
 
           <div class="mb-6">
-            <label class="block text-sm font-medium text-gray-700 mb-3">调试设置</label>
+            <label class="block text-sm font-medium text-gray-700 mb-3" data-i18n="config_section_debug_settings">Debug Settings</label>
             <label class="inline-flex items-center cursor-pointer select-none">
               <input type="checkbox" id="debugLogs" class="form-checkbox h-4 w-4 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500">
-              <span class="ml-2 text-sm text-gray-700">开启调试日志（影响控制台输出）</span>
+              <span class="ml-2 text-sm text-gray-700" data-i18n="config_debug_logs">Enable debug logs (affects console output)</span>
             </label>
           </div>
 
           <div class="mb-6">
-            <label for="paymentHistoryLimit" class="block text-sm font-medium text-gray-700">支付历史保留条数</label>
+            <label for="paymentHistoryLimit" class="block text-sm font-medium text-gray-700" data-i18n="config_label_payment_history_limit">Payment History Retention Limit</label>
             <input type="number" id="paymentHistoryLimit" min="10" max="1000" step="1"
               class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-              placeholder="默认 100">
-            <p class="mt-1 text-sm text-gray-500">自动续订与手动续订后仅保留最近 N 条支付历史（建议 50~200，默认 100）。</p>
+              placeholder="Default 100" data-i18n-placeholder="config_payment_history_limit_placeholder">
+            <p class="mt-1 text-sm text-gray-500" data-i18n="config_payment_history_limit_help">After auto-renewals and manual renewals, keep only the most recent N payment history records (recommended 50–200, default 100).</p>
           </div>
           
           <div id="telegramConfig" class="config-section">
-            <h4 class="text-md font-medium text-gray-900 mb-3">Telegram 配置</h4>
+            <h4 class="text-md font-medium text-gray-900 mb-3" data-i18n="config_section_telegram_title">Telegram Settings</h4>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
               <div>
                 <label for="tgBotToken" class="block text-sm font-medium text-gray-700">Bot Token</label>
                 <div class="mt-1 flex flex-col sm:flex-row sm:items-center gap-3">
-                  <input type="text" id="tgBotToken" placeholder="留空表示不修改；输入新值将更新" class="flex-1 border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+                  <input type="text" id="tgBotToken" placeholder="Leave blank to keep the current value; enter a new value to update" data-i18n-placeholder="config_secret_replace_placeholder" class="flex-1 border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
                   <button type="button" id="clearTgBotToken" class="btn-warning text-white px-4 py-2 rounded-md text-sm font-medium whitespace-nowrap">
-                    <i class="fas fa-eraser mr-2"></i>清空
+                    <i class="fas fa-eraser mr-2"></i><span data-i18n="config_clear">Clear</span>
                   </button>
                 </div>
-                <p id="TG_BOT_TOKENStatus" class="mt-1 text-xs text-gray-500">加载中...</p>
+                <p id="TG_BOT_TOKENStatus" class="mt-1 text-xs text-gray-500" data-i18n="config_loading">Loading...</p>
               </div>
               <div>
                 <label for="tgChatId" class="block text-sm font-medium text-gray-700">Chat ID</label>
-                <input type="text" id="tgChatId" placeholder="可从 @userinfobot 获取" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+                <input type="text" id="tgChatId" placeholder="You can get this from @userinfobot" data-i18n-placeholder="config_telegram_chat_id_placeholder" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
               </div>
             </div>
             <div class="flex justify-end">
               <button type="button" id="testTelegramBtn" class="btn-secondary text-white px-4 py-2 rounded-md text-sm font-medium">
-                <i class="fas fa-paper-plane mr-2"></i>测试 Telegram 通知
+                <i class="fas fa-paper-plane mr-2"></i><span data-i18n="config_test_telegram">Test Telegram Notification</span>
               </button>
             </div>
           </div>
           
           <div id="notifyxConfig" class="config-section">
-            <h4 class="text-md font-medium text-gray-900 mb-3">NotifyX 配置</h4>
+            <h4 class="text-md font-medium text-gray-900 mb-3" data-i18n="config_section_notifyx_title">NotifyX Settings</h4>
             <div class="mb-4">
               <label for="notifyxApiKey" class="block text-sm font-medium text-gray-700">API Key</label>
               <div class="mt-1 flex flex-col sm:flex-row sm:items-center gap-3">
-                <input type="text" id="notifyxApiKey" placeholder="留空表示不修改；输入新值将更新" class="flex-1 border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+                <input type="text" id="notifyxApiKey" placeholder="Leave blank to keep the current value; enter a new value to update" data-i18n-placeholder="config_secret_replace_placeholder" class="flex-1 border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
                 <button type="button" id="clearNotifyxApiKey" class="btn-warning text-white px-4 py-2 rounded-md text-sm font-medium whitespace-nowrap">
-                  <i class="fas fa-eraser mr-2"></i>清空
+                  <i class="fas fa-eraser mr-2"></i><span data-i18n="config_clear">Clear</span>
                 </button>
               </div>
-              <p id="NOTIFYX_API_KEYStatus" class="mt-1 text-xs text-gray-500">加载中...</p>
-              <p class="mt-1 text-sm text-gray-500">从 <a href="https://www.notifyx.cn/" target="_blank" class="text-indigo-600 hover:text-indigo-800">NotifyX平台</a> 获取的 API Key</p>
+              <p id="NOTIFYX_API_KEYStatus" class="mt-1 text-xs text-gray-500" data-i18n="config_loading">Loading...</p>
+              <p class="mt-1 text-sm text-gray-500" data-i18n="config_notifyx_api_key_help">API key obtained from the NotifyX platform</p>
             </div>
             <div class="flex justify-end">
               <button type="button" id="testNotifyXBtn" class="btn-secondary text-white px-4 py-2 rounded-md text-sm font-medium">
-                <i class="fas fa-paper-plane mr-2"></i>测试 NotifyX 通知
+                <i class="fas fa-paper-plane mr-2"></i><span data-i18n="config_test_notifyx">Test NotifyX Notification</span>
               </button>
             </div>
           </div>
@@ -347,16 +347,16 @@
               <div>
                 <label for="webhookUrl" class="block text-sm font-medium text-gray-700" data-i18n="config_label_webhook_url">Webhook Notification URL</label>
                 <div class="mt-1 flex flex-col sm:flex-row sm:items-center gap-3">
-                  <input type="url" id="webhookUrl" placeholder="留空表示不修改；输入新值将更新" class="flex-1 border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+                  <input type="url" id="webhookUrl" placeholder="Leave blank to keep the current value; enter a new value to update" data-i18n-placeholder="config_secret_replace_placeholder" class="flex-1 border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
                   <button type="button" id="clearWebhookUrl" class="btn-warning text-white px-4 py-2 rounded-md text-sm font-medium whitespace-nowrap">
-                    <i class="fas fa-eraser mr-2"></i>清空
+                    <i class="fas fa-eraser mr-2"></i><span data-i18n="config_clear">Clear</span>
                   </button>
                 </div>
-                <p id="WEBHOOK_URLStatus" class="mt-1 text-xs text-gray-500">加载中...</p>
-                <p class="mt-1 text-sm text-gray-500">请填写自建服务或第三方平台提供的 Webhook 地址，例如 <code>https://your-webhook-endpoint.com/path</code></p>
+                <p id="WEBHOOK_URLStatus" class="mt-1 text-xs text-gray-500" data-i18n="config_loading">Loading...</p>
+                <p class="mt-1 text-sm text-gray-500" data-i18n="config_webhook_url_help">Enter the Webhook URL provided by your own service or a third-party platform, for example https://your-webhook-endpoint.com/path</p>
               </div>
               <div>
-                <label for="webhookMethod" class="block text-sm font-medium text-gray-700">请求方法</label>
+                <label for="webhookMethod" class="block text-sm font-medium text-gray-700" data-i18n="config_label_webhook_method">Request Method</label>
                 <select id="webhookMethod" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
                   <option value="POST">POST</option>
                   <option value="GET">GET</option>
@@ -364,20 +364,20 @@
                 </select>
               </div>
               <div>
-                <label for="webhookHeaders" class="block text-sm font-medium text-gray-700">自定义请求头 (JSON格式，可选)</label>
+                <label for="webhookHeaders" class="block text-sm font-medium text-gray-700" data-i18n="config_label_webhook_headers">Custom Headers (JSON, Optional)</label>
                 <div class="mt-1 flex flex-col sm:flex-row sm:items-start gap-3">
-                  <textarea id="webhookHeaders" rows="3" placeholder='留空表示不修改；输入新值将更新' class="flex-1 border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"></textarea>
+                  <textarea id="webhookHeaders" rows="3" placeholder='Leave blank to keep the current value; enter a new value to update' data-i18n-placeholder="config_secret_replace_placeholder" class="flex-1 border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"></textarea>
                   <button type="button" id="clearWebhookHeaders" class="btn-warning text-white px-4 py-2 rounded-md text-sm font-medium whitespace-nowrap">
-                    <i class="fas fa-eraser mr-2"></i>清空
+                    <i class="fas fa-eraser mr-2"></i><span data-i18n="config_clear">Clear</span>
                   </button>
                 </div>
-                <p id="WEBHOOK_HEADERSStatus" class="mt-1 text-xs text-gray-500">加载中...</p>
-                <p class="mt-1 text-sm text-gray-500">JSON格式的自定义请求头，留空使用默认</p>
+                <p id="WEBHOOK_HEADERSStatus" class="mt-1 text-xs text-gray-500" data-i18n="config_loading">Loading...</p>
+                <p class="mt-1 text-sm text-gray-500" data-i18n="config_webhook_headers_help">Custom headers in JSON format; leave blank to use defaults</p>
               </div>
               <div>
-                <label for="webhookTemplate" class="block text-sm font-medium text-gray-700">消息模板 (JSON格式，可选)</label>
+                <label for="webhookTemplate" class="block text-sm font-medium text-gray-700" data-i18n="config_label_webhook_template">Message Template (JSON, Optional)</label>
                 <textarea id="webhookTemplate" rows="4" placeholder='{"title": "{{title}}", "content": "{{content}}", "timestamp": "{{timestamp}}"}' class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"></textarea>
-                <p class="mt-1 text-sm text-gray-500">支持变量: {{title}}, {{content}}, {{timestamp}}。留空使用默认格式</p>
+                <p class="mt-1 text-sm text-gray-500" data-i18n="config_webhook_template_help">Supports variables: {{title}}, {{content}}, {{timestamp}}. Leave blank to use the default format</p>
               </div>
             </div>
             <div class="flex justify-end">
@@ -391,34 +391,34 @@
             <h4 class="text-md font-medium text-gray-900 mb-3" data-i18n="config_section_wechatbot_title">WeCom Bot Settings</h4>
             <div class="grid grid-cols-1 gap-4 mb-4">
               <div>
-                <label for="wechatbotWebhook" class="block text-sm font-medium text-gray-700">机器人 Webhook URL</label>
+                <label for="wechatbotWebhook" class="block text-sm font-medium text-gray-700" data-i18n="config_label_wechatbot_webhook">Bot Webhook URL</label>
                 <div class="mt-1 flex flex-col sm:flex-row sm:items-center gap-3">
-                  <input type="url" id="wechatbotWebhook" placeholder="留空表示不修改；输入新值将更新" class="flex-1 border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+                  <input type="url" id="wechatbotWebhook" placeholder="Leave blank to keep the current value; enter a new value to update" data-i18n-placeholder="config_secret_replace_placeholder" class="flex-1 border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
                   <button type="button" id="clearWechatbotWebhook" class="btn-warning text-white px-4 py-2 rounded-md text-sm font-medium whitespace-nowrap">
-                    <i class="fas fa-eraser mr-2"></i>清空
+                    <i class="fas fa-eraser mr-2"></i><span data-i18n="config_clear">Clear</span>
                   </button>
                 </div>
-                <p id="WECHATBOT_WEBHOOKStatus" class="mt-1 text-xs text-gray-500">加载中...</p>
-                <p class="mt-1 text-sm text-gray-500">从企业微信群聊中添加机器人获取的 Webhook URL</p>
+                <p id="WECHATBOT_WEBHOOKStatus" class="mt-1 text-xs text-gray-500" data-i18n="config_loading">Loading...</p>
+                <p class="mt-1 text-sm text-gray-500" data-i18n="config_wechatbot_webhook_help">Webhook URL obtained by adding a bot in a WeCom group chat</p>
               </div>
               <div>
-                <label for="wechatbotMsgType" class="block text-sm font-medium text-gray-700">消息类型</label>
+                <label for="wechatbotMsgType" class="block text-sm font-medium text-gray-700" data-i18n="config_label_wechatbot_msg_type">Message Type</label>
                 <select id="wechatbotMsgType" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
-                  <option value="text">文本消息</option>
-                  <option value="markdown">Markdown消息</option>
+                  <option value="text" data-i18n="config_wechatbot_msg_type_text">Text Message</option>
+                  <option value="markdown" data-i18n="config_wechatbot_msg_type_markdown">Markdown Message</option>
                 </select>
-                <p class="mt-1 text-sm text-gray-500">选择发送的消息格式类型</p>
+                <p class="mt-1 text-sm text-gray-500" data-i18n="config_wechatbot_msg_type_help">Choose the message format to send</p>
               </div>
               <div>
-                <label for="wechatbotAtMobiles" class="block text-sm font-medium text-gray-700">@手机号 (可选)</label>
+                <label for="wechatbotAtMobiles" class="block text-sm font-medium text-gray-700" data-i18n="config_label_wechatbot_at_mobiles">@Mobile Numbers (Optional)</label>
                 <input type="text" id="wechatbotAtMobiles" placeholder="13800138000,13900139000" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
-                <p class="mt-1 text-sm text-gray-500">需要@的手机号，多个用逗号分隔，留空则不@任何人</p>
+                <p class="mt-1 text-sm text-gray-500" data-i18n="config_wechatbot_at_mobiles_help">Mobile numbers to @, separated by commas; leave blank to mention nobody</p>
               </div>
               <div>
-                <label for="wechatbotAtAll" class="block text-sm font-medium text-gray-700 mb-2">@所有人</label>
+                <label for="wechatbotAtAll" class="block text-sm font-medium text-gray-700 mb-2" data-i18n="config_label_wechatbot_at_all">@Everyone</label>
                 <label class="inline-flex items-center">
                   <input type="checkbox" id="wechatbotAtAll" class="form-checkbox h-4 w-4 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500">
-                  <span class="ml-2 text-sm text-gray-700">发送消息时@所有人</span>
+                  <span class="ml-2 text-sm text-gray-700" data-i18n="config_wechatbot_at_all_help">Mention everyone when sending a message</span>
                 </label>
               </div>
             </div>
@@ -435,28 +435,28 @@
               <div>
                 <label for="resendApiKey" class="block text-sm font-medium text-gray-700">Resend API Key</label>
                 <div class="mt-1 flex flex-col sm:flex-row sm:items-center gap-3">
-                  <input type="text" id="resendApiKey" placeholder="留空表示不修改；输入新值将更新" class="flex-1 border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+                  <input type="text" id="resendApiKey" placeholder="Leave blank to keep the current value; enter a new value to update" data-i18n-placeholder="config_secret_replace_placeholder" class="flex-1 border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
                   <button type="button" id="clearResendApiKey" class="btn-warning text-white px-4 py-2 rounded-md text-sm font-medium whitespace-nowrap">
-                    <i class="fas fa-eraser mr-2"></i>清空
+                    <i class="fas fa-eraser mr-2"></i><span data-i18n="config_clear">Clear</span>
                   </button>
                 </div>
-                <p id="RESEND_API_KEYStatus" class="mt-1 text-xs text-gray-500">加载中...</p>
-                <p class="mt-1 text-sm text-gray-500">从 <a href="https://resend.com/api-keys" target="_blank" class="text-indigo-600 hover:text-indigo-800">Resend控制台</a> 获取的 API Key</p>
+                <p id="RESEND_API_KEYStatus" class="mt-1 text-xs text-gray-500" data-i18n="config_loading">Loading...</p>
+                <p class="mt-1 text-sm text-gray-500" data-i18n="config_resend_api_key_help">API key obtained from the Resend dashboard</p>
               </div>
               <div>
-                <label for="emailFrom" class="block text-sm font-medium text-gray-700">发件人邮箱</label>
+                <label for="emailFrom" class="block text-sm font-medium text-gray-700" data-i18n="config_label_email_from">Sender Email</label>
                 <input type="email" id="emailFrom" placeholder="noreply@yourdomain.com" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
-                <p class="mt-1 text-sm text-gray-500">必须是已在Resend验证的域名邮箱</p>
+                <p class="mt-1 text-sm text-gray-500" data-i18n="config_email_from_help">Must be an email address from a domain already verified in Resend</p>
               </div>
               <div>
-                <label for="emailFromName" class="block text-sm font-medium text-gray-700">发件人名称</label>
-                <input type="text" id="emailFromName" placeholder="订阅提醒系统" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
-                <p class="mt-1 text-sm text-gray-500">显示在邮件中的发件人名称</p>
+                <label for="emailFromName" class="block text-sm font-medium text-gray-700" data-i18n="config_label_email_from_name">Sender Name</label>
+                <input type="text" id="emailFromName" placeholder="Subscription Reminder System" data-i18n-placeholder="config_email_from_name_placeholder" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+                <p class="mt-1 text-sm text-gray-500" data-i18n="config_email_from_name_help">The sender name shown in emails</p>
               </div>
               <div>
-                <label for="emailTo" class="block text-sm font-medium text-gray-700">收件人邮箱</label>
+                <label for="emailTo" class="block text-sm font-medium text-gray-700" data-i18n="config_label_email_to">Recipient Email</label>
                 <input type="email" id="emailTo" placeholder="user@example.com" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
-                <p class="mt-1 text-sm text-gray-500">接收通知邮件的邮箱地址</p>
+                <p class="mt-1 text-sm text-gray-500" data-i18n="config_email_to_help">The email address that receives notification emails</p>
               </div>
             </div>
             <div class="flex justify-end">
@@ -467,143 +467,143 @@
           </div>
 
           <div id="barkConfig" class="config-section">
-            <h4 class="text-md font-medium text-gray-900 mb-3">Bark 配置</h4>
+            <h4 class="text-md font-medium text-gray-900 mb-3" data-i18n="config_section_bark_title">Bark Settings</h4>
             <div class="grid grid-cols-1 gap-4 mb-4">
               <div>
-                <label for="barkServer" class="block text-sm font-medium text-gray-700">服务器地址</label>
+                <label for="barkServer" class="block text-sm font-medium text-gray-700" data-i18n="config_label_bark_server">Server URL</label>
                 <input type="url" id="barkServer" placeholder="https://api.day.app" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
-                <p class="mt-1 text-sm text-gray-500">Bark 服务器地址，默认为官方服务器，也可以使用自建服务器</p>
+                <p class="mt-1 text-sm text-gray-500" data-i18n="config_bark_server_help">Bark server URL. The official server is used by default, but you can also use a self-hosted server.</p>
               </div>
               <div>
-                <label for="barkDeviceKey" class="block text-sm font-medium text-gray-700">设备Key</label>
+                <label for="barkDeviceKey" class="block text-sm font-medium text-gray-700" data-i18n="config_label_bark_device_key">Device Key</label>
                 <div class="mt-1 flex flex-col sm:flex-row sm:items-center gap-3">
-                  <input type="text" id="barkDeviceKey" placeholder="留空表示不修改；输入新值将更新" class="flex-1 border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+                  <input type="text" id="barkDeviceKey" placeholder="Leave blank to keep the current value; enter a new value to update" data-i18n-placeholder="config_secret_replace_placeholder" class="flex-1 border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
                   <button type="button" id="clearBarkDeviceKey" class="btn-warning text-white px-4 py-2 rounded-md text-sm font-medium whitespace-nowrap">
-                    <i class="fas fa-eraser mr-2"></i>清空
+                    <i class="fas fa-eraser mr-2"></i><span data-i18n="config_clear">Clear</span>
                   </button>
                 </div>
-                <p id="BARK_DEVICE_KEYStatus" class="mt-1 text-xs text-gray-500">加载中...</p>
-                <p class="mt-1 text-sm text-gray-500">从 <a href="https://apps.apple.com/cn/app/bark-customed-notifications/id1403753865" target="_blank" class="text-indigo-600 hover:text-indigo-800">Bark iOS 应用</a> 中获取的设备Key</p>
+                <p id="BARK_DEVICE_KEYStatus" class="mt-1 text-xs text-gray-500" data-i18n="config_loading">Loading...</p>
+                <p class="mt-1 text-sm text-gray-500" data-i18n="config_bark_device_key_help">Device key obtained from the Bark iOS app</p>
               </div>
               <div>
-                <label for="barkIsArchive" class="block text-sm font-medium text-gray-700 mb-2">保存推送</label>
+                <label for="barkIsArchive" class="block text-sm font-medium text-gray-700 mb-2" data-i18n="config_label_bark_archive">Archive Notifications</label>
                 <label class="inline-flex items-center">
                   <input type="checkbox" id="barkIsArchive" class="form-checkbox h-4 w-4 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500">
-                  <span class="ml-2 text-sm text-gray-700">保存推送到历史记录</span>
+                  <span class="ml-2 text-sm text-gray-700" data-i18n="config_bark_archive_checkbox">Save notifications to history</span>
                 </label>
-                <p class="mt-1 text-sm text-gray-500">勾选后推送消息会保存到 Bark 的历史记录中</p>
+                <p class="mt-1 text-sm text-gray-500" data-i18n="config_bark_archive_help">When enabled, push notifications are saved to Bark history</p>
               </div>
             </div>
             <div class="flex justify-end">
               <button type="button" id="testBarkBtn" class="btn-secondary text-white px-4 py-2 rounded-md text-sm font-medium">
-                <i class="fas fa-paper-plane mr-2"></i>测试 Bark 通知
+                <i class="fas fa-paper-plane mr-2"></i><span data-i18n="config_test_bark">Test Bark Notification</span>
               </button>
             </div>
           </div>
 
           <div id="gotifyConfig" class="config-section">
-            <h4 class="text-md font-medium text-gray-900 mb-3">Gotify 配置</h4>
+            <h4 class="text-md font-medium text-gray-900 mb-3" data-i18n="config_section_gotify_title">Gotify Settings</h4>
             <div class="grid grid-cols-1 gap-4 mb-4">
               <div>
                 <label for="gotifyServerUrl" class="block text-sm font-medium text-gray-700">Server URL</label>
                 <input type="url" id="gotifyServerUrl" placeholder="https://gotify.example.com" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
-                <p class="mt-1 text-sm text-gray-500">你的 Gotify 服务地址（不需要带 /message）。</p>
+                <p class="mt-1 text-sm text-gray-500" data-i18n="config_gotify_server_help">Your Gotify server URL (do not include /message).</p>
               </div>
               <label for="gotifyAppToken" class="block text-sm font-medium text-gray-700">Application Token</label>
               <div class="mt-1 flex flex-col sm:flex-row sm:items-center gap-3">
-                <input type="text" id="gotifyAppToken" placeholder="留空表示不修改；输入新值将更新" class="flex-1 border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+                <input type="text" id="gotifyAppToken" placeholder="Leave blank to keep the current value; enter a new value to update" data-i18n-placeholder="config_secret_replace_placeholder" class="flex-1 border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
                 <button type="button" id="clearGotifyAppToken" class="btn-warning text-white px-4 py-2 rounded-md text-sm font-medium whitespace-nowrap">
-                  <i class="fas fa-eraser mr-2"></i>清空
+                  <i class="fas fa-eraser mr-2"></i><span data-i18n="config_clear">Clear</span>
                 </button>
               </div>
-              <p id="GOTIFY_APP_TOKENStatus" class="mt-1 text-xs text-gray-500">加载中...</p>
+              <p id="GOTIFY_APP_TOKENStatus" class="mt-1 text-xs text-gray-500" data-i18n="config_loading">Loading...</p>
             </div>
             <div class="flex justify-end">
               <button type="button" id="testGotifyBtn" class="btn-secondary text-white px-4 py-2 rounded-md text-sm font-medium">
-                <i class="fas fa-paper-plane mr-2"></i>测试 Gotify 通知
+                <i class="fas fa-paper-plane mr-2"></i><span data-i18n="config_test_gotify">Test Gotify Notification</span>
               </button>
             </div>
           </div>
 
           <div id="serverchanConfig" class="config-section">
-            <h4 class="text-md font-medium text-gray-900 mb-3">Server酱 配置</h4>
+            <h4 class="text-md font-medium text-gray-900 mb-3" data-i18n="config_section_serverchan_title">ServerChan Settings</h4>
             <div class="grid grid-cols-1 gap-4 mb-4">
               <div>
                 <label for="serverchanSendKey" class="block text-sm font-medium text-gray-700">SendKey</label>
                 <div class="mt-1 flex flex-col sm:flex-row sm:items-center gap-3">
-                  <input type="text" id="serverchanSendKey" placeholder="留空表示不修改；输入新值将更新" class="flex-1 border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+                  <input type="text" id="serverchanSendKey" placeholder="Leave blank to keep the current value; enter a new value to update" data-i18n-placeholder="config_secret_replace_placeholder" class="flex-1 border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
                   <button type="button" id="clearServerchanSendKey" class="btn-warning text-white px-4 py-2 rounded-md text-sm font-medium whitespace-nowrap">
-                    <i class="fas fa-eraser mr-2"></i>清空
+                    <i class="fas fa-eraser mr-2"></i><span data-i18n="config_clear">Clear</span>
                   </button>
                 </div>
-                <p id="SERVERCHAN_SENDKEYStatus" class="mt-1 text-xs text-gray-500">加载中...</p>
-                <p class="mt-1 text-sm text-gray-500">从 <a href="https://sct.ftqq.com/" target="_blank" class="text-indigo-600 hover:text-indigo-800">Server酱</a> 获取 SendKey</p>
+                <p id="SERVERCHAN_SENDKEYStatus" class="mt-1 text-xs text-gray-500" data-i18n="config_loading">Loading...</p>
+                <p class="mt-1 text-sm text-gray-500" data-i18n="config_serverchan_sendkey_help">Get the SendKey from ServerChan</p>
               </div>
             </div>
             <div class="flex justify-end">
               <button type="button" id="testServerchanBtn" class="btn-secondary text-white px-4 py-2 rounded-md text-sm font-medium">
-                <i class="fas fa-paper-plane mr-2"></i>测试 Server酱 通知
+                <i class="fas fa-paper-plane mr-2"></i><span data-i18n="config_test_serverchan">Test ServerChan Notification</span>
               </button>
             </div>
           </div>
 
           <div id="pushplusConfig" class="config-section">
-            <h4 class="text-md font-medium text-gray-900 mb-3">PushPlus 配置</h4>
+            <h4 class="text-md font-medium text-gray-900 mb-3" data-i18n="config_section_pushplus_title">PushPlus Settings</h4>
             <div class="grid grid-cols-1 gap-4 mb-4">
               <div>
                 <label for="pushplusToken" class="block text-sm font-medium text-gray-700">Token</label>
                 <div class="mt-1 flex flex-col sm:flex-row sm:items-center gap-3">
-                  <input type="text" id="pushplusToken" placeholder="留空表示不修改；输入新值将更新" class="flex-1 border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+                  <input type="text" id="pushplusToken" placeholder="Leave blank to keep the current value; enter a new value to update" data-i18n-placeholder="config_secret_replace_placeholder" class="flex-1 border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
                   <button type="button" id="clearPushplusToken" class="btn-warning text-white px-4 py-2 rounded-md text-sm font-medium whitespace-nowrap">
-                    <i class="fas fa-eraser mr-2"></i>清空
+                    <i class="fas fa-eraser mr-2"></i><span data-i18n="config_clear">Clear</span>
                   </button>
                 </div>
-                <p id="PUSHPLUS_TOKENStatus" class="mt-1 text-xs text-gray-500">加载中...</p>
+                <p id="PUSHPLUS_TOKENStatus" class="mt-1 text-xs text-gray-500" data-i18n="config_loading">Loading...</p>
               </div>
               <div>
-                <label for="pushplusTopic" class="block text-sm font-medium text-gray-700">群组编码 Topic（可选）</label>
-                <input type="text" id="pushplusTopic" placeholder="留空则发送到个人渠道" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+                <label for="pushplusTopic" class="block text-sm font-medium text-gray-700" data-i18n="config_label_pushplus_topic">Topic Group Code (Optional)</label>
+                <input type="text" id="pushplusTopic" placeholder="Leave blank to send to your personal channel" data-i18n-placeholder="config_pushplus_topic_placeholder" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
               </div>
               <div>
-                <label for="pushplusChannel" class="block text-sm font-medium text-gray-700">渠道（可选）</label>
+                <label for="pushplusChannel" class="block text-sm font-medium text-gray-700" data-i18n="config_label_pushplus_channel">Channel (Optional)</label>
                 <select id="pushplusChannel" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
-                  <option value="">默认</option>
-                  <option value="wechat">微信公众号</option>
-                  <option value="mail">邮件</option>
-                  <option value="sms">短信</option>
+                  <option value="" data-i18n="config_pushplus_channel_default">Default</option>
+                  <option value="wechat" data-i18n="config_pushplus_channel_wechat">WeChat Official Account</option>
+                  <option value="mail" data-i18n="config_pushplus_channel_email">Email</option>
+                  <option value="sms" data-i18n="config_pushplus_channel_sms">SMS</option>
                   <option value="webhook">Webhook</option>
                 </select>
-                <p class="mt-1 text-sm text-gray-500">具体可用渠道以 PushPlus 平台支持情况为准</p>
+                <p class="mt-1 text-sm text-gray-500" data-i18n="config_pushplus_channel_help">Available channels depend on what the PushPlus platform currently supports</p>
               </div>
             </div>
             <div class="flex justify-end">
               <button type="button" id="testPushplusBtn" class="btn-secondary text-white px-4 py-2 rounded-md text-sm font-medium">
-                <i class="fas fa-paper-plane mr-2"></i>测试 PushPlus 通知
+                <i class="fas fa-paper-plane mr-2"></i><span data-i18n="config_test_pushplus">Test PushPlus Notification</span>
               </button>
             </div>
           </div>
 
           <div id="discordConfig" class="config-section">
-            <h4 class="text-md font-medium text-gray-900 mb-3">Discord Bot 私信配置</h4>
+            <h4 class="text-md font-medium text-gray-900 mb-3" data-i18n="config_section_discord_title">Discord Bot DM Settings</h4>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
               <div>
                 <label for="discordBotToken" class="block text-sm font-medium text-gray-700">Bot Token</label>
                 <div class="mt-1 flex flex-col sm:flex-row sm:items-center gap-3">
-                  <input type="text" id="discordBotToken" placeholder="留空表示不修改；输入新值将更新" class="flex-1 border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+                  <input type="text" id="discordBotToken" placeholder="Leave blank to keep the current value; enter a new value to update" data-i18n-placeholder="config_secret_replace_placeholder" class="flex-1 border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
                   <button type="button" id="clearDiscordBotToken" class="btn-warning text-white px-4 py-2 rounded-md text-sm font-medium whitespace-nowrap">
-                    <i class="fas fa-eraser mr-2"></i>清空
+                    <i class="fas fa-eraser mr-2"></i><span data-i18n="config_clear">Clear</span>
                   </button>
                 </div>
-                <p id="DISCORD_BOT_TOKENStatus" class="mt-1 text-xs text-gray-500">加载中...</p>
+                <p id="DISCORD_BOT_TOKENStatus" class="mt-1 text-xs text-gray-500" data-i18n="config_loading">Loading...</p>
               </div>
               <div>
-                <label for="discordUserId" class="block text-sm font-medium text-gray-700">Discord 用户 ID</label>
-                <input type="text" id="discordUserId" placeholder="开启开发者模式后复制" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+                <label for="discordUserId" class="block text-sm font-medium text-gray-700" data-i18n="config_label_discord_user_id">Discord User ID</label>
+                <input type="text" id="discordUserId" placeholder="Copy this after enabling Developer Mode" data-i18n-placeholder="config_discord_user_placeholder" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
               </div>
             </div>
             <div class="flex justify-end">
               <button type="button" id="testDiscordBtn" class="btn-secondary text-white px-4 py-2 rounded-md text-sm font-medium">
-                <i class="fas fa-paper-plane mr-2"></i>测试 Discord 私信
+                <i class="fas fa-paper-plane mr-2"></i><span data-i18n="config_test_discord">Test Discord DM</span>
               </button>
             </div>
           </div>
@@ -723,7 +723,7 @@
         document.getElementById('wechatbotAtMobiles').value = config.WECHATBOT_AT_MOBILES || '';
         document.getElementById('wechatbotAtAll').checked = config.WECHATBOT_AT_ALL === 'true';
         document.getElementById('emailFrom').value = config.EMAIL_FROM || '';
-        document.getElementById('emailFromName').value = config.EMAIL_FROM_NAME || '订阅提醒系统';
+        document.getElementById('emailFromName').value = config.EMAIL_FROM_NAME || window.AppLocale.getMessage('config_email_from_name_placeholder', window.AppLocale.getPreferredLocale());
         document.getElementById('emailTo').value = config.EMAIL_TO || '';
         document.getElementById('discordUserId').value = config.DISCORD_USER_ID || '';
         document.getElementById('barkServer').value = config.BARK_SERVER || 'https://api.day.app';
@@ -787,7 +787,7 @@
         toggleNotificationConfigs(enabledNotifiers);
       } catch (error) {
         console.error('加载配置失败:', error);
-        showToast('加载配置失败，请刷新页面重试', 'error');
+        showToast(window.AppLocale.getMessage('config_load_failed_refresh', window.AppLocale.getPreferredLocale()), 'error');
       }
     }
     
@@ -883,7 +883,7 @@
         .map(cb => cb.value);
 
       if (enabledNotifiers.length === 0) {
-        showToast('请至少选择一种通知方式', 'warning');
+        showToast(window.AppLocale.getMessage('config_select_notifier_warning', window.AppLocale.getPreferredLocale()), 'warning');
         return;
       }
 

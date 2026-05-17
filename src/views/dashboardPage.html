@@ -275,6 +275,7 @@
             schedulerStatusEl.innerHTML = '<div class="empty-state"><div class="empty-state-icon">🕐</div><div class="empty-state-text">' + msg('dashboard_scheduler_empty') + '</div></div>';
           } else {
             const sendResult = status.sendResult || {};
+            const statusReason = status.reasonKey ? msg(status.reasonKey, status.reasonParams || {}) : status.reason;
             const unknownTime = msg('dashboard_scheduler_history_unknown_time');
             const runAt = status.lastRunAt ? new Date(status.lastRunAt).toLocaleString(getLocaleTag()) : unknownTime;
             const configuredHours = Array.isArray(status.configuredHours) && status.configuredHours.length > 0
@@ -309,7 +310,7 @@
                 <div class="bg-gray-50 rounded-md p-3 md:col-span-2">
                   <div class="text-gray-500">${msg('dashboard_scheduler_send_result_label')}</div>
                   <div class="text-gray-900 font-medium mt-1">${msg('dashboard_scheduler_send_result', { attempted: sendResult.attempted || 0, success: sendResult.successCount || 0, failed: sendResult.failedCount || 0, skipped: status.dedupeSkipped || 0 })}</div>
-                  <div class="text-xs text-gray-500 mt-1">${status.reason || msg('dashboard_scheduler_no_details')}</div>
+                  <div class="text-xs text-gray-500 mt-1">${statusReason || msg('dashboard_scheduler_no_details')}</div>
                 </div>
               </div>
             `;
@@ -327,7 +328,7 @@
               const sent = item.sent
                 ? msg('dashboard_scheduler_history_sent')
                 : msg('dashboard_scheduler_history_not_sent');
-              const reason = item.reason || msg('dashboard_scheduler_no_details');
+              const reason = item.reasonKey ? msg(item.reasonKey, item.reasonParams || {}) : (item.reason || msg('dashboard_scheduler_no_details'));
               return `<div class="py-2 border-b border-gray-100 last:border-b-0 text-sm"><div class="font-medium text-gray-800">${when} · ${sent}</div><div class="text-xs text-gray-500 mt-1">${reason}</div></div>`;
             }).join('');
           }

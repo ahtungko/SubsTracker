@@ -43,6 +43,11 @@ async function checkExpiringSubscriptions(env) {
   try {
     const config = await getConfig(env);
     const notificationLocale = getNotificationLocale(config);
+    const setStatusReason = (target, key, params = {}) => {
+      target.reasonKey = key;
+      target.reasonParams = params;
+      target.reason = getNotificationMessage(key, notificationLocale, params);
+    };
     const timezone = 'UTC';
     const currentTime = getCurrentTimeInTimezone('UTC');
     const todayMidnight = getTimezoneMidnightTimestamp(currentTime, 'UTC');
@@ -75,6 +80,8 @@ async function checkExpiringSubscriptions(env) {
       updatedSubscriptions: 0,
       sent: false,
       sendResult: null,
+      reasonKey: '',
+      reasonParams: {},
       reason: ''
     };
 
@@ -191,7 +198,10 @@ async function checkExpiringSubscriptions(env) {
     if (expiringSubscriptions.length > 0) {
       if (!shouldNotifyThisHour) {
         status.sent = false;
-        status.reason = `当前小时 ${currentHour} 未在通知时段内 (${normalizedNotificationHours.join(',') || '空'})`;
+        setStatusReason(status, 'dashboard_scheduler_reason_current_hour_skipped', {
+          hour: currentHour,
+          hours: normalizedNotificationHours.join(',') || '*'
+        });
         console.log(`[定时任务] ${status.reason}，跳过发送`);
       } else {
         expiringSubscriptions.sort((a, b) => a.daysRemaining - b.daysRemaining);
@@ -201,7 +211,10 @@ async function checkExpiringSubscriptions(env) {
 
         if (dedupeResult.deduped.length === 0) {
           status.sent = false;
-          status.reason = `命中 ${expiringSubscriptions.length} 条，但全部在去重窗口内（跳过 ${dedupeResult.skipped} 条）`;
+          setStatusReason(status, 'dashboard_scheduler_reason_dedupe_only', {
+            matched: expiringSubscriptions.length,
+            skipped: dedupeResult.skipped
+          });
           console.log(`[定时任务] ${status.reason}`);
         } else {
           console.log(`[定时任务] 发送 ${dedupeResult.deduped.length} 条提醒通知（去重跳过 ${dedupeResult.skipped} 条）`);
@@ -210,23 +223,36 @@ async function checkExpiringSubscriptions(env) {
           const sendResult = await sendNotificationToAllChannels(title, commonContent, config, '[定时任务]');
           status.sent = true;
           status.sendResult = sendResult;
-          status.reason = sendResult && sendResult.attempted > 0
-            ? `已尝试发送到 ${sendResult.attempted} 个渠道，成功 ${sendResult.successCount} 个（去重跳过 ${dedupeResult.skipped} 条）`
-            : '未启用任何通知渠道';
+          if (sendResult && sendResult.attempted > 0) {
+            setStatusReason(status, 'dashboard_scheduler_reason_send_summary', {
+              attempted: sendResult.attempted,
+              success: sendResult.successCount,
+              skipped: dedupeResult.skipped
+            });
+          } else {
+            setStatusReason(status, 'dashboard_scheduler_reason_no_channels');
+          }
         }
       }
     } else {
       status.sent = false;
-      status.reason = '本次未命中需要提醒的订阅';
+      setStatusReason(status, 'dashboard_scheduler_reason_no_matches');
     }
 
     await saveSchedulerStatus(env, status);
   } catch (error) {
     console.error('[定时任务] 执行失败:', error);
+    const fallbackLocale = 'en';
     await saveSchedulerStatus(env, {
       lastRunAt: new Date().toISOString(),
       sent: false,
-      reason: '执行异常: ' + (error && error.message ? error.message : String(error)),
+      reasonKey: 'dashboard_scheduler_reason_execution_error',
+      reasonParams: {
+        error: error && error.message ? error.message : String(error)
+      },
+      reason: getNotificationMessage('dashboard_scheduler_reason_execution_error', fallbackLocale, {
+        error: error && error.message ? error.message : String(error)
+      }),
       errorStack: error && error.stack ? error.stack : undefined
     });
   }

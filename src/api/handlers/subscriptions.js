@@ -98,7 +98,7 @@ ${copy.expiryDateLabel}: ${formattedExpiryDate}${lunarExpiryText}
 ${copy.autoRenewLabel}: ${autoRenewText}
 ${copy.notesLabel}: ${subscription.notes || copy.none}
 ${copy.sentAtLabel}: ${currentTime}
-${copy.timezoneLabel}: ${formatTimezoneDisplay(timezone)}`;
+${copy.timezoneLabel}: ${formatTimezoneDisplay(timezone, notificationLocale)}`;
 
     const tags = extractTagsFromSubscriptions([subscription]);
     const notifyResult = await sendNotificationToAllChannels(title, commonContent, config, '[手动测试]', {

@@ -82,7 +82,6 @@ async function handleTestNotification(request, env) {
     let message = '';
 
     const type = typeof body.type === 'string' ? body.type.trim() : '';
-    const sentAt = formatTimeInTimezone(new Date(), config?.TIMEZONE || 'UTC', 'datetime');
     const supportedTypes = ['telegram', 'notifyx', 'webhook', 'wechatbot', 'email', 'bark', 'gotify', 'serverchan', 'pushplus', 'discord'];
 
     if (!type) {
@@ -99,6 +98,7 @@ async function handleTestNotification(request, env) {
       );
     }
 
+    const sentAt = formatTimeInTimezone(new Date(), config?.TIMEZONE || 'UTC', 'datetime');
     const notificationCopy = buildLocalizedTestNotification(type, notificationLocale, sentAt);
 
     if (type === 'telegram') {

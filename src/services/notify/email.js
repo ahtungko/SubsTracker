@@ -55,8 +55,11 @@ async function sendEmailNotification(title, content, config) {
 </body>
 </html>`;
 
-    const fromEmail = config.EMAIL_FROM_NAME ?
-      `${config.EMAIL_FROM_NAME} <${config.EMAIL_FROM}>` :
+    const fromDisplayName = typeof config.EMAIL_FROM_NAME === 'string' && config.EMAIL_FROM_NAME.trim().length > 0
+      ? config.EMAIL_FROM_NAME.trim()
+      : signatureText;
+    const fromEmail = fromDisplayName ?
+      `${fromDisplayName} <${config.EMAIL_FROM}>` :
       config.EMAIL_FROM;
 
     const response = await fetch('https://api.resend.com/emails', {

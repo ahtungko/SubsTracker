@@ -1,6 +1,12 @@
+import { getTimezoneDisplayName, getUiLocaleTag, normalizeUiLocale } from './locale.js';
+
 // 时间与时区工具
 const MS_PER_HOUR = 1000 * 60 * 60;
 const MS_PER_DAY = MS_PER_HOUR * 24;
+
+function resolveLocaleTag(locale = 'zh') {
+  return getUiLocaleTag(normalizeUiLocale(locale || 'zh'));
+}
 
 function getCurrentTimeInTimezone(timezone = 'UTC') {
   try {
@@ -63,20 +69,22 @@ function getTimezoneMidnightTimestamp(date, timezone = 'UTC') {
   return Date.UTC(year, month - 1, day, 0, 0, 0);
 }
 
-function formatTimeInTimezone(time, timezone = 'UTC', format = 'full') {
+function formatTimeInTimezone(time, timezone = 'UTC', format = 'full', locale = 'zh') {
   try {
     const date = new Date(time);
+    const localeTag = resolveLocaleTag(locale);
 
     if (format === 'date') {
-      return date.toLocaleDateString('zh-CN', {
+      return date.toLocaleDateString(localeTag, {
         timeZone: timezone,
         year: 'numeric',
         month: '2-digit',
         day: '2-digit'
       });
     } else if (format === 'datetime') {
-      return date.toLocaleString('zh-CN', {
+      return date.toLocaleString(localeTag, {
         timeZone: timezone,
+        hour12: false,
         year: 'numeric',
         month: '2-digit',
         day: '2-digit',
@@ -85,7 +93,7 @@ function formatTimeInTimezone(time, timezone = 'UTC', format = 'full') {
         second: '2-digit'
       });
     } else {
-      return date.toLocaleString('zh-CN', {
+      return date.toLocaleString(localeTag, {
         timeZone: timezone
       });
     }
@@ -107,34 +115,11 @@ function getTimezoneOffset(timezone = 'UTC') {
   }
 }
 
-function formatTimezoneDisplay(timezone = 'UTC') {
+function formatTimezoneDisplay(timezone = 'UTC', locale = 'zh') {
   try {
     const offset = getTimezoneOffset(timezone);
     const offsetStr = offset >= 0 ? `+${offset}` : `${offset}`;
-
-    const timezoneNames = {
-      'UTC': '世界标准时间',
-      'Asia/Shanghai': '中国标准时间',
-      'Asia/Hong_Kong': '香港时间',
-      'Asia/Taipei': '台北时间',
-      'Asia/Singapore': '新加坡时间',
-      'Asia/Kuala_Lumpur': '吉隆坡时间',
-      'Asia/Tokyo': '日本时间',
-      'Asia/Seoul': '韩国时间',
-      'America/New_York': '美国东部时间',
-      'America/Los_Angeles': '美国太平洋时间',
-      'America/Chicago': '美国中部时间',
-      'America/Denver': '美国山地时间',
-      'Europe/London': '英国时间',
-      'Europe/Paris': '巴黎时间',
-      'Europe/Berlin': '柏林时间',
-      'Europe/Moscow': '莫斯科时间',
-      'Australia/Sydney': '悉尼时间',
-      'Australia/Melbourne': '墨尔本时间',
-      'Pacific/Auckland': '奥克兰时间'
-    };
-
-    const timezoneName = timezoneNames[timezone] || timezone;
+    const timezoneName = getTimezoneDisplayName(timezone, locale);
     return `${timezoneName} (UTC${offsetStr})`;
   } catch (error) {
     console.error('格式化时区显示失败:', error);
@@ -143,7 +128,7 @@ function formatTimezoneDisplay(timezone = 'UTC') {
 }
 
 function formatBeijingTime(date = new Date(), format = 'full') {
-  return formatTimeInTimezone(date, 'Asia/Shanghai', format);
+  return formatTimeInTimezone(date, 'Asia/Shanghai', format, 'zh');
 }
 
 function extractTimezone(request) {

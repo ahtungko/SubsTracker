@@ -23,7 +23,7 @@ test('formatNotificationContent uses English reminder labels when NOTIFICATION_L
     }
   ], {
     NOTIFICATION_LOCALE: 'en',
-    TIMEZONE: 'UTC',
+    TIMEZONE: 'Asia/Kuala_Lumpur',
     SHOW_LUNAR: false
   });
 
@@ -36,6 +36,7 @@ test('formatNotificationContent uses English reminder labels when NOTIFICATION_L
   assert.match(content, /Status: Due in 2 day\(s\)/);
   assert.match(content, /Notes: Family plan/);
   assert.match(content, /Sent at:/);
-  assert.match(content, /Current timezone:/);
+  assert.match(content, /Current timezone: Kuala Lumpur Time \(UTC\+8\)/);
+  assert.doesNotMatch(content, /吉隆坡时间/);
   assert.doesNotMatch(content, /类型|分类|金额|日历类型|到期日期|自动续期|到期状态|备注|周期|未分类|其他/);
 });

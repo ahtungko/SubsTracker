@@ -17,7 +17,7 @@ const DEFAULT_CONFIG = {
   WECHATBOT_AT_ALL: 'false',
   RESEND_API_KEY: '',
   EMAIL_FROM: '',
-  EMAIL_FROM_NAME: '订阅提醒系统',
+  EMAIL_FROM_NAME: '',
   EMAIL_TO: '',
   BARK_DEVICE_KEY: '',
   BARK_SERVER: 'https://api.day.app',

@@ -542,10 +542,12 @@ test('dashboard scheduler runtime renders localized scheduler states and interpo
         expiringMatched: 2,
         dedupeSkipped: 3,
         sendResult: { attempted: 2, successCount: 1, failedCount: 1 },
+        reasonKey: 'dashboard_scheduler_reason_no_matches',
+        reasonParams: {},
         reason: ''
       },
       schedulerStatusHistory: [
-        { lastRunAt: null, sent: false, reason: '' }
+        { lastRunAt: null, sent: false, reasonKey: 'dashboard_scheduler_reason_no_matches', reasonParams: {}, reason: '' }
       ],
       monthlyExpense: { amount: 0, trendDirection: 'flat', trend: 0 },
       yearlyExpense: { amount: 0, monthlyAverage: 0 },
@@ -564,10 +566,10 @@ test('dashboard scheduler runtime renders localized scheduler states and interpo
   assert.equal(elements.schedulerStatus.innerHTML.includes('Attempted 2 channels, succeeded 1, failed 1, dedupe skipped 3'), true);
   assert.equal(elements.schedulerStatus.innerHTML.includes('Unknown time'), true);
   assert.equal(elements.schedulerStatus.innerHTML.includes('No send this run'), true);
-  assert.equal(elements.schedulerStatus.innerHTML.includes('No details yet'), true);
+  assert.equal(elements.schedulerStatus.innerHTML.includes('No subscriptions matched this reminder run'), true);
   assert.equal(elements.schedulerStatusHistory.innerHTML.includes('Unknown time'), true);
   assert.equal(elements.schedulerStatusHistory.innerHTML.includes('Not sent'), true);
-  assert.equal(elements.schedulerStatusHistory.innerHTML.includes('No details yet'), true);
+  assert.equal(elements.schedulerStatusHistory.innerHTML.includes('No subscriptions matched this reminder run'), true);
   assert.equal(elements.schedulerStatus.innerHTML.includes('\u5168\u90e8\u65f6\u6bb5'), false);
   assert.equal(elements.schedulerStatus.innerHTML.includes('\u672c\u6b21\u672a\u53d1\u9001'), false);
 });
@@ -629,6 +631,7 @@ test('dashboard page localises second-wave scheduler and stats copy', () => {
   assert.equal(dashboardPageHtml.includes("msg('dashboard_scheduler_send_result'"), true);
   assert.equal(dashboardPageHtml.includes("msg('dashboard_scheduler_send_result_label'"), true);
   assert.equal(dashboardPageHtml.includes("msg('dashboard_scheduler_no_details'"), true);
+  assert.equal(dashboardPageHtml.includes("status.reasonKey ? msg(status.reasonKey, status.reasonParams || {}) : status.reason"), true);
   assert.equal(dashboardPageHtml.includes("msg('dashboard_scheduler_history_empty'"), true);
   assert.equal(dashboardPageHtml.includes("msg('dashboard_scheduler_history_unknown_time'"), true);
   assert.equal(dashboardPageHtml.includes("msg('dashboard_scheduler_history_sent'"), true);
@@ -891,20 +894,101 @@ test('config page localises second-wave notifier and secret-management copy', ()
   assert.equal(configPageHtml.includes('data-i18n-placeholder="config_admin_password_placeholder"'), true);
   assert.equal(configPageHtml.includes('data-i18n="config_admin_password_help"'), true);
   assert.equal(configPageHtml.includes('data-i18n="config_theme_help"'), true);
+  assert.equal(configPageHtml.includes('data-i18n-placeholder="config_notification_hours_placeholder"'), true);
+  assert.equal(configPageHtml.includes('data-i18n="config_notification_locale_zh"'), true);
   assert.equal(configPageHtml.includes('data-i18n="config_notifiers_heading"'), true);
   assert.equal(configPageHtml.includes('data-i18n="config_notifier_webhook"'), true);
   assert.equal(configPageHtml.includes('data-i18n="config_notifier_wechatbot"'), true);
   assert.equal(configPageHtml.includes('data-i18n="config_notifier_email"'), true);
   assert.equal(configPageHtml.includes('data-i18n="config_notifier_serverchan"'), true);
   assert.equal(configPageHtml.includes('data-i18n="config_notifier_discord"'), true);
+  assert.equal(configPageHtml.includes('data-i18n="config_link_notifyx_home"'), true);
+  assert.equal(configPageHtml.includes('data-i18n="config_link_webhook_debug"'), true);
   assert.equal(configPageHtml.includes('data-i18n="config_link_wechatbot_docs"'), true);
+  assert.equal(configPageHtml.includes('data-i18n="config_link_resend_api"'), true);
+  assert.equal(configPageHtml.includes('data-i18n="config_link_bark_ios"'), true);
+  assert.equal(configPageHtml.includes('data-i18n="config_link_serverchan_home"'), true);
+  assert.equal(configPageHtml.includes('data-i18n="config_link_pushplus_home"'), true);
+  assert.equal(configPageHtml.includes('data-i18n="config_label_third_party_token"'), true);
+  assert.equal(configPageHtml.includes('data-i18n-placeholder="config_secret_replace_placeholder"'), true);
+  assert.equal(configPageHtml.includes('data-i18n="config_generate_token"'), true);
+  assert.equal(configPageHtml.includes('data-i18n="config_clear"'), true);
+  assert.equal(configPageHtml.includes('data-i18n="config_loading"'), true);
+  assert.equal(configPageHtml.includes('data-i18n="config_third_party_token_help"'), true);
+  assert.equal(configPageHtml.includes('data-i18n="config_section_debug_settings"'), true);
+  assert.equal(configPageHtml.includes('data-i18n="config_debug_logs"'), true);
+  assert.equal(configPageHtml.includes('data-i18n="config_label_payment_history_limit"'), true);
+  assert.equal(configPageHtml.includes('data-i18n-placeholder="config_payment_history_limit_placeholder"'), true);
+  assert.equal(configPageHtml.includes('data-i18n="config_payment_history_limit_help"'), true);
+  assert.equal(configPageHtml.includes('data-i18n="config_section_telegram_title"'), true);
+  assert.equal(configPageHtml.includes('data-i18n-placeholder="config_telegram_chat_id_placeholder"'), true);
+  assert.equal(configPageHtml.includes('data-i18n="config_test_telegram"'), true);
+  assert.equal(configPageHtml.includes('data-i18n="config_section_notifyx_title"'), true);
+  assert.equal(configPageHtml.includes('data-i18n="config_notifyx_api_key_help"'), true);
+  assert.equal(configPageHtml.includes('data-i18n="config_test_notifyx"'), true);
   assert.equal(configPageHtml.includes('data-i18n="config_section_webhook_title"'), true);
   assert.equal(configPageHtml.includes('data-i18n="config_label_webhook_url"'), true);
+  assert.equal(configPageHtml.includes('data-i18n="config_webhook_url_help"'), true);
+  assert.equal(configPageHtml.includes('data-i18n="config_label_webhook_method"'), true);
+  assert.equal(configPageHtml.includes('data-i18n="config_label_webhook_headers"'), true);
+  assert.equal(configPageHtml.includes('data-i18n="config_webhook_headers_help"'), true);
+  assert.equal(configPageHtml.includes('data-i18n="config_label_webhook_template"'), true);
+  assert.equal(configPageHtml.includes('data-i18n="config_webhook_template_help"'), true);
   assert.equal(configPageHtml.includes('data-i18n="config_test_webhook"'), true);
   assert.equal(configPageHtml.includes('data-i18n="config_section_wechatbot_title"'), true);
+  assert.equal(configPageHtml.includes('data-i18n="config_label_wechatbot_webhook"'), true);
+  assert.equal(configPageHtml.includes('data-i18n="config_wechatbot_webhook_help"'), true);
+  assert.equal(configPageHtml.includes('data-i18n="config_label_wechatbot_msg_type"'), true);
+  assert.equal(configPageHtml.includes('data-i18n="config_wechatbot_msg_type_text"'), true);
+  assert.equal(configPageHtml.includes('data-i18n="config_wechatbot_msg_type_markdown"'), true);
+  assert.equal(configPageHtml.includes('data-i18n="config_wechatbot_msg_type_help"'), true);
+  assert.equal(configPageHtml.includes('data-i18n="config_label_wechatbot_at_mobiles"'), true);
+  assert.equal(configPageHtml.includes('data-i18n="config_wechatbot_at_mobiles_help"'), true);
+  assert.equal(configPageHtml.includes('data-i18n="config_label_wechatbot_at_all"'), true);
+  assert.equal(configPageHtml.includes('data-i18n="config_wechatbot_at_all_help"'), true);
   assert.equal(configPageHtml.includes('data-i18n="config_test_wechatbot"'), true);
   assert.equal(configPageHtml.includes('data-i18n="config_section_email_title"'), true);
+  assert.equal(configPageHtml.includes('data-i18n="config_resend_api_key_help"'), true);
+  assert.equal(configPageHtml.includes('data-i18n="config_label_email_from"'), true);
+  assert.equal(configPageHtml.includes('data-i18n="config_email_from_help"'), true);
+  assert.equal(configPageHtml.includes('data-i18n="config_label_email_from_name"'), true);
+  assert.equal(configPageHtml.includes('data-i18n-placeholder="config_email_from_name_placeholder"'), true);
+  assert.equal(configPageHtml.includes('data-i18n="config_email_from_name_help"'), true);
+  assert.equal(configPageHtml.includes('data-i18n="config_label_email_to"'), true);
+  assert.equal(configPageHtml.includes('data-i18n="config_email_to_help"'), true);
   assert.equal(configPageHtml.includes('data-i18n="config_test_email"'), true);
+  assert.equal(configPageHtml.includes('data-i18n="config_section_bark_title"'), true);
+  assert.equal(configPageHtml.includes('data-i18n="config_label_bark_server"'), true);
+  assert.equal(configPageHtml.includes('data-i18n="config_label_bark_device_key"'), true);
+  assert.equal(configPageHtml.includes('data-i18n="config_bark_server_help"'), true);
+  assert.equal(configPageHtml.includes('data-i18n="config_bark_device_key_help"'), true);
+  assert.equal(configPageHtml.includes('data-i18n="config_label_bark_archive"'), true);
+  assert.equal(configPageHtml.includes('data-i18n="config_bark_archive_checkbox"'), true);
+  assert.equal(configPageHtml.includes('data-i18n="config_bark_archive_help"'), true);
+  assert.equal(configPageHtml.includes('data-i18n="config_test_bark"'), true);
+  assert.equal(configPageHtml.includes('data-i18n="config_section_gotify_title"'), true);
+  assert.equal(configPageHtml.includes('data-i18n="config_gotify_server_help"'), true);
+  assert.equal(configPageHtml.includes('data-i18n="config_test_gotify"'), true);
+  assert.equal(configPageHtml.includes('data-i18n="config_section_serverchan_title"'), true);
+  assert.equal(configPageHtml.includes('data-i18n="config_serverchan_sendkey_help"'), true);
+  assert.equal(configPageHtml.includes('data-i18n="config_test_serverchan"'), true);
+  assert.equal(configPageHtml.includes('data-i18n="config_section_pushplus_title"'), true);
+  assert.equal(configPageHtml.includes('data-i18n="config_label_pushplus_topic"'), true);
+  assert.equal(configPageHtml.includes('data-i18n-placeholder="config_pushplus_topic_placeholder"'), true);
+  assert.equal(configPageHtml.includes('data-i18n="config_label_pushplus_channel"'), true);
+  assert.equal(configPageHtml.includes('data-i18n="config_pushplus_channel_default"'), true);
+  assert.equal(configPageHtml.includes('data-i18n="config_pushplus_channel_wechat"'), true);
+  assert.equal(configPageHtml.includes('data-i18n="config_pushplus_channel_email"'), true);
+  assert.equal(configPageHtml.includes('data-i18n="config_pushplus_channel_sms"'), true);
+  assert.equal(configPageHtml.includes('data-i18n="config_pushplus_channel_help"'), true);
+  assert.equal(configPageHtml.includes('data-i18n="config_test_pushplus"'), true);
+  assert.equal(configPageHtml.includes('data-i18n="config_section_discord_title"'), true);
+  assert.equal(configPageHtml.includes('data-i18n="config_label_discord_user_id"'), true);
+  assert.equal(configPageHtml.includes('data-i18n-placeholder="config_discord_user_placeholder"'), true);
+  assert.equal(configPageHtml.includes('data-i18n="config_test_discord"'), true);
+  assert.equal(configPageHtml.includes("window.AppLocale.getMessage('config_load_failed_refresh'"), true);
+  assert.equal(configPageHtml.includes("window.AppLocale.getMessage('config_select_notifier_warning'"), true);
+  assert.equal(configPageHtml.includes("window.AppLocale.getMessage('config_email_from_name_placeholder'"), true);
   assert.equal(configPageHtml.includes("window.AppLocale.getMessage('config_secret_configured'"), true);
   assert.equal(configPageHtml.includes("window.AppLocale.getMessage('config_secret_pending_update'"), true);
   assert.equal(configPageHtml.includes("window.AppLocale.getMessage('config_test_in_progress'"), true);
@@ -925,6 +1009,44 @@ test('config page localises second-wave notifier and secret-management copy', ()
   assert.equal(configPageHtml.includes('未配置'), false);
   assert.equal(configPageHtml.includes('测试中...'), false);
   assert.equal(configPageHtml.includes('生成令牌'), false);
+  assert.equal(configPageHtml.includes('第三方 API 访问令牌'), false);
+  assert.equal(configPageHtml.includes('调试设置'), false);
+  assert.equal(configPageHtml.includes('支付历史保留条数'), false);
+  assert.equal(configPageHtml.includes('Telegram 配置'), false);
+  assert.equal(configPageHtml.includes('测试 Telegram 通知'), false);
+  assert.equal(configPageHtml.includes('NotifyX 配置'), false);
+  assert.equal(configPageHtml.includes('测试 NotifyX 通知'), false);
+  assert.equal(configPageHtml.includes('请求方法'), false);
+  assert.equal(configPageHtml.includes('请填写自建服务或第三方平台提供的 Webhook 地址，例如 https://your-webhook-endpoint.com/path'), false);
+  assert.equal(configPageHtml.includes('自定义请求头 (JSON格式，可选)'), false);
+  assert.equal(configPageHtml.includes('消息模板 (JSON格式，可选)'), false);
+  assert.equal(configPageHtml.includes('消息类型'), false);
+  assert.equal(configPageHtml.includes('文本消息'), false);
+  assert.equal(configPageHtml.includes('Markdown消息'), false);
+  assert.equal(configPageHtml.includes('@手机号 (可选)'), false);
+  assert.equal(configPageHtml.includes('@所有人'), false);
+  assert.equal(configPageHtml.includes('从 Resend控制台 获取的 API Key'), false);
+  assert.equal(configPageHtml.includes('发件人邮箱'), false);
+  assert.equal(configPageHtml.includes('发件人名称'), false);
+  assert.equal(configPageHtml.includes('收件人邮箱'), false);
+  assert.equal(configPageHtml.includes('Bark 配置'), false);
+  assert.equal(configPageHtml.includes('服务器地址'), false);
+  assert.equal(configPageHtml.includes('保存推送'), false);
+  assert.equal(configPageHtml.includes('测试 Bark 通知'), false);
+  assert.equal(configPageHtml.includes('Gotify 配置'), false);
+  assert.equal(configPageHtml.includes('测试 Gotify 通知'), false);
+  assert.equal(configPageHtml.includes('Server酱 配置'), false);
+  assert.equal(configPageHtml.includes('测试 Server酱 通知'), false);
+  assert.equal(configPageHtml.includes('群组编码 Topic（可选）'), false);
+  assert.equal(configPageHtml.includes('渠道（可选）'), false);
+  assert.equal(configPageHtml.includes('<option value="">默认</option>'), false);
+  assert.equal(configPageHtml.includes('<option value="wechat">微信公众号</option>'), false);
+  assert.equal(configPageHtml.includes('<option value="mail">邮件</option>'), false);
+  assert.equal(configPageHtml.includes('<option value="sms">短信</option>'), false);
+  assert.equal(configPageHtml.includes('Discord Bot 私信配置'), false);
+  assert.equal(configPageHtml.includes('开启开发者模式后复制'), false);
+  assert.equal(configPageHtml.includes('加载配置失败，请刷新页面重试'), false);
+  assert.equal(configPageHtml.includes('请至少选择一种通知方式'), false);
 });
 
 
@@ -932,8 +1054,10 @@ test('config page exposes notification locale setting', () => {
   assert.equal(configPageHtml.includes('id="notificationLocale"'), true);
   assert.equal(configPageHtml.includes('data-i18n="config_label_notification_locale"'), true);
   assert.equal(configPageHtml.includes('data-i18n="config_notification_locale_help"'), true);
+  assert.equal(configPageHtml.includes('data-i18n="config_notification_locale_zh"'), true);
+  assert.equal(configPageHtml.includes('data-i18n="config_notification_locale_en"'), true);
   assert.equal(configPageHtml.includes("document.getElementById('notificationLocale').value = config.NOTIFICATION_LOCALE || 'en';"), true);
   assert.equal(configPageHtml.includes("NOTIFICATION_LOCALE: document.getElementById('notificationLocale').value.trim(),"), true);
-  assert.equal(configPageHtml.includes('<option value="zh">'), true);
-  assert.equal(configPageHtml.includes('<option value="en">'), true);
+  assert.equal(configPageHtml.includes('value="zh"'), true);
+  assert.equal(configPageHtml.includes('value="en"'), true);
 });

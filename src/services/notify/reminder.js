@@ -126,7 +126,7 @@ ${getNotificationMessage('reminder_label_status', notificationLocale)}: ${status
   }
 
   const currentTime = formatTimeInTimezone(new Date(), timezone, 'datetime');
-  content += `${getNotificationMessage('reminder_sent_at', notificationLocale)}: ${currentTime}\n${getNotificationMessage('reminder_current_timezone', notificationLocale)}: ${formatTimezoneDisplay(timezone)}`;
+  content += `${getNotificationMessage('reminder_sent_at', notificationLocale)}: ${currentTime}\n${getNotificationMessage('reminder_current_timezone', notificationLocale)}: ${formatTimezoneDisplay(timezone, notificationLocale)}`;
 
   return content;
 }
