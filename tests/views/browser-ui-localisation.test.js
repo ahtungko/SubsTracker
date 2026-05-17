@@ -169,6 +169,64 @@ test('browser locale runtime exposes getMessage and applyTranslations', async ()
   assert.equal(documentStub.documentElement.lang, 'en');
 });
 
+test('browser locale runtime prefers stored uiLocale over browser language and can clear it', async () => {
+  const runtimeModule = await import(pathToFileURL(runtimeJsPath).href + `?t=${Date.now()}`);
+  const scriptSource = stripScriptTags(runtimeModule.buildBrowserLocaleResources());
+
+  const localStorageState = new Map([['uiLocale', 'en']]);
+  const documentStub = {
+    title: '',
+    documentElement: { lang: 'zh-CN' },
+    querySelectorAll() {
+      return [];
+    }
+  };
+
+  const sandbox = {
+    window: { Object },
+    document: documentStub,
+    navigator: { language: 'zh-CN', languages: ['zh-CN'] },
+    localStorage: {
+      getItem(key) {
+        return localStorageState.has(key) ? localStorageState.get(key) : null;
+      },
+      setItem(key, value) {
+        localStorageState.set(key, String(value));
+      },
+      removeItem(key) {
+        localStorageState.delete(key);
+      }
+    },
+    Intl,
+    Date,
+    console
+  };
+
+  vm.createContext(sandbox);
+  vm.runInContext(scriptSource, sandbox, { filename: 'browser-ui-localisation-runtime.js' });
+
+  const { AppLocale } = sandbox.window;
+  assert.equal(typeof AppLocale.getStoredLocale, 'function');
+  assert.equal(typeof AppLocale.setStoredLocale, 'function');
+  assert.equal(typeof AppLocale.clearStoredLocale, 'function');
+  assert.equal(AppLocale.getStoredLocale(), 'en');
+  assert.equal(AppLocale.getPreferredLocale(), 'en');
+  assert.deepEqual(AppLocale.getRequestHeaders(), { 'X-Locale': 'en' });
+
+  AppLocale.setStoredLocale('zh');
+  assert.equal(localStorageState.get('uiLocale'), 'zh');
+  assert.equal(AppLocale.getPreferredLocale(), 'zh');
+  assert.deepEqual(AppLocale.getRequestHeaders(), { 'X-Locale': 'zh' });
+
+  localStorageState.set('uiLocale', 'fr');
+  assert.equal(AppLocale.getStoredLocale(), null);
+  assert.equal(AppLocale.getPreferredLocale(), 'zh');
+
+  AppLocale.clearStoredLocale();
+  assert.equal(localStorageState.has('uiLocale'), false);
+  assert.equal(AppLocale.getPreferredLocale(), 'zh');
+});
+
 test('config page runtime renders full-phrase Task 3 localisation strings in English', async () => {
   const runtimeModule = await import(pathToFileURL(runtimeJsPath).href + `?t=${Date.now()}`);
   const scriptSource = stripScriptTags(runtimeModule.buildBrowserLocaleResources());

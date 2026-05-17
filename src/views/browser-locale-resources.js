@@ -22,13 +22,76 @@ function buildBrowserLocaleResources() {
     const getUiLocaleTag = ${getUiLocaleTag.toString()};
     const formatMessage = ${formatMessage.toString()};
     const getMessage = ${getMessage.toString()};
+    const UI_LOCALE_STORAGE_KEY = 'uiLocale';
 
-    function getPreferredLocale() {
+    function getStorage() {
+      try {
+        return typeof localStorage !== 'undefined' ? localStorage : null;
+      } catch (error) {
+        return null;
+      }
+    }
+
+    function resolveStoredLocale(rawLocale) {
+      if (typeof rawLocale !== 'string') {
+        return null;
+      }
+
+      const locale = rawLocale.trim().toLowerCase();
+      if (!locale) {
+        return null;
+      }
+
+      if (locale === 'zh' || locale.startsWith('zh-')) {
+        return 'zh';
+      }
+
+      if (locale === 'en' || locale.startsWith('en-')) {
+        return 'en';
+      }
+
+      return null;
+    }
+
+    function getStoredLocale() {
+      const storage = getStorage();
+      if (!storage) {
+        return null;
+      }
+
+      return resolveStoredLocale(storage.getItem(UI_LOCALE_STORAGE_KEY));
+    }
+
+    function setStoredLocale(locale) {
+      const storage = getStorage();
+      const resolvedLocale = resolveStoredLocale(locale);
+      if (!storage || !resolvedLocale) {
+        return null;
+      }
+
+      storage.setItem(UI_LOCALE_STORAGE_KEY, resolvedLocale);
+      return resolvedLocale;
+    }
+
+    function clearStoredLocale() {
+      const storage = getStorage();
+      if (!storage) {
+        return;
+      }
+
+      storage.removeItem(UI_LOCALE_STORAGE_KEY);
+    }
+
+    function getNavigatorLocale() {
       const preferredLocale = Array.isArray(navigator.languages) && navigator.languages.length > 0
         ? navigator.languages[0]
         : navigator.language;
 
       return normalizeUiLocale(preferredLocale || DEFAULT_UI_LOCALE);
+    }
+
+    function getPreferredLocale() {
+      return getStoredLocale() || getNavigatorLocale();
     }
 
     function getTimezoneOffset(timezone) {
@@ -124,6 +187,9 @@ function buildBrowserLocaleResources() {
       SUPPORTED_TIMEZONE_IDS,
       normalizeUiLocale,
       getUiLocaleTag,
+      getStoredLocale,
+      setStoredLocale,
+      clearStoredLocale,
       getPreferredLocale,
       getTimezoneDisplayName,
       formatTimezoneDisplay,
