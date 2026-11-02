@@ -875,10 +875,10 @@ test('admin page localises remaining modal, payment-history, and edit-payment st
   assert.equal(adminPageHtml.includes('data-i18n="admin_period_unit_year"'), true);
   assert.equal(adminPageHtml.includes('data-i18n="admin_label_expiry_date"'), true);
   assert.equal(adminPageHtml.includes('data-i18n="admin_auto_calculate_expiry"'), true);
-  assert.equal(adminPageHtml.includes('data-i18n="admin_label_reminder_offset"'), true);
-  assert.equal(adminPageHtml.includes('data-i18n="admin_reminder_unit_day"'), true);
-  assert.equal(adminPageHtml.includes('data-i18n="admin_reminder_unit_hour"'), true);
-  assert.equal(adminPageHtml.includes('data-i18n="admin_reminder_help"'), true);
+  assert.equal(adminPageHtml.includes('id="reminderRulesContainer"'), true);
+  assert.equal(adminPageHtml.includes('id="reminderRulesPresetBtn"'), true);
+  assert.equal(adminPageHtml.includes('id="reminderRulesAddBtn"'), true);
+  assert.equal(adminPageHtml.includes('id="reminderValue"'), true);
   assert.equal(adminPageHtml.includes('data-i18n="admin_option_settings"'), true);
   assert.equal(adminPageHtml.includes('data-i18n="admin_enable_subscription"'), true);
   assert.equal(adminPageHtml.includes('data-i18n="admin_enable_auto_renew"'), true);

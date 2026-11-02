@@ -9,6 +9,10 @@ function createEnv(initialSubscriptions = []) {
     ['config', JSON.stringify({ JWT_SECRET: 'jwt-secret', PAYMENT_HISTORY_LIMIT: 100 })]
   ]);
 
+  const seed = initialSubscriptions;
+  store.set('sub_index', JSON.stringify(seed.map(item => item.id)));
+  for (const item of seed) store.set('sub:' + item.id, JSON.stringify(item));
+
   return {
     SUBSCRIPTIONS_KV: {
       get: async (key) => store.get(key) ?? null,

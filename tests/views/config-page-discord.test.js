@@ -31,7 +31,7 @@ test('config page wires Discord save, toggle, and test-notification flows', () =
   assert.match(html, /DISCORD_BOT_TOKEN: document\.getElementById\('discordBotToken'\)\.value\.trim\(\)/);
   assert.match(html, /DISCORD_USER_ID: document\.getElementById\('discordUserId'\)\.value\.trim\(\)/);
   assert.match(html, /const discordConfig = document\.getElementById\('discordConfig'\)/);
-  assert.match(html, /\[telegramConfig, notifyxConfig, webhookConfig, wechatbotConfig, emailConfig, barkConfig, gotifyConfig, serverchanConfig, pushplusConfig, discordConfig\]\.forEach/);
+  assert.match(html, /\[telegramConfig, notifyxConfig, webhookConfig, wechatbotConfig, emailConfig, barkConfig, gotifyConfig, serverchanConfig, pushplusConfig, ntfyConfig, wpushConfig, discordConfig\]\.forEach/);
   assert.match(html, /} else if \(type === 'discord'\) {\s*discordConfig\.classList\.remove\('inactive'\);\s*discordConfig\.classList\.add\('active'\);/);
   assert.match(html, /testDiscordBtn/);
   assert.match(html, /data-i18n="config_notifier_discord"/);

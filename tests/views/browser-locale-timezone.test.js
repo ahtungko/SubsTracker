@@ -88,7 +88,7 @@ test('config page builds timezone labels from shared AppLocale data', () => {
   assert.equal(configPageHtml.includes('window.AppLocale.formatTimezoneDisplay(timezoneId)'), true);
   assert.equal(configPageHtml.includes("name: '吉隆坡时间'"), false);
   assert.equal(configPageHtml.includes('<option value="Asia/Kuala_Lumpur">吉隆坡时间'), false);
-  assert.equal(countMatches(configPageHtml, /fetch\('\/api\/config'/g), 2);
+  assert.equal(countMatches(configPageHtml, /fetch\('\/api\/config'/g), 1);
 });
 
 test('dashboard, admin, and config inline scripts still compile after locale refactor', () => {

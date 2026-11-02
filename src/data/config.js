@@ -5,6 +5,7 @@ const DEFAULT_CONFIG = {
   ADMIN_PASSWORD: 'password',
   TG_BOT_TOKEN: '',
   TG_CHAT_ID: '',
+  TG_TOPIC_ID: '',
   NOTIFYX_API_KEY: '',
   WEBHOOK_URL: '',
   WEBHOOK_METHOD: 'POST',
@@ -37,7 +38,13 @@ const DEFAULT_CONFIG = {
   SERVERCHAN_SENDKEY: '',
   PUSHPLUS_TOKEN: '',
   PUSHPLUS_TOPIC: '',
-  PUSHPLUS_CHANNEL: ''
+  PUSHPLUS_CHANNEL: '',
+  NTFY_SERVER: 'https://ntfy.sh',
+  NTFY_TOPIC: '',
+  NTFY_TOKEN: '',
+  WPUSH_APIKEY: '',
+  WPUSH_CHANNEL: '',
+  WPUSH_TOPIC_CODE: ''
 };
 
 function normalizeNotificationLocale(rawLocale) {

@@ -8,12 +8,21 @@
   <link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
   ${themeResources} <style>
-    
+
+    #toast-container {
+      position: fixed; top: 20px; right: 20px; z-index: 10000;
+      display: flex; flex-direction: column; gap: 8px; max-width: 380px;
+    }
     .toast {
-      position: fixed; top: 20px; right: 20px; padding: 12px 20px; border-radius: 8px;
-      color: white; font-weight: 500; z-index: 1000; transform: translateX(400px);
+      padding: 12px 36px 12px 16px; border-radius: 8px; position: relative;
+      color: white; font-weight: 500; transform: translateX(400px);
       transition: all 0.3s ease-in-out; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
     }
+    .toast .toast-close {
+      position: absolute; top: 8px; right: 10px; cursor: pointer;
+      opacity: 0.7; font-size: 14px; line-height: 1;
+    }
+    .toast .toast-close:hover { opacity: 1; }
     .toast.show { transform: translateX(0); }
     .toast.success { background-color: #10b981; }
     .toast.error { background-color: #ef4444; }
@@ -27,20 +36,22 @@
     html.dark .toast.error { background-color: #dc2626; }
     html.dark .toast.info { background-color: #2563eb; }
     html.dark .toast.warning { background-color: #d97706; }
-    
-    .config-section { 
-      border: 1px solid #e5e7eb; 
-      border-radius: 8px; 
-      padding: 16px; 
-      margin-bottom: 24px; 
+    html.dark #floatingSaveBar { background-color: #1f2937; border-color: #374151; }
+    html.dark #floatingSaveBar span { color: #d1d5db; }
+
+    .config-section {
+      border: 1px solid #e5e7eb;
+      border-radius: 8px;
+      padding: 16px;
+      margin-bottom: 24px;
     }
-    .config-section.active { 
-      background-color: #f8fafc; 
-      border-color: #6366f1; 
+    .config-section.active {
+      background-color: #f8fafc;
+      border-color: #6366f1;
     }
-    .config-section.inactive { 
-      background-color: #f9fafb; 
-      opacity: 0.7; 
+    .config-section.inactive {
+      background-color: #f9fafb;
+      opacity: 0.7;
     }
     /* === Config Page 暗黑模式修复 === */
     html.dark .config-section {
@@ -76,13 +87,16 @@
           </div>
           <span id="systemTimeDisplay" class="ml-4 text-base text-indigo-600 font-normal hidden md:block pt-1"></span>
         </div>
-          
+
         <div class="hidden md:flex items-center space-x-4 ml-auto">
           <a href="/admin/dashboard" class="text-gray-700 hover:text-gray-900 border-b-2 border-transparent hover:border-gray-300 px-3 py-2 rounded-md text-sm font-medium transition">
             <i class="fas fa-chart-line mr-1"></i><span data-i18n="nav_dashboard">仪表盘</span>
           </a>
           <a href="/admin" class="text-gray-700 hover:text-gray-900 border-b-2 border-transparent hover:border-gray-300 px-3 py-2 rounded-md text-sm font-medium transition">
             <i class="fas fa-list mr-1"></i><span data-i18n="nav_subscriptions">订阅列表</span>
+          </a>
+          <a href="/admin/notify-logs" class="text-gray-700 hover:text-gray-900 border-b-2 border-transparent hover:border-gray-300 px-3 py-2 rounded-md text-sm font-medium transition">
+            <i class="fas fa-history mr-1"></i>通知历史
           </a>
           <a href="/admin/config" class="text-indigo-600 border-b-2 border-indigo-600 px-3 py-2 rounded-md text-sm font-medium transition">
             <i class="fas fa-cog mr-1"></i><span data-i18n="nav_settings">系统配置</span>
@@ -109,6 +123,9 @@
         <a href="/admin" class="block px-3 py-3 rounded-md text-base font-medium text-gray-700 hover:bg-indigo-50 hover:text-indigo-600 active:bg-indigo-100 transition-colors">
           <i class="fas fa-list w-6 text-center mr-2"></i><span data-i18n="nav_subscriptions">订阅列表</span>
         </a>
+        <a href="/admin/notify-logs" class="block px-3 py-3 rounded-md text-base font-medium text-gray-700 hover:bg-indigo-50 hover:text-indigo-600 active:bg-indigo-100 transition-colors">
+          <i class="fas fa-history w-6 text-center mr-2"></i>通知历史
+        </a>
         <a href="/admin/config" class="block px-3 py-3 rounded-md text-base font-medium text-gray-700 hover:bg-indigo-50 hover:text-indigo-600 active:bg-indigo-100 transition-colors">
           <i class="fas fa-cog w-6 text-center mr-2"></i><span data-i18n="nav_settings">系统配置</span>
         </a>
@@ -118,11 +135,15 @@
       </div>
     </div>
   </nav>
-  
+
   <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
     <div class="bg-white rounded-lg shadow-md p-6">
       <h2 class="text-2xl font-bold text-gray-800 mb-6" data-i18n="config_page_heading">系统配置</h2>
-      
+      <div id="defaultPasswordBanner" class="hidden mb-4 p-3 rounded-md border border-amber-300 bg-amber-50 text-amber-900 text-sm">
+        <i class="fas fa-exclamation-triangle mr-1"></i>
+        检测到仍可能使用默认管理员密码。请立即修改下方「管理员密码」并保存，避免公网被接管。
+      </div>
+
       <form id="configForm" class="space-y-8">
         <div class="border-b border-gray-200 pb-6">
           <h3 class="text-lg font-medium text-gray-900 mb-4" data-i18n="config_section_admin_account">管理员账户</h3>
@@ -138,10 +159,10 @@
             </div>
           </div>
         </div>
-        
+
         <div class="border-b border-gray-200 pb-6">
           <h3 class="text-lg font-medium text-gray-900 mb-4" data-i18n="config_section_display_settings">显示设置</h3>
-          
+
           <div class="mb-6">
             <label for="themeModeSelect" class="block text-sm font-medium text-gray-700 mb-1" data-i18n="config_label_theme_mode">主题模式</label>
             <select id="themeModeSelect" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 bg-white sm:text-sm">
@@ -151,7 +172,7 @@
             </select>
             <p class="mt-1 text-sm text-gray-500" data-i18n="config_theme_help">Choose the visual appearance used by the app</p>
           </div>
-          
+
           <div class="mb-6">
             <label class="inline-flex items-center">
               <input type="checkbox" id="showLunarGlobal" class="form-checkbox h-4 w-4 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500" checked>
@@ -171,20 +192,24 @@
           </div>
         </div>
 
-        
+
         <div class="border-b border-gray-200 pb-6">
           <h3 class="text-lg font-medium text-gray-900 mb-4" data-i18n="config_section_notification_settings">通知设置</h3>
           <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
             <div>
-              <label for="notificationHours" class="block text-sm font-medium text-gray-700" data-i18n="config_label_notification_hours">通知时段（UTC）</label>
-              <input type="text" id="notificationHours" placeholder="For example: 08, 12, 20, or enter * for all day" data-i18n-placeholder="config_notification_hours_placeholder"
+              <label for="notificationHours" class="block text-sm font-medium text-gray-700">
+                <span data-i18n="config_label_notification_hours">Allowed notification hours</span>
+                <span id="tzLabelInline" class="text-indigo-600 font-semibold">（按下方时区）</span>
+              </label>
+              <input type="text" id="notificationHours" data-i18n-placeholder="config_notification_hours_placeholder" placeholder="例如：8 或 08, 12, 20；留空或 * = 每小时都可发"
                 class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
-              <p class="mt-1 text-sm text-gray-500" data-i18n="config_notification_hours_help">可输入多个小时，使用逗号或空格分隔；留空则默认每天执行一次任务即可</p>
+              <p class="mt-1 text-sm text-gray-500" data-i18n="config_notification_hours_help">Enter allowed hours from 0 to 23.</p>
+              <div id="tzWindowPreview" class="mt-2 p-3 rounded-md border border-gray-200 bg-gray-50 text-sm leading-relaxed"></div>
             </div>
-            <div class="bg-indigo-50 border border-indigo-100 rounded-md p-3 text-sm text-indigo-700">
-              <p class="font-medium mb-1" data-i18n="config_notification_hint_title">提示</p>
-              <p data-i18n="config_notification_hint_body_1">后台统一按 UTC 判断通知时段。示例：北京时间 08:00 对应 UTC 00，请在此填 00。</p>
-              <p class="mt-1" data-i18n="config_notification_hint_body_2">若 Cron 已设置为每小时执行，可用该字段限制实际发送提醒的小时段。</p>
+            <div class="bg-blue-50 border border-blue-200 rounded-md p-3 text-sm text-blue-900">
+              <p class="font-semibold mb-1" data-i18n="config_notification_hint_title">Tip</p>
+              <p data-i18n="config_notification_hint_body_1">The current hour is evaluated in the selected timezone.</p>
+              <p data-i18n="config_notification_hint_body_2">The scheduled job checks hourly.</p>
             </div>
           </div>
           <div class="mb-6">
@@ -231,12 +256,20 @@
                 <span class="ml-2 text-sm text-gray-700" data-i18n="config_notifier_serverchan">ServerChan</span>
               </label>
               <label class="inline-flex items-center">
+                <input type="checkbox" name="enabledNotifiers" value="ntfy" class="form-checkbox h-4 w-4 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500">
+                <span class="ml-2 text-sm text-gray-700">ntfy</span>
+              </label>
+              <label class="inline-flex items-center">
                 <input type="checkbox" name="enabledNotifiers" value="pushplus" class="form-checkbox h-4 w-4 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500">
                 <span class="ml-2 text-sm text-gray-700">PushPlus</span>
               </label>
               <label class="inline-flex items-center">
                 <input type="checkbox" name="enabledNotifiers" value="discord" class="form-checkbox h-4 w-4 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500">
                 <span class="ml-2 text-sm text-gray-700" data-i18n="config_notifier_discord">Discord Bot DM</span>
+              </label>
+              <label class="inline-flex items-center">
+                <input type="checkbox" name="enabledNotifiers" value="wpush" class="form-checkbox h-4 w-4 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500">
+                <span class="ml-2 text-sm text-gray-700">WPUSH</span>
               </label>
             </div>
             <div class="mt-2 flex flex-wrap gap-4">
@@ -260,6 +293,9 @@
               </a>
               <a href="https://www.pushplus.plus/" target="_blank" class="text-indigo-600 hover:text-indigo-800 text-sm">
                 <i class="fas fa-external-link-alt ml-1"></i> <span data-i18n="config_link_pushplus_home">PushPlus Home</span>
+              </a>
+              <a href="https://wpush.cn/" target="_blank" class="text-indigo-600 hover:text-indigo-800 text-sm">
+                <i class="fas fa-external-link-alt ml-1"></i> WPUSH官网
               </a>
             </div>
           </div>
@@ -295,7 +331,7 @@
               placeholder="Default 100" data-i18n-placeholder="config_payment_history_limit_placeholder">
             <p class="mt-1 text-sm text-gray-500" data-i18n="config_payment_history_limit_help">After auto-renewals and manual renewals, keep only the most recent N payment history records (recommended 50–200, default 100).</p>
           </div>
-          
+
           <div id="telegramConfig" class="config-section">
             <h4 class="text-md font-medium text-gray-900 mb-3" data-i18n="config_section_telegram_title">Telegram Settings</h4>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
@@ -313,6 +349,11 @@
                 <label for="tgChatId" class="block text-sm font-medium text-gray-700">Chat ID</label>
                 <input type="text" id="tgChatId" placeholder="You can get this from @userinfobot" data-i18n-placeholder="config_telegram_chat_id_placeholder" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
               </div>
+              <div>
+                <label for="tgTopicId" class="block text-sm font-medium text-gray-700">Topic ID（可选）</label>
+                <input type="text" id="tgTopicId" placeholder="Forum 群组话题 ID，对应 message_thread_id" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+                <p class="mt-1 text-xs text-gray-500">仅在开启 Topics 的群组中填写；留空则发送到普通会话/群组。</p>
+              </div>
             </div>
             <div class="flex justify-end">
               <button type="button" id="testTelegramBtn" class="btn-secondary text-white px-4 py-2 rounded-md text-sm font-medium">
@@ -320,7 +361,7 @@
               </button>
             </div>
           </div>
-          
+
           <div id="notifyxConfig" class="config-section">
             <h4 class="text-md font-medium text-gray-900 mb-3" data-i18n="config_section_notifyx_title">NotifyX Settings</h4>
             <div class="mb-4">
@@ -525,7 +566,38 @@
             </div>
           </div>
 
-          <div id="serverchanConfig" class="config-section">
+
+          <div id="ntfyConfig" class="config-section">
+            <h4 class="text-md font-medium text-gray-900 mb-3">ntfy 配置</h4>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+              <div>
+                <label for="ntfyServer" class="block text-sm font-medium text-gray-700">Server URL</label>
+                <input type="url" id="ntfyServer" placeholder="https://ntfy.sh" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+                <p class="mt-1 text-sm text-gray-500">公共服务器可用 https://ntfy.sh，也可填自建地址。</p>
+              </div>
+              <div>
+                <label for="ntfyTopic" class="block text-sm font-medium text-gray-700">Topic（主题）</label>
+                <input type="text" id="ntfyTopic" placeholder="例如 my-substracker-alerts" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+              </div>
+              <div class="md:col-span-2">
+                <label for="ntfyToken" class="block text-sm font-medium text-gray-700">Access Token（可选）</label>
+                <div class="mt-1 flex flex-col sm:flex-row sm:items-center gap-3">
+                  <input type="text" id="ntfyToken" placeholder="留空表示不修改；受保护主题时填写" class="flex-1 border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+                  <button type="button" id="clearNtfyToken" class="btn-warning text-white px-4 py-2 rounded-md text-sm font-medium whitespace-nowrap">
+                    <i class="fas fa-eraser mr-2"></i>清空
+                  </button>
+                </div>
+                <p id="NTFY_TOKENStatus" class="mt-1 text-xs text-gray-500">加载中...</p>
+              </div>
+            </div>
+            <div class="flex justify-end">
+              <button type="button" id="testNtfyBtn" class="btn-secondary text-white px-4 py-2 rounded-md text-sm font-medium">
+                <i class="fas fa-paper-plane mr-2"></i>测试 ntfy 通知
+              </button>
+            </div>
+          </div>
+
+<div id="serverchanConfig" class="config-section">
             <h4 class="text-md font-medium text-gray-900 mb-3" data-i18n="config_section_serverchan_title">ServerChan Settings</h4>
             <div class="grid grid-cols-1 gap-4 mb-4">
               <div>
@@ -607,6 +679,49 @@
               </button>
             </div>
           </div>
+
+          <div id="wpushConfig" class="config-section">
+            <h4 class="text-md font-medium text-gray-900 mb-3">WPUSH 配置</h4>
+            <div class="grid grid-cols-1 gap-4 mb-4">
+              <div>
+                <label for="wpushApikey" class="block text-sm font-medium text-gray-700">API Key</label>
+                <div class="mt-1 flex flex-col sm:flex-row sm:items-center gap-3">
+                  <input type="text" id="wpushApikey" placeholder="留空表示不修改；输入新值将更新" class="flex-1 border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+                  <button type="button" id="clearWpushApikey" class="btn-warning text-white px-4 py-2 rounded-md text-sm font-medium whitespace-nowrap">
+                    <i class="fas fa-eraser mr-2"></i>清空
+                  </button>
+                </div>
+                <p id="WPUSH_APIKEYStatus" class="mt-1 text-xs text-gray-500">加载中...</p>
+                <p class="mt-1 text-sm text-gray-500">从 <a href="https://wpush.cn/settings" target="_blank" class="text-indigo-600 hover:text-indigo-800">WPUSH 设置页</a> 获取 API Key</p>
+              </div>
+              <div>
+                <label for="wpushChannel" class="block text-sm font-medium text-gray-700" data-i18n="config_label_pushplus_channel">Channel (Optional)</label>
+                <select id="wpushChannel" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+                  <option value="" data-i18n="config_pushplus_channel_default">Default</option>
+                  <option value="wechat" data-i18n="config_pushplus_channel_wechat">WeChat Official Account</option>
+                  <option value="app">App</option>
+                  <option value="sms" data-i18n="config_pushplus_channel_sms">SMS</option>
+                  <option value="mail" data-i18n="config_pushplus_channel_email">Email</option>
+                  <option value="webhook">Webhook</option>
+                  <option value="dingtalk">钉钉</option>
+                  <option value="feishu">飞书</option>
+                  <option value="wechat_work">企业微信</option>
+                  <option value="clawbot">微信 ClawBot</option>
+                  <option value="qqbot">QQ 机器人</option>
+                </select>
+                <p class="mt-1 text-sm text-gray-500">具体可用渠道以 <a href="https://wpush.cn/docs" target="_blank" class="text-indigo-600 hover:text-indigo-800">WPUSH 文档</a> 为准</p>
+              </div>
+              <div>
+                <label for="wpushTopicCode" class="block text-sm font-medium text-gray-700">Topic 编码（可选）</label>
+                <input type="text" id="wpushTopicCode" placeholder="留空则按个人渠道推送" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+              </div>
+            </div>
+            <div class="flex justify-end">
+              <button type="button" id="testWpushBtn" class="btn-secondary text-white px-4 py-2 rounded-md text-sm font-medium">
+                <i class="fas fa-paper-plane mr-2"></i>测试 WPUSH 通知
+              </button>
+            </div>
+          </div>
         </div>
 
         <div class="flex justify-end">
@@ -615,33 +730,100 @@
           </button>
         </div>
       </form>
+
+      <!-- 备份与恢复（不在 configForm 内，避免触发表单提交） -->
+      <div class="config-section active mt-8" id="backupSection">
+        <h3 class="text-lg font-semibold text-gray-800 mb-2">
+          <i class="fas fa-file-export text-indigo-500 mr-2"></i>数据备份与恢复
+        </h3>
+        <p class="text-sm text-gray-500 mb-4">
+          导出系统配置、订阅列表与提醒规则，便于换账号部署或升级迁移。
+          默认导出<strong>不含</strong> Bot Token / API Key 等密钥；需要时可勾选「包含敏感配置」。
+        </p>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div class="bg-white border border-gray-200 rounded-lg p-4">
+            <h4 class="text-sm font-semibold text-gray-700 mb-3"><i class="fas fa-download mr-1"></i>导出备份</h4>
+            <label class="inline-flex items-center text-sm text-gray-700 mb-3 cursor-pointer">
+              <input type="checkbox" id="exportIncludeSecrets" class="form-checkbox h-4 w-4 text-indigo-600 rounded border-gray-300">
+              <span class="ml-2">包含敏感配置（Token / 密码等）</span>
+            </label>
+            <p class="text-xs text-amber-600 mb-3">勾选后请妥善保管 JSON 文件，勿上传公开仓库。</p>
+            <button type="button" id="exportBackupBtn" class="btn-secondary text-white px-4 py-2 rounded-md text-sm font-medium">
+              <i class="fas fa-file-download mr-2"></i>下载备份 JSON
+            </button>
+          </div>
+
+          <div class="bg-white border border-gray-200 rounded-lg p-4">
+            <h4 class="text-sm font-semibold text-gray-700 mb-3"><i class="fas fa-upload mr-1"></i>导入恢复</h4>
+            <input type="file" id="importBackupFile" accept="application/json,.json" class="block w-full text-sm text-gray-600 mb-3">
+            <div class="flex flex-col gap-2 mb-3">
+              <label class="inline-flex items-center text-sm text-gray-700 cursor-pointer">
+                <input type="radio" name="importMode" value="merge" class="form-radio h-4 w-4 text-indigo-600" checked>
+                <span class="ml-2">合并（按 ID 覆盖同名订阅，保留其余）</span>
+              </label>
+              <label class="inline-flex items-center text-sm text-gray-700 cursor-pointer">
+                <input type="radio" name="importMode" value="replace" class="form-radio h-4 w-4 text-indigo-600">
+                <span class="ml-2">覆盖（删除现有订阅后整包导入）</span>
+              </label>
+              <label class="inline-flex items-center text-sm text-gray-700 cursor-pointer">
+                <input type="checkbox" id="importIncludeSecrets" class="form-checkbox h-4 w-4 text-indigo-600 rounded border-gray-300">
+                <span class="ml-2">应用备份中的敏感配置（仅当备份含密钥时有效）</span>
+              </label>
+            </div>
+            <button type="button" id="importBackupBtn" class="btn-warning text-white px-4 py-2 rounded-md text-sm font-medium">
+              <i class="fas fa-file-import mr-2"></i>从文件恢复
+            </button>
+          </div>
+        </div>
+      </div>
     </div>
+  </div>
+
+  <!-- 悬浮保存栏 -->
+  <div id="floatingSaveBar" class="fixed bottom-0 left-0 right-0 bg-white border-t shadow-lg py-3 px-6 flex justify-between items-center z-50 transform translate-y-full transition-transform duration-300" style="display:none;">
+    <span class="text-sm text-gray-600"><i class="fas fa-exclamation-circle text-yellow-500 mr-2"></i>有未保存的更改</span>
+    <button type="button" onclick="document.getElementById('configForm').requestSubmit()" class="btn-primary text-white px-5 py-2 rounded-md text-sm font-medium">
+      <i class="fas fa-save mr-2"></i>保存配置
+    </button>
   </div>
 
   <script>
     window.AppLocale.applyDocumentMetadata({ titleKey: 'page_title_config' });
     window.AppLocale.applyTranslations();
-    function showToast(message, type = 'success', duration = 3000) {
+    // 统一 API 请求封装：401 自动跳转登录页
+    async function apiFetch(url, options) {
+      const response = await fetch(url, options);
+      if (response.status === 401) {
+        showToast('登录已过期，正在跳转登录页...', 'warning');
+        setTimeout(() => { window.location.href = '/'; }, 1000);
+        throw new Error('AUTH_EXPIRED');
+      }
+      return response;
+    }
+
+    function showToast(message, type = 'success', duration) {
+      if (!duration) duration = type === 'error' ? 6000 : type === 'warning' ? 4500 : 3000;
       const container = document.getElementById('toast-container');
+      while (container.children.length >= 5) container.removeChild(container.firstChild);
+
       const toast = document.createElement('div');
       toast.className = 'toast ' + type;
-      
+
       const icon = type === 'success' ? 'check-circle' :
                    type === 'error' ? 'exclamation-circle' :
                    type === 'warning' ? 'exclamation-triangle' : 'info-circle';
-      
-      toast.innerHTML = '<div class="flex items-center"><i class="fas fa-' + icon + ' mr-2"></i><span>' + message + '</span></div>';
-      
+
+      toast.innerHTML = '<div class="flex items-center"><i class="fas fa-' + icon + ' mr-2"></i><span class="toast-msg"></span></div><span class="toast-close" onclick="this.parentElement.remove()">&times;</span>';
+      toast.querySelector('.toast-msg').textContent = message;
+
       container.appendChild(toast);
-      setTimeout(() => toast.classList.add('show'), 100);
-      setTimeout(() => {
+      setTimeout(() => toast.classList.add('show'), 50);
+      const timer = setTimeout(() => {
         toast.classList.remove('show');
-        setTimeout(() => {
-          if (container.contains(toast)) {
-            container.removeChild(toast);
-          }
-        }, 300);
+        setTimeout(() => { if (container.contains(toast)) container.removeChild(toast); }, 300);
       }, duration);
+      toast.querySelector('.toast-close').addEventListener('click', () => clearTimeout(timer));
     }
 
     // 记录用户是否点击了“清空”某个密钥字段；保存时会提交给后端处理
@@ -667,6 +849,7 @@
       setSecretStatus('SERVERCHAN_SENDKEY', cfg.SERVERCHAN_SENDKEY ? window.AppLocale.getMessage('config_secret_configured', window.AppLocale.getPreferredLocale()) : window.AppLocale.getMessage('config_secret_not_configured', window.AppLocale.getPreferredLocale()));
       setSecretStatus('PUSHPLUS_TOKEN', cfg.PUSHPLUS_TOKEN ? window.AppLocale.getMessage('config_secret_configured', window.AppLocale.getPreferredLocale()) : window.AppLocale.getMessage('config_secret_not_configured', window.AppLocale.getPreferredLocale()));
       setSecretStatus('DISCORD_BOT_TOKEN', cfg.DISCORD_BOT_TOKEN ? window.AppLocale.getMessage('config_secret_configured', window.AppLocale.getPreferredLocale()) : window.AppLocale.getMessage('config_secret_not_configured', window.AppLocale.getPreferredLocale()));
+      setSecretStatus('WPUSH_APIKEY', cfg.WPUSH_APIKEY ? window.AppLocale.getMessage('config_secret_configured', window.AppLocale.getPreferredLocale()) : window.AppLocale.getMessage('config_secret_not_configured', window.AppLocale.getPreferredLocale()));
     }
 
     function wireSecretInput(inputId, key) {
@@ -713,10 +896,17 @@
         // 3) 如需清空，请点对应的“清空”按钮（会在保存时生效）。
 
         document.getElementById('adminUsername').value = config.ADMIN_USERNAME || '';
+        const _banner = document.getElementById('defaultPasswordBanner');
+        if (_banner) {
+          // 无法读取密码；用户名仍为 admin 时提示改密（默认部署风险）
+          _banner.classList.toggle('hidden', (config.ADMIN_USERNAME || 'admin') !== 'admin');
+        }
         document.getElementById('themeModeSelect').value = config.THEME_MODE || 'system';  // 回显主题设置
 
         // 非敏感字段正常回显
         document.getElementById('tgChatId').value = config.TG_CHAT_ID || '';
+        const tgTopicEl = document.getElementById('tgTopicId');
+        if (tgTopicEl) tgTopicEl.value = config.TG_TOPIC_ID || '';
         document.getElementById('webhookMethod').value = config.WEBHOOK_METHOD || 'POST';
         document.getElementById('webhookTemplate').value = config.WEBHOOK_TEMPLATE || '';
         document.getElementById('wechatbotMsgType').value = config.WECHATBOT_MSG_TYPE || 'text';
@@ -729,8 +919,12 @@
         document.getElementById('barkServer').value = config.BARK_SERVER || 'https://api.day.app';
         document.getElementById('barkIsArchive').checked = config.BARK_IS_ARCHIVE === 'true';
         document.getElementById('gotifyServerUrl').value = config.GOTIFY_SERVER_URL || '';
+        if (document.getElementById('ntfyServer')) document.getElementById('ntfyServer').value = config.NTFY_SERVER || 'https://ntfy.sh';
+        if (document.getElementById('ntfyTopic')) document.getElementById('ntfyTopic').value = config.NTFY_TOPIC || '';
         document.getElementById('pushplusTopic').value = config.PUSHPLUS_TOPIC || '';
         document.getElementById('pushplusChannel').value = config.PUSHPLUS_CHANNEL || '';
+        if (document.getElementById('wpushChannel')) document.getElementById('wpushChannel').value = config.WPUSH_CHANNEL || '';
+        if (document.getElementById('wpushTopicCode')) document.getElementById('wpushTopicCode').value = config.WPUSH_TOPIC_CODE || '';
 
         // 敏感字段：清空输入框（不回显真实值）
         document.getElementById('tgBotToken').value = '';
@@ -745,6 +939,7 @@
         document.getElementById('serverchanSendKey').value = '';
         document.getElementById('pushplusToken').value = '';
         document.getElementById('discordBotToken').value = '';
+        if (document.getElementById('wpushApikey')) document.getElementById('wpushApikey').value = '';
 
         window.SECRET_CONFIGURED = {
           TG_BOT_TOKEN: config.TG_BOT_TOKEN_CONFIGURED === true,
@@ -756,9 +951,11 @@
           BARK_DEVICE_KEY: config.BARK_DEVICE_KEY_CONFIGURED === true,
           THIRD_PARTY_API_TOKEN: config.THIRD_PARTY_API_TOKEN_CONFIGURED === true,
           GOTIFY_APP_TOKEN: config.GOTIFY_APP_TOKEN_CONFIGURED === true,
+          NTFY_TOKEN: config.NTFY_TOKEN_CONFIGURED === true,
           SERVERCHAN_SENDKEY: config.SERVERCHAN_SENDKEY_CONFIGURED === true,
           PUSHPLUS_TOKEN: config.PUSHPLUS_TOKEN_CONFIGURED === true,
-          DISCORD_BOT_TOKEN: config.DISCORD_BOT_TOKEN_CONFIGURED === true
+          DISCORD_BOT_TOKEN: config.DISCORD_BOT_TOKEN_CONFIGURED === true,
+          WPUSH_APIKEY: config.WPUSH_APIKEY_CONFIGURED === true
         };
 
         updateAllSecretStatus();
@@ -771,12 +968,12 @@
           notificationHoursInput.value = hours.join(', ');
         }
         document.getElementById('notificationLocale').value = config.NOTIFICATION_LOCALE || 'en';
-        
+
         // 加载农历显示设置
         document.getElementById('showLunarGlobal').checked = config.SHOW_LUNAR === true;
 
         // 动态生成时区选项，并设置保存的值
-        generateTimezoneOptions(config.TIMEZONE || 'UTC');
+        generateTimezoneOptions(config.TIMEZONE || 'Asia/Shanghai');
 
         // 处理多选通知渠道
         const enabledNotifiers = config.ENABLED_NOTIFIERS || ['notifyx'];
@@ -785,14 +982,22 @@
         });
 
         toggleNotificationConfigs(enabledNotifiers);
+
+        // 配置加载完成后再刷新「是否可发送」预览（避免空输入被当成全天）
+        if (typeof window.__refreshNotificationHoursPreview === 'function') {
+          window.__refreshNotificationHoursPreview();
+        }
       } catch (error) {
         console.error('加载配置失败:', error);
         showToast(window.AppLocale.getMessage('config_load_failed_refresh', window.AppLocale.getPreferredLocale()), 'error');
+        // 禁用表单防止误提交覆盖数据
+        const form = document.getElementById('configForm');
+        Array.from(form.elements).forEach(el => { el.disabled = true; });
       }
     }
-    
-    // 动态生成时区选项
-    function generateTimezoneOptions(selectedTimezone = 'UTC') {
+
+    // 动态生成时区选项（保持与静态 HTML 一致：推荐分组在最前）
+    function generateTimezoneOptions(selectedTimezone = 'Asia/Shanghai') {
       const timezoneSelect = document.getElementById('timezone');
       const fallbackTimezone = 'UTC';
       const timezoneIds = window.AppLocale.SUPPORTED_TIMEZONE_IDS || [fallbackTimezone];
@@ -813,9 +1018,10 @@
         showToast(window.AppLocale.getMessage('config_timezone_unknown_warning', window.AppLocale.getPreferredLocale()), 'warning', 4500);
       }
     }
-    
+
     function toggleNotificationConfigs(enabledNotifiers) {
       const telegramConfig = document.getElementById('telegramConfig');
+      const ntfyConfig = document.getElementById('ntfyConfig');
       const notifyxConfig = document.getElementById('notifyxConfig');
       const webhookConfig = document.getElementById('webhookConfig');
       const wechatbotConfig = document.getElementById('wechatbotConfig');
@@ -825,9 +1031,8 @@
       const serverchanConfig = document.getElementById('serverchanConfig');
       const pushplusConfig = document.getElementById('pushplusConfig');
       const discordConfig = document.getElementById('discordConfig');
-
-      // 重置所有配置区域
-      [telegramConfig, notifyxConfig, webhookConfig, wechatbotConfig, emailConfig, barkConfig, gotifyConfig, serverchanConfig, pushplusConfig, discordConfig].forEach(config => {
+      const wpushConfig = document.getElementById('wpushConfig');
+      [telegramConfig, notifyxConfig, webhookConfig, wechatbotConfig, emailConfig, barkConfig, gotifyConfig, serverchanConfig, pushplusConfig, ntfyConfig, wpushConfig, discordConfig].forEach(config => {
         config.classList.remove('active', 'inactive');
         config.classList.add('inactive');
       });
@@ -855,6 +1060,9 @@
         } else if (type === 'gotify') {
           gotifyConfig.classList.remove('inactive');
           gotifyConfig.classList.add('active');
+        } else if (type === 'ntfy' && ntfyConfig) {
+          ntfyConfig.classList.remove('inactive');
+          ntfyConfig.classList.add('active');
         } else if (type === 'serverchan') {
           serverchanConfig.classList.remove('inactive');
           serverchanConfig.classList.add('active');
@@ -864,6 +1072,9 @@
         } else if (type === 'discord') {
           discordConfig.classList.remove('inactive');
           discordConfig.classList.add('active');
+        } else if (type === 'wpush' && wpushConfig) {
+          wpushConfig.classList.remove('inactive');
+          wpushConfig.classList.add('active');
         }
       });
     }
@@ -875,7 +1086,7 @@
         toggleNotificationConfigs(enabledNotifiers);
       });
     });
-    
+
     document.getElementById('configForm').addEventListener('submit', async (e) => {
       e.preventDefault();
 
@@ -904,9 +1115,11 @@
         SERVERCHAN_SENDKEY: document.getElementById('serverchanSendKey').value.trim(),
         PUSHPLUS_TOKEN: document.getElementById('pushplusToken').value.trim(),
         DISCORD_BOT_TOKEN: document.getElementById('discordBotToken').value.trim(),
+        WPUSH_APIKEY: (document.getElementById('wpushApikey') && document.getElementById('wpushApikey').value.trim()) || '',
 
         // 非敏感字段正常提交
         TG_CHAT_ID: document.getElementById('tgChatId').value.trim(),
+        TG_TOPIC_ID: (document.getElementById('tgTopicId') && document.getElementById('tgTopicId').value.trim()) || '',
         WEBHOOK_METHOD: document.getElementById('webhookMethod').value,
         WEBHOOK_TEMPLATE: document.getElementById('webhookTemplate').value.trim(),
         SHOW_LUNAR: document.getElementById('showLunarGlobal').checked,
@@ -922,6 +1135,11 @@
         PUSHPLUS_TOPIC: document.getElementById('pushplusTopic').value.trim(),
         PUSHPLUS_CHANNEL: document.getElementById('pushplusChannel').value.trim(),
         DISCORD_USER_ID: document.getElementById('discordUserId').value.trim(),
+        NTFY_SERVER: (document.getElementById('ntfyServer') && document.getElementById('ntfyServer').value.trim()) || 'https://ntfy.sh',
+        NTFY_TOPIC: (document.getElementById('ntfyTopic') && document.getElementById('ntfyTopic').value.trim()) || '',
+        NTFY_TOKEN: (document.getElementById('ntfyToken') && document.getElementById('ntfyToken').value.trim()) || '',
+        WPUSH_CHANNEL: (document.getElementById('wpushChannel') && document.getElementById('wpushChannel').value.trim()) || '',
+        WPUSH_TOPIC_CODE: (document.getElementById('wpushTopicCode') && document.getElementById('wpushTopicCode').value.trim()) || '',
         ENABLED_NOTIFIERS: enabledNotifiers,
         TIMEZONE: document.getElementById('timezone').value.trim(),
         NOTIFICATION_LOCALE: document.getElementById('notificationLocale').value.trim(),
@@ -959,7 +1177,7 @@
       submitButton.disabled = true;
 
       try {
-        const response = await fetch('/api/config', {
+        const response = await apiFetch('/api/config', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -976,14 +1194,14 @@
             window.updateAppTheme(config.THEME_MODE);
           }
           passwordField.value = '';
-          
+
           // 前端始终显示浏览器本地时区
           globalTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone || 'UTC';
           showSystemTime();
-          
+
           // 标记时区已更新，供其他页面检测
           localStorage.setItem('timezoneUpdated', Date.now().toString());
-          
+
           // 如果当前在订阅列表页面，则自动刷新页面以更新时区显示
           if (window.location.pathname === '/admin') {
             window.location.reload();
@@ -999,7 +1217,7 @@
         submitButton.disabled = false;
       }
     });
-    
+
     async function testNotification(type) {
       const buttonId = type === 'telegram' ? 'testTelegramBtn' :
                       type === 'notifyx' ? 'testNotifyXBtn' :
@@ -1009,7 +1227,9 @@
                       type === 'gotify' ? 'testGotifyBtn' :
                       type === 'serverchan' ? 'testServerchanBtn' :
                       type === 'pushplus' ? 'testPushplusBtn' :
-                      type === 'discord' ? 'testDiscordBtn' : 'testWebhookBtn';
+                      type === 'discord' ? 'testDiscordBtn' :
+                      type === 'ntfy' ? 'testNtfyBtn' :
+                      type === 'wpush' ? 'testWpushBtn' : 'testWebhookBtn';
       const button = document.getElementById(buttonId);
       if (!button) {
         showToast(window.AppLocale.getMessage('admin_test_button_missing', window.AppLocale.getPreferredLocale()), 'error');
@@ -1024,6 +1244,8 @@
       // 方案 B：敏感字段不回显。测试通知时如果用户没填，就按“使用服务器已保存的配置”处理。
       if (type === 'telegram') {
         config.TG_CHAT_ID = document.getElementById('tgChatId').value.trim();
+        const topicEl = document.getElementById('tgTopicId');
+        if (topicEl) config.TG_TOPIC_ID = topicEl.value.trim();
         const token = document.getElementById('tgBotToken').value.trim();
         if (token) config.TG_BOT_TOKEN = token;
       } else if (type === 'notifyx') {
@@ -1084,10 +1306,15 @@
           button.disabled = false;
           return;
         }
+      } else if (type === 'wpush') {
+        const key = document.getElementById('wpushApikey') && document.getElementById('wpushApikey').value.trim();
+        if (key) config.WPUSH_APIKEY = key;
+        config.WPUSH_CHANNEL = (document.getElementById('wpushChannel') && document.getElementById('wpushChannel').value.trim()) || '';
+        config.WPUSH_TOPIC_CODE = (document.getElementById('wpushTopicCode') && document.getElementById('wpushTopicCode').value.trim()) || '';
       }
 
       try {
-        const response = await fetch('/api/test-notification', {
+        const response = await apiFetch('/api/test-notification', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -1122,11 +1349,11 @@
         button.disabled = false;
       }
     }
-    
+
     document.getElementById('testTelegramBtn').addEventListener('click', () => {
       testNotification('telegram');
     });
-    
+
     document.getElementById('testNotifyXBtn').addEventListener('click', () => {
       testNotification('notifyx');
     });
@@ -1162,6 +1389,19 @@
     document.getElementById('testDiscordBtn').addEventListener('click', () => {
       testNotification('discord');
     });
+    const testNtfyBtn = document.getElementById('testNtfyBtn');
+    if (testNtfyBtn) {
+      testNtfyBtn.addEventListener('click', () => {
+        testNotification('ntfy');
+      });
+    }
+
+    const testWpushBtn = document.getElementById('testWpushBtn');
+    if (testWpushBtn) {
+      testWpushBtn.addEventListener('click', () => {
+        testNotification('wpush');
+      });
+    }
 
     document.getElementById('generateThirdPartyToken').addEventListener('click', () => {
       try {
@@ -1191,9 +1431,11 @@
       wireSecretInput('barkDeviceKey', 'BARK_DEVICE_KEY');
       wireSecretInput('thirdPartyToken', 'THIRD_PARTY_API_TOKEN');
       wireSecretInput('gotifyAppToken', 'GOTIFY_APP_TOKEN');
+      if (document.getElementById('ntfyToken')) wireSecretInput('ntfyToken', 'NTFY_TOKEN');
       wireSecretInput('serverchanSendKey', 'SERVERCHAN_SENDKEY');
       wireSecretInput('pushplusToken', 'PUSHPLUS_TOKEN');
       wireSecretInput('discordBotToken', 'DISCORD_BOT_TOKEN');
+      if (document.getElementById('wpushApikey')) wireSecretInput('wpushApikey', 'WPUSH_APIKEY');
 
       wireClearSecretButton('clearTgBotToken', 'tgBotToken', 'TG_BOT_TOKEN');
       wireClearSecretButton('clearNotifyxApiKey', 'notifyxApiKey', 'NOTIFYX_API_KEY');
@@ -1204,23 +1446,58 @@
       wireClearSecretButton('clearBarkDeviceKey', 'barkDeviceKey', 'BARK_DEVICE_KEY');
       wireClearSecretButton('clearThirdPartyToken', 'thirdPartyToken', 'THIRD_PARTY_API_TOKEN');
       wireClearSecretButton('clearGotifyAppToken', 'gotifyAppToken', 'GOTIFY_APP_TOKEN');
+      if (document.getElementById('clearNtfyToken')) wireClearSecretButton('clearNtfyToken', 'ntfyToken', 'NTFY_TOKEN');
       wireClearSecretButton('clearServerchanSendKey', 'serverchanSendKey', 'SERVERCHAN_SENDKEY');
       wireClearSecretButton('clearPushplusToken', 'pushplusToken', 'PUSHPLUS_TOKEN');
       wireClearSecretButton('clearDiscordBotToken', 'discordBotToken', 'DISCORD_BOT_TOKEN');
+      if (document.getElementById('clearWpushApikey')) wireClearSecretButton('clearWpushApikey', 'wpushApikey', 'WPUSH_APIKEY');
 
       loadConfig();
+
+      // 表单变更检测：显示悬浮保存栏 + beforeunload 提示
+      let configDirty = false;
+      const form = document.getElementById('configForm');
+      const floatingBar = document.getElementById('floatingSaveBar');
+
+      form.addEventListener('input', () => {
+        if (!configDirty) {
+          configDirty = true;
+          floatingBar.style.display = '';
+          requestAnimationFrame(() => floatingBar.style.transform = 'translateY(0)');
+        }
+      });
+      form.addEventListener('change', () => {
+        if (!configDirty) {
+          configDirty = true;
+          floatingBar.style.display = '';
+          requestAnimationFrame(() => floatingBar.style.transform = 'translateY(0)');
+        }
+      });
+
+      // 保存成功后隐藏悬浮栏
+      form.addEventListener('submit', () => {
+        setTimeout(() => {
+          configDirty = false;
+          floatingBar.style.transform = 'translateY(100%)';
+          setTimeout(() => { floatingBar.style.display = 'none'; }, 300);
+        }, 500);
+      });
+
+      window.addEventListener('beforeunload', (e) => {
+        if (configDirty) { e.preventDefault(); e.returnValue = ''; }
+      });
     });
-    
+
     // 前端展示时区（固定使用浏览器本地时区）
     let globalTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone || 'UTC';
     let systemTimeTimer = null;
     let timezoneCheckTimer = null;
-    
+
     // 实时显示系统时间和时区
     function showSystemTime() {
       try {
         globalTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone || 'UTC';
-        
+
         // 格式化当前时间
         function formatTime(dt, tz) {
           return dt.toLocaleString('zh-CN', { timeZone: tz, year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', second: '2-digit' });
@@ -1273,7 +1550,7 @@
     // --- 新增：移动端菜单控制脚本 ---
     const mobileMenuBtn = document.getElementById('mobile-menu-btn');
     const mobileMenu = document.getElementById('mobile-menu');
-    
+
     if (mobileMenuBtn && mobileMenu) {
       const syncMobileMenuState = () => {
         const icon = mobileMenuBtn.querySelector('i');
@@ -1289,7 +1566,7 @@
         mobileMenu.classList.toggle('hidden');
         syncMobileMenuState();
       });
-      
+
       mobileMenu.querySelectorAll('a').forEach(link => {
         link.addEventListener('click', () => {
           mobileMenu.classList.add('hidden');
@@ -1314,6 +1591,199 @@
 
       syncMobileMenuState();
     }
+
+    // ───────────────────────────────────────────────────────
+    // 通知小时实时预览（与调度器同一套规则）
+    // 注意：必须在 loadConfig 写入输入框之后再刷新，否则会误显示「空=全天」
+    // ───────────────────────────────────────────────────────
+    (function () {
+      const tzSelect = document.getElementById('timezone');
+      const hoursInput = document.getElementById('notificationHours');
+      const labelInline = document.getElementById('tzLabelInline');
+      const preview = document.getElementById('tzWindowPreview');
+      if (!tzSelect || !hoursInput || !preview || !labelInline) return;
+
+      const TZ_LABELS = {
+        'Asia/Shanghai': '北京时间',
+        'Asia/Hong_Kong': '香港时间',
+        'Asia/Taipei': '台北时间',
+        'Asia/Tokyo': '东京时间',
+        'Asia/Singapore': '新加坡时间',
+        'UTC': '世界协调时(UTC)',
+        'America/New_York': '纽约时间',
+        'America/Los_Angeles': '洛杉矶时间',
+        'Europe/London': '伦敦时间'
+      };
+
+      function friendlyTz(tz) {
+        return TZ_LABELS[tz] || tz;
+      }
+
+      function currentTzHour(tz) {
+        try {
+          const fmt = new Intl.DateTimeFormat('en-US', {
+            timeZone: tz, hour12: false, hour: '2-digit', minute: '2-digit'
+          });
+          const parts = fmt.formatToParts(new Date());
+          let h = parts.find(p => p.type === 'hour')?.value || '00';
+          const m = parts.find(p => p.type === 'minute')?.value || '00';
+          if (h === '24') h = '00';
+          return { hh: String(h).padStart(2, '0'), mm: String(m).padStart(2, '0') };
+        } catch {
+          return { hh: '??', mm: '??' };
+        }
+      }
+
+      function parseHours(text) {
+        if (!text) return [];
+        return String(text).split(/[,，\s]+/).map(s => s.trim()).filter(Boolean).map(s => {
+          if (s === '*' || s.toUpperCase() === 'ALL') return '*';
+          const n = Number(s);
+          if (!isNaN(n)) return String(Math.max(0, Math.min(23, Math.floor(n)))).padStart(2, '0');
+          return s;
+        });
+      }
+
+      function update() {
+        const tz = tzSelect.value || 'UTC';
+        const tzName = friendlyTz(tz);
+        labelInline.textContent = '（按' + tzName + '）';
+        const { hh, mm } = currentTzHour(tz);
+        const hours = parseHours(hoursInput.value);
+        const allowAll = hours.length === 0 || hours.includes('*');
+        const inWindow = allowAll || hours.includes(hh);
+
+        let statusHtml;
+        if (allowAll) {
+          statusHtml = '<span class="text-green-700 font-medium">✓ 当前会允许发送</span>'
+            + '<div class="text-xs text-gray-600 mt-1">未限制小时（留空或 *）= 每个整点检查时都可以发。</div>';
+        } else if (inWindow) {
+          statusHtml = '<span class="text-green-700 font-medium">✓ 当前整点在允许列表内，会发送</span>'
+            + '<div class="text-xs text-gray-600 mt-1">允许的小时：<b>' + hours.join('、') + '</b>；现在是 <b>' + hh + ':' + mm + '</b>（' + tzName + '）。</div>';
+        } else {
+          statusHtml = '<span class="text-amber-700 font-medium">✗ 当前不会发送</span>'
+            + '<div class="text-xs text-gray-600 mt-1">你只允许在 <b>' + hours.join('、') + '</b> 点发送；现在是 <b>' + hh + ':' + mm + '</b>（' + tzName + '）。'
+            + '定时任务仍会每小时跑一次，但不推送，任务历史会记「不在允许发送的小时」——这是正常跳过。</div>';
+        }
+
+        preview.innerHTML =
+          '<div class="text-gray-800">' + statusHtml + '</div>'
+          + '<div class="text-xs text-gray-500 mt-2">时区代码：' + tz + ' · 预览仅反映输入框内容，保存后调度器才用服务器上的值。</div>';
+      }
+
+      window.__refreshNotificationHoursPreview = update;
+
+      tzSelect.addEventListener('change', update);
+      hoursInput.addEventListener('input', update);
+      hoursInput.addEventListener('change', update);
+      setTimeout(update, 200);
+      setInterval(update, 30000);
+    })();
+
+    // ───────────────────────────────────────────────────────
+    // 备份导出 / 导入恢复
+    // ───────────────────────────────────────────────────────
+    (function () {
+      const exportBtn = document.getElementById('exportBackupBtn');
+      const importBtn = document.getElementById('importBackupBtn');
+      if (!exportBtn || !importBtn) return;
+
+      exportBtn.addEventListener('click', async () => {
+        const includeSecrets = document.getElementById('exportIncludeSecrets').checked;
+        if (includeSecrets && !confirm('将导出包含 Token / 密钥的完整备份，请确认文件会安全保存。继续？')) {
+          return;
+        }
+        const original = exportBtn.innerHTML;
+        exportBtn.disabled = true;
+        exportBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>导出中...';
+        try {
+          const url = '/api/backup?includeSecrets=' + (includeSecrets ? '1' : '0');
+          const res = await apiFetch(url);
+          if (!res.ok) {
+            const err = await res.json().catch(() => ({}));
+            throw new Error(err.message || ('HTTP ' + res.status));
+          }
+          const blob = await res.blob();
+          const a = document.createElement('a');
+          const objectUrl = URL.createObjectURL(blob);
+          a.href = objectUrl;
+          a.download = 'substracker-backup-' + new Date().toISOString().slice(0, 10) + '.json';
+          document.body.appendChild(a);
+          a.click();
+          a.remove();
+          URL.revokeObjectURL(objectUrl);
+          showToast('备份已下载', 'success');
+        } catch (e) {
+          if (e && e.message === 'AUTH_EXPIRED') return;
+          console.error(e);
+          showToast('导出失败: ' + (e.message || e), 'error');
+        } finally {
+          exportBtn.disabled = false;
+          exportBtn.innerHTML = original;
+        }
+      });
+
+      importBtn.addEventListener('click', async () => {
+        const fileInput = document.getElementById('importBackupFile');
+        const file = fileInput && fileInput.files && fileInput.files[0];
+        if (!file) {
+          showToast('请先选择备份 JSON 文件', 'warning');
+          return;
+        }
+        const modeEl = document.querySelector('input[name="importMode"]:checked');
+        const mode = modeEl ? modeEl.value : 'merge';
+        const includeSecrets = document.getElementById('importIncludeSecrets').checked;
+
+        if (mode === 'replace' && !confirm('覆盖模式会删除当前全部订阅后再导入，且不可撤销。确定继续？')) {
+          return;
+        }
+        if (!confirm('确认从备份恢复？建议先导出一份当前数据作为回滚。')) {
+          return;
+        }
+
+        const original = importBtn.innerHTML;
+        importBtn.disabled = true;
+        importBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>恢复中...';
+        try {
+          const text = await file.text();
+          let backup;
+          try {
+            backup = JSON.parse(text);
+          } catch {
+            throw new Error('文件不是合法 JSON');
+          }
+          const res = await apiFetch('/api/restore', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ backup, mode, includeSecrets })
+          });
+          const result = await res.json().catch(() => ({}));
+          if (!res.ok || !result.success) {
+            throw new Error(result.message || ('HTTP ' + res.status));
+          }
+          const stats = result.stats || {};
+          showToast(
+            '恢复成功：订阅 ' + (stats.subscriptions || 0) +
+            ' 条，规则 ' + (stats.reminderRules || 0) + ' 条',
+            'success',
+            5000
+          );
+          // 重新加载配置表单
+          if (typeof loadConfig === 'function') {
+            try { loadConfig(); } catch (_) { /* ignore */ }
+          } else {
+            setTimeout(function () { location.reload(); }, 800);
+          }
+        } catch (e) {
+          if (e && e.message === 'AUTH_EXPIRED') return;
+          console.error(e);
+          showToast('恢复失败: ' + (e.message || e), 'error', 6000);
+        } finally {
+          importBtn.disabled = false;
+          importBtn.innerHTML = original;
+        }
+      });
+    })();
   </script>
 </body>
 </html>
